@@ -360,7 +360,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX * amx)
 
 PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 {
-	if (core->global.tickCount == core->global.tickRate)
+	if (core->global.tickCount >= core->global.tickRate)
 	{
 		if (!core->movingAreas.empty())
 		{
@@ -389,6 +389,10 @@ PLUGIN_EXPORT void PLUGIN_CALL ProcessTick()
 						std::vector<Grid::SharedCell> playerCells;
 						grid->findNearbyCells(* p, playerCells, totalCells);
 						p->interiorID = invoke->callNative(&PAWN::GetPlayerInterior, p->playerID);
+						if (p->interiorID >= MAX_INTERIORS)
+						{
+							p->interiorID = 0;
+						}
 						p->worldID = invoke->callNative(&PAWN::GetPlayerVirtualWorld, p->playerID);
 						if (!playerCells.empty())
 						{
