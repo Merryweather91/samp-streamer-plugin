@@ -163,6 +163,10 @@ cell AMX_NATIVE_CALL Natives::Streamer_Update(AMX * amx, cell * params)
 		{
 			invoke->callNative(&PAWN::GetPlayerPos, p->playerID, &p->x, &p->y, &p->z);
 			p->interiorID = invoke->callNative(&PAWN::GetPlayerInterior, p->playerID);
+			if (p->interiorID >= MAX_INTERIORS)
+			{
+				p->interiorID = 0;
+			}
 			p->worldID = invoke->callNative(&PAWN::GetPlayerVirtualWorld, p->playerID);
 			if (!core->movingAreas.empty())
 			{
@@ -222,6 +226,10 @@ cell AMX_NATIVE_CALL Natives::Streamer_UpdateEx(AMX * amx, cell * params)
 		if (p->playerID == (int)params[1])
 		{
 			p->interiorID = invoke->callNative(&PAWN::GetPlayerInterior, p->playerID);
+			if (p->interiorID >= MAX_INTERIORS)
+			{
+				p->interiorID = 0;
+			}
 			p->worldID = invoke->callNative(&PAWN::GetPlayerVirtualWorld, p->playerID);
 			p->x = amx_ctof(params[2]);
 			p->y = amx_ctof(params[3]);
