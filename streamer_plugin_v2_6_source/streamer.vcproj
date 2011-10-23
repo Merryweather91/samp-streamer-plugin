@@ -41,8 +41,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="Libraries"
-				PreprocessorDefinitions="WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;NDEBUG;NOMINMAX;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;_SECURE_SCL=0;BOOST_ALL_NO_LIB"
+				AdditionalIncludeDirectories="include"
+				PreprocessorDefinitions="WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;NDEBUG;NOMINMAX;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;_SECURE_SCL=0;BOOST_ALL_NO_LIB;SAMPGDK_STATIC"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
@@ -62,8 +62,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="Libraries/boost/libboost_system.lib"
+				AdditionalDependencies="libboost_system.lib sampgdk_static.lib"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="lib/boost;lib/sampgdk"
 				ModuleDefinitionFile="streamer.def"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -97,177 +98,113 @@
 	</References>
 	<Files>
 		<Filter
-			Name="Source"
+			Name="src"
 			>
 			<File
-				RelativePath=".\Source\Cell.cpp"
+				RelativePath=".\src\Cell.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Cell.h"
+				RelativePath=".\src\Cell.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Common.h"
+				RelativePath=".\src\Common.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Core.cpp"
+				RelativePath=".\src\Core.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Core.h"
+				RelativePath=".\src\Core.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Data.h"
+				RelativePath=".\src\Data.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Element.cpp"
+				RelativePath=".\src\Data.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Element.h"
+				RelativePath=".\src\Element.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Events.cpp"
+				RelativePath=".\src\Element.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Events.h"
+				RelativePath=".\src\Events.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Grid.cpp"
+				RelativePath=".\src\Events.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Grid.h"
+				RelativePath=".\src\Grid.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Identifier.cpp"
+				RelativePath=".\src\Grid.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Identifier.h"
+				RelativePath=".\src\Identifier.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Manipulation.cpp"
+				RelativePath=".\src\Identifier.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Manipulation.h"
+				RelativePath=".\src\Main.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Natives.cpp"
+				RelativePath=".\src\Main.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Natives.h"
+				RelativePath=".\src\Manipulation.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Player.h"
+				RelativePath=".\src\Manipulation.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Streamer.cpp"
+				RelativePath=".\src\Natives.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Streamer.h"
+				RelativePath=".\src\Natives.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Utility.cpp"
+				RelativePath=".\src\Player.h"
 				>
 			</File>
 			<File
-				RelativePath=".\Source\Utility.h"
+				RelativePath=".\src\Streamer.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Streamer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Utility.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\src\Utility.h"
 				>
 			</File>
 		</Filter>
-		<Filter
-			Name="sampgdk"
-			>
-			<File
-				RelativePath=".\Libraries\sampgdk\amxapihooks.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Libraries\sampgdk\amxplugin.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Libraries\sampgdk\callbacks.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Libraries\sampgdk\eventhandler.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Libraries\sampgdk\fakeamx.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Libraries\sampgdk\funcidx.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Libraries\sampgdk\gamemode.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Libraries\sampgdk\gpci.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Libraries\sampgdk\hooknative.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Libraries\sampgdk\jump.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Libraries\sampgdk\objects.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Libraries\sampgdk\players.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Libraries\sampgdk\samp.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Libraries\sampgdk\vehicles.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Libraries\sampgdk\wrapper.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Libraries\sampgdk\wrapperimpl.cpp"
-				>
-			</File>
-		</Filter>
-		<File
-			RelativePath=".\main.cpp"
-			>
-		</File>
-		<File
-			RelativePath=".\main.h"
-			>
-		</File>
 		<File
 			RelativePath=".\streamer.rc"
 			>
