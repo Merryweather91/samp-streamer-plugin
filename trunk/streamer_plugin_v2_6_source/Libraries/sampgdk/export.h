@@ -1,7 +1,0 @@
-#ifndef SAMPGDK_EXPORT_H
-#define SAMPGDK_EXPORT_H
-
-#define SAMPGDK_EXPORT
-#define SAMPGDK_CALL
-
-#endif
