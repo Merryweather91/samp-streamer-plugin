@@ -356,6 +356,7 @@ void Streamer::processAreas(Player &player, const std::vector<SharedCell> &playe
 					{
 						show = boost::geometry::within(player.position, boost::get<Element::Box3D>(a->second->position));
 					}
+					break;
 					case STREAMER_AREA_TYPE_POLYGON:
 					{
 						show = boost::geometry::within(Eigen::Vector2f(player.position[0], player.position[1]), boost::get<Element::Polygon2D>(a->second->position));
