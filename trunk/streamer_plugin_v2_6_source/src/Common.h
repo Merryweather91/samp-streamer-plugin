@@ -46,7 +46,7 @@ namespace Element
 
 	typedef boost::geometry::model::box<Eigen::Vector2f> Box2D;
 	typedef boost::geometry::model::box<Eigen::Vector3f> Box3D;
-	typedef boost::geometry::model::polygon<Eigen::Vector2f> Polygon2D;
+	typedef boost::tuple<boost::geometry::model::polygon<Eigen::Vector2f>, Eigen::Vector2f> Polygon2D;
 }
 
 namespace boost { namespace geometry { namespace traits

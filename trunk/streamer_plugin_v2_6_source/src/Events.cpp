@@ -57,16 +57,17 @@ bool Events::OnPlayerDisconnect(int playerid, int reason)
 
 bool Events::OnPlayerPickUpPickup(int playerid, int pickupid)
 {
-	for (boost::unordered_map<int, int>::iterator p = core->getStreamer()->internalPickups.begin(); p != core->getStreamer()->internalPickups.end(); ++p)
+	for (boost::unordered_map<int, int>::iterator i = core->getStreamer()->internalPickups.begin(); i != core->getStreamer()->internalPickups.end(); ++i)
 	{
-		if (p->second == pickupid)
+		if (i->second == pickupid)
 		{
+			int pickupid = i->first;
 			for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 			{
 				int index = 0;
 				if (!amx_FindPublic(*a, "OnPlayerPickUpDynamicPickup", &index))
 				{
-					amx_Push(*a, p->first);
+					amx_Push(*a, pickupid);
 					amx_Push(*a, playerid);
 					amx_Exec(*a, NULL, index);
 				}
@@ -84,15 +85,15 @@ bool Events::OnPlayerEnterCheckpoint(int playerid)
 	{
 		if (p->second.activeCheckpoint != p->second.visibleCheckpoint)
 		{
-			int checkpointID = p->second.visibleCheckpoint;
-			p->second.activeCheckpoint = checkpointID;
+			int checkpointid = p->second.visibleCheckpoint;
+			p->second.activeCheckpoint = checkpointid;
 			for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 			{
 				int index = 0;
 				if (!amx_FindPublic(*a, "OnPlayerEnterDynamicCP", &index))
 				{
-					amx_Push(*a, checkpointID);
-					amx_Push(*a, p->first);
+					amx_Push(*a, checkpointid);
+					amx_Push(*a, playerid);
 					amx_Exec(*a, NULL, index);
 				}
 			}
@@ -108,15 +109,15 @@ bool Events::OnPlayerLeaveCheckpoint(int playerid)
 	{
 		if (p->second.activeCheckpoint == p->second.visibleCheckpoint)
 		{
-			int checkpointID = p->second.activeCheckpoint;
+			int checkpointid = p->second.activeCheckpoint;
 			p->second.activeCheckpoint = 0;
 			for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 			{
 				int index = 0;
 				if (!amx_FindPublic(*a, "OnPlayerLeaveDynamicCP", &index))
 				{
-					amx_Push(*a, checkpointID);
-					amx_Push(*a, p->first);
+					amx_Push(*a, checkpointid);
+					amx_Push(*a, playerid);
 					amx_Exec(*a, NULL, index);
 				}
 			}
@@ -132,15 +133,15 @@ bool Events::OnPlayerEnterRaceCheckpoint(int playerid)
 	{
 		if (p->second.activeRaceCheckpoint != p->second.visibleRaceCheckpoint)
 		{
-			int raceCheckpointID = p->second.visibleRaceCheckpoint;
-			p->second.activeRaceCheckpoint = raceCheckpointID;
+			int checkpointid = p->second.visibleRaceCheckpoint;
+			p->second.activeRaceCheckpoint = checkpointid;
 			for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 			{
 				int index = 0;
 				if (!amx_FindPublic(*a, "OnPlayerEnterDynamicRaceCP", &index))
 				{
-					amx_Push(*a, raceCheckpointID);
-					amx_Push(*a, p->first);
+					amx_Push(*a, checkpointid);
+					amx_Push(*a, playerid);
 					amx_Exec(*a, NULL, index);
 				}
 			}
@@ -156,15 +157,15 @@ bool Events::OnPlayerLeaveRaceCheckpoint(int playerid)
 	{
 		if (p->second.activeRaceCheckpoint == p->second.visibleRaceCheckpoint)
 		{
-			int raceCheckpointID = p->second.activeRaceCheckpoint;
+			int checkpointid = p->second.activeRaceCheckpoint;
 			p->second.activeRaceCheckpoint = 0;
 			for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 			{
 				int index = 0;
 				if (!amx_FindPublic(*a, "OnPlayerLeaveDynamicRaceCP", &index))
 				{
-					amx_Push(*a, raceCheckpointID);
-					amx_Push(*a, p->first);
+					amx_Push(*a, checkpointid);
+					amx_Push(*a, playerid);
 					amx_Exec(*a, NULL, index);
 				}
 			}

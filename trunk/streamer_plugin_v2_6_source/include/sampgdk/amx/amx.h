@@ -21,18 +21,18 @@
  *  Version: $Id: amx.h,v 1.5 2006/03/26 16:56:15 spookie Exp $
  */
 
-#ifndef AMX_H_INCLUDED
-#define AMX_H_INCLUDED
-
 #if defined __linux || defined __linux__
-#define __LINUX__
+  #define __LINUX__
 #endif
 #if defined FREEBSD && !defined __FreeBSD__
-#define __FreeBSD__
+  #define __FreeBSD__
 #endif
 #if defined __LINUX__ || defined __FreeBSD__ || defined __OpenBSD__
-#include "sclinux.h"
+  #include "sclinux.h"
 #endif
+
+#ifndef AMX_H_INCLUDED
+#define AMX_H_INCLUDED
 
 #if defined HAVE_STDINT_H
   #include <stdint.h>
@@ -85,11 +85,11 @@
 #if HAVE_ALLOCA_H
   #include <alloca.h>
 #endif
-/*#if defined __WIN32__ || defined _WIN32 || defined WIN32
+#if defined __WIN32__ || defined _WIN32 || defined WIN32 /* || defined __MSDOS__ */
   #if !defined alloca
-    #define xalloca(n)   _alloca(n)
+    #define alloca(n)   _alloca(n)
   #endif
-#endif*/
+#endif
 
 #if !defined arraysize
   #define arraysize(array)  (sizeof(array) / sizeof((array)[0]))
@@ -191,7 +191,7 @@ typedef int (AMXAPI *AMX_DEBUG)(struct tagAMX *amx);
 #endif
 
 #if !defined AMX_NO_ALIGN
-  #if defined __LINUX__ || defined __FreeBSD__
+  #if defined LINUX || defined __FreeBSD__
     #pragma pack(1)         /* structures must be packed (byte-aligned) */
   #elif defined MACOS && defined __MWERKS__
 	#pragma options align=mac68k
