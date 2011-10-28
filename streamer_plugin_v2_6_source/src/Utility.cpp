@@ -254,8 +254,8 @@ void Utility::getArrayFromNative(AMX *amx, cell input, cell size, Element::Polyg
 	{
 		points.push_back(Eigen::Vector2f(amx_ctof(array[i]), amx_ctof(array[i + 1])));
 	}
-	boost::geometry::assign_points(polygon, points);
-	boost::geometry::correct(polygon);
+	boost::geometry::assign_points(polygon.get<0>(), points);
+	boost::geometry::correct(polygon.get<0>());
 }
 
 std::string Utility::getStringFromNative(AMX *amx, cell input)

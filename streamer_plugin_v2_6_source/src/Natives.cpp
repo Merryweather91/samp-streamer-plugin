@@ -574,8 +574,11 @@ cell AMX_NATIVE_CALL Natives::SetDynamicObjectPos(AMX *amx, cell *params)
 			o->second->move->duration = static_cast<int>((boost::geometry::distance(o->second->move->position.get<0>(), o->second->position) / o->second->move->speed) * 1000.0f);
 			o->second->move->position.get<1>() = o->second->position;
 			o->second->move->position.get<2>() = (o->second->move->position.get<0>() - o->second->position) / o->second->move->duration;
-			o->second->move->rotation.get<1>() = o->second->rotation;
-			o->second->move->rotation.get<2>() = (o->second->move->rotation.get<0>() - o->second->rotation) / o->second->move->duration;
+			if (o->second->move->rotation.get<0>().maxCoeff() > -1000.0f)
+			{
+				o->second->move->rotation.get<1>() = o->second->rotation;
+				o->second->move->rotation.get<2>() = (o->second->move->rotation.get<0>() - o->second->rotation) / o->second->move->duration;
+			}
 			o->second->move->time = boost::chrono::steady_clock::now();
 		}
 		return 1;
@@ -660,9 +663,12 @@ cell AMX_NATIVE_CALL Natives::MoveDynamicObject(AMX *amx, cell *params)
 		o->second->move->position.get<0>() = position;
 		o->second->move->position.get<1>() = o->second->position;
 		o->second->move->position.get<2>() = (position - o->second->position) / o->second->move->duration;
-		o->second->move->rotation.get<0>() = o->second->rotation;
-		o->second->move->rotation.get<1>() = rotation;
-		o->second->move->rotation.get<2>() = (rotation - o->second->rotation) / o->second->move->duration;
+		o->second->move->rotation.get<0>() = rotation;
+		if (o->second->move->rotation.get<0>().maxCoeff() > -1000.0f)
+		{
+			o->second->move->rotation.get<1>() = o->second->rotation;
+			o->second->move->rotation.get<2>() = (rotation - o->second->rotation) / o->second->move->duration;
+		}
 		o->second->move->speed = amx_ctof(params[5]);
 		o->second->move->time = boost::chrono::steady_clock::now();
 		for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
@@ -1344,7 +1350,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicCube(AMX *amx, cell *params)
 
 cell AMX_NATIVE_CALL Natives::CreateDynamicPolygon(AMX *amx, cell *params)
 {
-	CHECK_PARAMS(5, "CreateDynamicPolygon");
+	CHECK_PARAMS(7, "CreateDynamicPolygon");
 	if (core->getData()->getMaxItems(STREAMER_TYPE_AREA) == core->getData()->areas.size())
 	{
 		return 0;
@@ -1360,12 +1366,13 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicPolygon(AMX *amx, cell *params)
 	area->areaID = areaID;
 	area->extraID = 0;
 	area->type = STREAMER_AREA_TYPE_POLYGON;
-	Utility::getArrayFromNative(amx, params[1], params[2], boost::get<Element::Polygon2D>(area->position));
-	Element::Box2D box = boost::geometry::return_envelope<Element::Box2D>(boost::get<Element::Polygon2D>(area->position));
+	Utility::getArrayFromNative(amx, params[1], params[4], boost::get<Element::Polygon2D>(area->position));
+	Element::Box2D box = boost::geometry::return_envelope<Element::Box2D>(boost::get<Element::Polygon2D>(area->position).get<0>());
 	area->size = boost::geometry::comparable_distance(box.min_corner(), box.max_corner());
-	Utility::addToContainer(area->worlds, static_cast<int>(params[3]));
-	Utility::addToContainer(area->interiors, static_cast<int>(params[4]));
-	Utility::addToContainer(area->players, static_cast<size_t>(params[5]));
+	boost::get<Element::Polygon2D>(area->position).get<1>() = Eigen::Vector2f(amx_ctof(params[2]), amx_ctof(params[3]));
+	Utility::addToContainer(area->worlds, static_cast<int>(params[5]));
+	Utility::addToContainer(area->interiors, static_cast<int>(params[6]));
+	Utility::addToContainer(area->players, static_cast<size_t>(params[7]));
 	core->getGrid()->addArea(area);
 	core->getData()->areas.insert(std::make_pair(areaID, area));
 	return static_cast<cell>(areaID);
@@ -1815,7 +1822,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicCubeEx(AMX *amx, cell *params)
 
 cell AMX_NATIVE_CALL Natives::CreateDynamicPolygonEx(AMX *amx, cell *params)
 {
-	CHECK_PARAMS(8, "CreateDynamicPolygonEx");
+	CHECK_PARAMS(10, "CreateDynamicPolygonEx");
 	if (core->getData()->getMaxItems(STREAMER_TYPE_AREA) == core->getData()->areas.size())
 	{
 		return 0;
@@ -1830,12 +1837,13 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicPolygonEx(AMX *amx, cell *params)
 	area->areaID = areaID;
 	area->extraID = 0;
 	area->type = STREAMER_AREA_TYPE_POLYGON;
-	Utility::getArrayFromNative(amx, params[1], params[2], boost::get<Element::Polygon2D>(area->position));
-	Element::Box2D box = boost::geometry::return_envelope<Element::Box2D>(boost::get<Element::Polygon2D>(area->position));
+	Utility::getArrayFromNative(amx, params[1], params[4], boost::get<Element::Polygon2D>(area->position));
+	Element::Box2D box = boost::geometry::return_envelope<Element::Box2D>(boost::get<Element::Polygon2D>(area->position).get<0>());
 	area->size = boost::geometry::comparable_distance(box.min_corner(), box.max_corner());
-	Utility::getArrayFromNative(amx, params[3], params[6], area->worlds);
-	Utility::getArrayFromNative(amx, params[4], params[7], area->interiors);
-	Utility::getArrayFromNative(amx, params[5], params[8], area->players);
+	boost::get<Element::Polygon2D>(area->position).get<1>() = Eigen::Vector2f(amx_ctof(params[2]), amx_ctof(params[3]));
+	Utility::getArrayFromNative(amx, params[5], params[8], area->worlds);
+	Utility::getArrayFromNative(amx, params[6], params[9], area->interiors);
+	Utility::getArrayFromNative(amx, params[7], params[10], area->players);
 	core->getGrid()->addArea(area);
 	core->getData()->areas.insert(std::make_pair(areaID, area));
 	return static_cast<cell>(areaID);

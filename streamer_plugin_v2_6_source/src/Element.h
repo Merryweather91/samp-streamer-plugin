@@ -48,7 +48,7 @@ namespace Element
 		boost::intrusive_ptr<Attach> attach;
 
 		std::set<int> interiors;
-		std::bitset<MAX_PLAYERS> players;
+		std::bitset<sampgdk::MAX_PLAYERS> players;
 		std::set<int> worlds;
 
 		static Identifier identifier;
@@ -68,7 +68,7 @@ namespace Element
 		float streamDistance;
 
 		std::set<int> interiors;
-		std::bitset<MAX_PLAYERS> players;
+		std::bitset<sampgdk::MAX_PLAYERS> players;
 		std::set<int> worlds;
 
 		static Identifier identifier;
@@ -90,7 +90,7 @@ namespace Element
 		int type;
 
 		std::set<int> interiors;
-		std::bitset<MAX_PLAYERS> players;
+		std::bitset<sampgdk::MAX_PLAYERS> players;
 		std::set<int> worlds;
 
 		static Identifier identifier;
@@ -126,7 +126,7 @@ namespace Element
 		boost::intrusive_ptr<Move> move;
 
 		std::set<int> interiors;
-		std::bitset<MAX_PLAYERS> players;
+		std::bitset<sampgdk::MAX_PLAYERS> players;
 		std::set<int> worlds;
 
 		static Identifier identifier;
@@ -148,7 +148,7 @@ namespace Element
 		int worldID;
 
 		std::set<int> interiors;
-		std::bitset<MAX_PLAYERS> players;
+		std::bitset<sampgdk::MAX_PLAYERS> players;
 		std::set<int> worlds;
 
 		static Identifier identifier;
@@ -170,7 +170,7 @@ namespace Element
 		int type;
 
 		std::set<int> interiors;
-		std::bitset<MAX_PLAYERS> players;
+		std::bitset<sampgdk::MAX_PLAYERS> players;
 		std::set<int> worlds;
 
 		static Identifier identifier;
@@ -205,7 +205,7 @@ namespace Element
 		boost::intrusive_ptr<Attach> attach;
 
 		std::set<int> interiors;
-		std::bitset<MAX_PLAYERS> players;
+		std::bitset<sampgdk::MAX_PLAYERS> players;
 		std::set<int> worlds;
 
 		static Identifier identifier;

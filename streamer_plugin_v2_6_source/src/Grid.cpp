@@ -74,7 +74,7 @@ void Grid::addArea(const Element::SharedArea &area)
 			break;
 			case STREAMER_AREA_TYPE_POLYGON:
 			{
-				boost::geometry::centroid(boost::get<Element::Polygon2D>(area->position), position);
+				boost::geometry::centroid(boost::get<Element::Polygon2D>(area->position).get<0>(), position);
 			}
 			break;
 		}

@@ -28,7 +28,6 @@ public:
 	Streamer();
 
 	bool setTickRate(std::size_t value);
-	bool setVelocityBoundaries(float minimum, float maximum);
 
 	std::size_t getVisibleItems(int type);
 	bool setVisibleItems(int type, std::size_t value);

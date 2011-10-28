@@ -62,9 +62,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="libboost_system.lib sampgdk_static.lib"
+				AdditionalDependencies="libboost_system.lib sampgdk.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="lib/boost;lib/sampgdk"
+				AdditionalLibraryDirectories="lib/windows/boost;lib/windows/sampgdk"
 				ModuleDefinitionFile="streamer.def"
 				SubSystem="2"
 				OptimizeReferences="2"

@@ -523,6 +523,11 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 								*result = amx_ftoc(boost::get<Element::Box3D>(a->second->position).max_corner()[2]);
 							}
 							break;
+							case STREAMER_AREA_TYPE_POLYGON:
+							{
+								*result = amx_ftoc(boost::get<Element::Polygon2D>(a->second->position).get<1>()[1]);
+							}
+							break;
 						}
 						return 1;
 					}
@@ -570,6 +575,11 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							case STREAMER_AREA_TYPE_CUBE:
 							{
 								*result = amx_ftoc(boost::get<Element::Box3D>(a->second->position).min_corner()[2]);
+							}
+							break;
+							case STREAMER_AREA_TYPE_POLYGON:
+							{
+								*result = amx_ftoc(boost::get<Element::Polygon2D>(a->second->position).get<1>()[0]);
 							}
 							break;
 						}
@@ -1142,7 +1152,6 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							case STREAMER_AREA_TYPE_SPHERE:
 							{
 								boost::get<Eigen::Vector3f>(a->second->position)[2] = amx_ctof(params[4]);
-								reassign = true;
 							}
 							break;
 						}
@@ -1193,7 +1202,11 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							case STREAMER_AREA_TYPE_CUBE:
 							{
 								boost::get<Element::Box3D>(a->second->position).max_corner()[2] = amx_ctof(params[4]);
-								reassign = true;
+							}
+							break;
+							case STREAMER_AREA_TYPE_POLYGON:
+							{
+								boost::get<Element::Polygon2D>(a->second->position).get<1>()[1] = amx_ctof(params[4]);
 							}
 							break;
 						}
@@ -1245,7 +1258,11 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							case STREAMER_AREA_TYPE_CUBE:
 							{
 								boost::get<Element::Box3D>(a->second->position).min_corner()[2] = amx_ctof(params[4]);
-								reassign = true;
+							}
+							break;
+							case STREAMER_AREA_TYPE_POLYGON:
+							{
+								boost::get<Element::Polygon2D>(a->second->position).get<1>()[0] = amx_ctof(params[4]);
 							}
 							break;
 						}

@@ -41,16 +41,6 @@ bool Streamer::setTickRate(std::size_t value)
 	return false;
 }
 
-bool Streamer::setVelocityBoundaries(float minimum, float maximum)
-{
-	if (minimum >= 0.0f && maximum >= 0.0f)
-	{
-		velocityBoundaries = boost::make_tuple(minimum, maximum);
-		return true;
-	}
-	return false;
-}
-
 std::size_t Streamer::getVisibleItems(int type)
 {
 	switch (type)
@@ -162,7 +152,7 @@ void Streamer::performPlayerUpdate(Player &player, bool final, bool automatic)
 	if (automatic)
 	{
 		int state = sampgdk::GetPlayerState(player.playerID);
-		if (state == PLAYER_STATE_NONE || state == PLAYER_STATE_WASTED)
+		if (state == sampgdk::PLAYER_STATE_NONE || state == sampgdk::PLAYER_STATE_WASTED)
 		{
 			return;
 		}
@@ -181,7 +171,7 @@ void Streamer::performPlayerUpdate(Player &player, bool final, bool automatic)
 		player.interiorID = sampgdk::GetPlayerInterior(player.playerID);
 		player.worldID = sampgdk::GetPlayerVirtualWorld(player.playerID);
 		Eigen::Vector3f velocity = Eigen::Vector3f::Zero();
-		if (state == PLAYER_STATE_ONFOOT)
+		if (state == sampgdk::PLAYER_STATE_ONFOOT)
 		{
 			sampgdk::GetPlayerVelocity(player.playerID, velocity[0], velocity[1], velocity[2]);
 		}
@@ -359,7 +349,10 @@ void Streamer::processAreas(Player &player, const std::vector<SharedCell> &playe
 					break;
 					case STREAMER_AREA_TYPE_POLYGON:
 					{
-						show = boost::geometry::within(Eigen::Vector2f(player.position[0], player.position[1]), boost::get<Element::Polygon2D>(a->second->position));
+						if (player.position[2] >= boost::get<Element::Polygon2D>(a->second->position).get<1>()[0] && player.position[2] <= boost::get<Element::Polygon2D>(a->second->position).get<1>()[1])
+						{
+							show = boost::geometry::within(Eigen::Vector2f(player.position[0], player.position[1]), boost::get<Element::Polygon2D>(a->second->position).get<0>());
+						}
 					}
 					break;
 				}
@@ -372,7 +365,10 @@ void Streamer::processAreas(Player &player, const std::vector<SharedCell> &playe
 					player.internalAreas.insert(a->first);
 					areaCallbacks.insert(std::make_pair(show, boost::make_tuple(a->first, player.playerID)));
 				}
-				player.visibleCell->areas.insert(*a);
+				if (a->second->cell)
+				{
+					player.visibleCell->areas.insert(*a);
+				}
 			}
 			else
 			{
@@ -434,7 +430,10 @@ void Streamer::processCheckpoints(Player &player, const std::vector<SharedCell> 
 			sampgdk::SetPlayerCheckpoint(player.playerID, d->second->position[0], d->second->position[1], d->second->position[2], d->second->size);
 			player.visibleCheckpoint = d->second->checkpointID;
 		}
-		player.visibleCell->checkpoints.insert(std::make_pair(d->second->checkpointID, d->second));
+		if (d->second->cell)
+		{
+			player.visibleCell->checkpoints.insert(std::make_pair(d->second->checkpointID, d->second));
+		}
 	}
 }
 
@@ -459,7 +458,10 @@ void Streamer::processMapIcons(Player &player, const std::vector<SharedCell> &pl
 				}
 				else
 				{
-					player.visibleCell->mapIcons.insert(*m);
+					if (m->second->cell)
+					{
+						player.visibleCell->mapIcons.insert(*m);
+					}
 					existingMapIcons.insert(std::make_pair(distance, m->second));
 				}
 			}
@@ -490,7 +492,10 @@ void Streamer::processMapIcons(Player &player, const std::vector<SharedCell> &pl
 						player.mapIconIdentifier.remove(i->second, player.internalMapIcons.size());
 						player.internalMapIcons.quick_erase(i);
 					}
-					player.visibleCell->mapIcons.erase(e->second->mapIconID);
+					if (e->second->cell)
+					{
+						player.visibleCell->mapIcons.erase(e->second->mapIconID);
+					}
 					existingMapIcons.erase(--e.base());
 				}
 			}
@@ -502,7 +507,10 @@ void Streamer::processMapIcons(Player &player, const std::vector<SharedCell> &pl
 		int internalID = player.mapIconIdentifier.get();
 		sampgdk::SetPlayerMapIcon(player.playerID, internalID, d->second->position[0], d->second->position[1], d->second->position[2], d->second->type, d->second->color, d->second->style);
 		player.internalMapIcons.insert(std::make_pair(d->second->mapIconID, internalID));
-		player.visibleCell->mapIcons.insert(std::make_pair(d->second->mapIconID, d->second));
+		if (d->second->cell)
+		{
+			player.visibleCell->mapIcons.insert(std::make_pair(d->second->mapIconID, d->second));
+		}
 	}
 }
 
@@ -527,7 +535,10 @@ void Streamer::processObjects(Player &player, const std::vector<SharedCell> &pla
 				}
 				else
 				{
-					player.visibleCell->objects.insert(*o);
+					if (o->second->cell)
+					{
+						player.visibleCell->objects.insert(*o);
+					}
 					existingObjects.insert(std::make_pair(distance, o->second));
 				}
 			}
@@ -556,7 +567,10 @@ void Streamer::processObjects(Player &player, const std::vector<SharedCell> &pla
 						sampgdk::DestroyPlayerObject(player.playerID, i->second);
 						player.internalObjects.quick_erase(i);
 					}
-					player.visibleCell->objects.erase(e->second->objectID);
+					if (e->second->cell)
+					{
+						player.visibleCell->objects.erase(e->second->objectID);
+					}
 					existingObjects.erase(--e.base());
 				}
 			}
@@ -577,7 +591,10 @@ void Streamer::processObjects(Player &player, const std::vector<SharedCell> &pla
 			sampgdk::MovePlayerObject(player.playerID, internalID, d->second->move->position.get<0>()[0], d->second->move->position.get<0>()[1], d->second->move->position.get<0>()[2], d->second->move->speed, d->second->move->rotation.get<0>()[0], d->second->move->rotation.get<0>()[1], d->second->move->rotation.get<0>()[2]);
 		}
 		player.internalObjects.insert(std::make_pair(d->second->objectID, internalID));
-		player.visibleCell->objects.insert(std::make_pair(d->second->objectID, d->second));
+		if (d->second->cell)
+		{
+			player.visibleCell->objects.insert(std::make_pair(d->second->objectID, d->second));
+		}
 	}
 }
 
@@ -589,23 +606,22 @@ void Streamer::processPickups(Player &player, const std::vector<SharedCell> &pla
 		for (boost::unordered_map<int, Element::SharedPickup>::const_iterator p = (*c)->pickups.begin(); p != (*c)->pickups.end(); ++p)
 		{
 			boost::unordered_map<int, Element::SharedPickup>::iterator d = discoveredPickups.find(p->first), e = existingPickups.find(p->first);
-			if (d != discoveredPickups.end() || e != existingPickups.end())
+			if (d == discoveredPickups.end() && e == existingPickups.end())
 			{
-				continue;
-			}
-			if (checkPlayer(p->second->players, player.playerID, p->second->interiors, player.interiorID, p->second->worlds, player.worldID))
-			{
-				if (boost::geometry::comparable_distance(player.position, p->second->position) <= p->second->streamDistance)
+				if (checkPlayer(p->second->players, player.playerID, p->second->interiors, player.interiorID, p->second->worlds, player.worldID))
 				{
-					boost::unordered_map<int, int>::iterator i = internalPickups.find(p->first);
-					if (i == internalPickups.end())
+					if (boost::geometry::comparable_distance(player.position, p->second->position) <= p->second->streamDistance)
 					{
-						p->second->worldID = player.worldID;
-						discoveredPickups.insert(*p);
-					}
-					else
-					{
-						existingPickups.insert(*p);
+						boost::unordered_map<int, int>::iterator i = internalPickups.find(p->first);
+						if (i == internalPickups.end())
+						{
+							p->second->worldID = player.worldID;
+							discoveredPickups.insert(*p);
+						}
+						else
+						{
+							existingPickups.insert(*p);
+						}
 					}
 				}
 			}
@@ -689,9 +705,11 @@ void Streamer::processRaceCheckpoints(Player &player, const std::vector<SharedCe
 			sampgdk::SetPlayerRaceCheckpoint(player.playerID, d->second->type, d->second->position[0], d->second->position[1], d->second->position[2], d->second->next[0], d->second->next[1], d->second->next[2], d->second->size);
 			player.visibleRaceCheckpoint = d->second->raceCheckpointID;
 		}
-		player.visibleCell->raceCheckpoints.insert(std::make_pair(d->second->raceCheckpointID, d->second));
+		if (d->second->cell)
+		{
+			player.visibleCell->raceCheckpoints.insert(std::make_pair(d->second->raceCheckpointID, d->second));
+		}
 	}
-	discoveredRaceCheckpoints.clear();
 }
 
 void Streamer::processTextLabels(Player &player, const std::vector<SharedCell> &playerCells)
@@ -722,7 +740,10 @@ void Streamer::processTextLabels(Player &player, const std::vector<SharedCell> &
 				}
 				else
 				{
-					player.visibleCell->textLabels.insert(*t);
+					if (t->second->cell)
+					{
+						player.visibleCell->textLabels.insert(*t);
+					}
 					existingTextLabels.insert(std::make_pair(distance, t->second));
 				}
 			}
@@ -751,7 +772,10 @@ void Streamer::processTextLabels(Player &player, const std::vector<SharedCell> &
 						sampgdk::DeletePlayer3DTextLabel(player.playerID, i->second);
 						player.internalTextLabels.quick_erase(i);
 					}
-					player.visibleCell->textLabels.erase(e->second->textLabelID);
+					if (e->second->cell)
+					{
+						player.visibleCell->textLabels.erase(e->second->textLabelID);
+					}
 					existingTextLabels.erase(--e.base());
 				}
 			}
@@ -768,7 +792,10 @@ void Streamer::processTextLabels(Player &player, const std::vector<SharedCell> &
 			break;
 		}
 		player.internalTextLabels.insert(std::make_pair(d->second->textLabelID, internalID));
-		player.visibleCell->textLabels.insert(std::make_pair(d->second->textLabelID, d->second));
+		if (d->second->cell)
+		{
+			player.visibleCell->textLabels.insert(std::make_pair(d->second->textLabelID, d->second));
+		}
 	}
 }
 
