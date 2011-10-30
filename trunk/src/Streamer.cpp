@@ -615,7 +615,6 @@ void Streamer::processPickups(Player &player, const std::vector<SharedCell> &pla
 						boost::unordered_map<int, int>::iterator i = internalPickups.find(p->first);
 						if (i == internalPickups.end())
 						{
-							p->second->worldID = player.worldID;
 							discoveredPickups.insert(*p);
 						}
 						else
@@ -650,7 +649,7 @@ void Streamer::processPickups(Player &player, const std::vector<SharedCell> &pla
 			{
 				break;
 			}
-			int internalID = sampgdk::CreatePickup(d->second->modelID, d->second->type, d->second->position[0], d->second->position[1], d->second->position[2], d->second->worldID);
+			int internalID = sampgdk::CreatePickup(d->second->modelID, d->second->type, d->second->position[0], d->second->position[1], d->second->position[2]);
 			if (internalID == INVALID_ALTERNATE_ID)
 			{
 				break;
