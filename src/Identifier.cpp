@@ -53,5 +53,5 @@ void Identifier::remove(int id, std::size_t remaining)
 void Identifier::reset()
 {
 	highestID = 0;
-	removedIDs.empty();
+	removedIDs = std::priority_queue<int, std::vector<int>, std::greater<int> >();
 }

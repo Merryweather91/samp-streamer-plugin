@@ -793,7 +793,7 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					if (i != core->getStreamer()->internalPickups.end())
 					{
 						sampgdk::DestroyPickup(i->second);
-						i->second = sampgdk::CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], p->second->worldID);
+						i->second = sampgdk::CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2]);
 					}
 				}
 				return (reassign || update);
@@ -1667,12 +1667,6 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						update = true;
 					}
 					break;
-					case WorldID:
-					{
-						p->second->worldID = static_cast<int>(params[4]);
-						return 1;
-					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_SetIntData: Invalid data specified");
@@ -1685,7 +1679,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					if (i != core->getStreamer()->internalPickups.end())
 					{
 						sampgdk::DestroyPickup(i->second);
-						i->second = sampgdk::CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], p->second->worldID);
+						i->second = sampgdk::CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2]);
 					}
 					return 1;
 				}

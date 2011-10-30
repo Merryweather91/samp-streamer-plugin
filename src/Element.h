@@ -145,7 +145,6 @@ namespace Element
 		int references;
 		float streamDistance;
 		int type;
-		int worldID;
 
 		std::set<int> interiors;
 		std::bitset<sampgdk::MAX_PLAYERS> players;
