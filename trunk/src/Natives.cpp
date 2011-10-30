@@ -1354,7 +1354,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicPolygon(AMX *amx, cell *params)
 	{
 		return 0;
 	}
-	if (static_cast<int>(params[2] >= 2 && static_cast<int>(params[2]) % 2))
+	if (static_cast<int>(params[4] >= 2 && static_cast<int>(params[4]) % 2))
 	{
 		logprintf("*** CreateDynamicPolygon: Number of points must be divisible by two");
 		return 0;
@@ -1825,7 +1825,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicPolygonEx(AMX *amx, cell *params)
 	{
 		return 0;
 	}
-	if (static_cast<int>(params[2] >= 2 && static_cast<int>(params[2]) % 2))
+	if (static_cast<int>(params[4] >= 2 && static_cast<int>(params[4]) % 2))
 	{
 		logprintf("*** CreateDynamicPolygonEx: Number of points must be divisible by two");
 	}
