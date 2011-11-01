@@ -649,7 +649,7 @@ void Streamer::processPickups(Player &player, const std::vector<SharedCell> &pla
 			{
 				break;
 			}
-			int internalID = sampgdk::CreatePickup(d->second->modelID, d->second->type, d->second->position[0], d->second->position[1], d->second->position[2]);
+			int internalID = sampgdk::CreatePickup(d->second->modelID, d->second->type, d->second->position[0], d->second->position[1], d->second->position[2], -1);
 			if (internalID == INVALID_ALTERNATE_ID)
 			{
 				break;

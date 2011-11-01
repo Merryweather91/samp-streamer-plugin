@@ -793,7 +793,7 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					if (i != core->getStreamer()->internalPickups.end())
 					{
 						sampgdk::DestroyPickup(i->second);
-						i->second = sampgdk::CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2]);
+						i->second = sampgdk::CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], -1);
 					}
 				}
 				return (reassign || update);
@@ -1679,7 +1679,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					if (i != core->getStreamer()->internalPickups.end())
 					{
 						sampgdk::DestroyPickup(i->second);
-						i->second = sampgdk::CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2]);
+						i->second = sampgdk::CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], -1);
 					}
 					return 1;
 				}
