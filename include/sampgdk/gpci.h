@@ -14,8 +14,10 @@
 
 #include <cstddef>
 
+#include <sampgdk/export.h>
+
 namespace sampgdk {
 
-bool gpci(int playerid, char *buffer, std::size_t size);
+SAMPGDK_EXPORT bool SAMPGDK_CALL gpci(int playerid, char *buffer, std::size_t size);
 
 } // namespace sampgdk
