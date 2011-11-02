@@ -12,12 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <cstddef>
+#ifndef SAMPGDK_GPCI_H
+#define SAMPGDK_GPCI_H
 
-#include <sampgdk/export.h>
+#include <cstddef>
 
 namespace sampgdk {
 
-SAMPGDK_EXPORT bool SAMPGDK_CALL gpci(int playerid, char *buffer, std::size_t size);
+bool gpci(int playerid, char *buffer, std::size_t size);
 
 } // namespace sampgdk
+
+#endif // !SAMPGDK_GPCI_H
