@@ -57,4 +57,6 @@
 
 #include "Core.h"
 
+typedef void (*logprintf_t)(const char*, ...);
+
 extern logprintf_t logprintf;
