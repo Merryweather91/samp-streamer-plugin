@@ -15,48 +15,32 @@
 #ifndef SAMPGDK_WRAPPER_H
 #define SAMPGDK_WRAPPER_H
 
-#include <map>
-#include <string>
-
-#include <sampgdk/amx.h>
-
-#define AMX_EXEC_GDK (-10)
+#include <sampgdk/amxplugin.h>
+#include <sampgdk/export.h>
 
 namespace sampgdk {
 
-typedef cell (*PublicHookProc)(AMX *amx);
+class WrapperImpl;
 
-class PublicHook {
+class SAMPGDK_EXPORT Wrapper {
 public:
-	PublicHook(PublicHookProc fun, cell badRet) 
-		: fun_(fun), badRet_(badRet)
-	{}
+	typedef cell (SAMPGDK_CALL *PublicHandler)(AMX *amx);
 
-	inline bool Call(AMX *amx, cell *retval) const {
-		return ((*retval = fun_(amx)) != badRet_);
-	}
+	~Wrapper();
 
-private:
-	PublicHookProc fun_;
-	cell badRet_;
-};
-
-class Wrapper {
-public:
 	static Wrapper &GetInstance();
-	static void Initialize(void **ppPluginData);
+
+	void Initialize(void **ppPluginData);
 
 	void SetNative(const char *name, AMX_NATIVE native);
 	AMX_NATIVE GetNative(const char *name) const;
 
-	void SetPublicHook(const char *name, PublicHook hook);
-	bool CallPublicHook(AMX *amx, cell *retval, const char *name) const;
+	void SetPublicHook(const char *name, PublicHandler handler, cell badReturn);
+	bool ExecutePublicHook(AMX *amx, cell *retval, const char *name) const;
 
 private:
 	Wrapper();
-
-	std::map<std::string, AMX_NATIVE> natives_;
-	std::map<std::string, PublicHook> publicHooks_;
+	WrapperImpl *pimpl_;
 };
 
 } // namespace sampgdk
