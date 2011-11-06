@@ -18,8 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
+			OutputDirectory="bin\windows\$(ConfigurationName)"
+			IntermediateDirectory="obj\windows\$(ConfigurationName)"
 			ConfigurationType="2"
 			WholeProgramOptimization="1"
 			>
@@ -42,7 +42,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				AdditionalIncludeDirectories="include"
-				PreprocessorDefinitions="WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;NDEBUG;NOMINMAX;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;_SECURE_SCL=0;BOOST_ALL_NO_LIB;SAMPGDK_STATIC"
+				PreprocessorDefinitions="WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;NDEBUG;NOMINMAX;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;_SECURE_SCL=0;BOOST_ALL_NO_LIB"
+				StringPooling="true"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="false"
 				EnableFunctionLevelLinking="true"
@@ -63,6 +64,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="libboost_system.lib sampgdk.lib"
+				OutputFile="$(OutDir)\$(ProjectName).dll"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="lib/windows/boost;lib/windows/sampgdk"
 				ModuleDefinitionFile="streamer.def"
