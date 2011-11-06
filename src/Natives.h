@@ -53,6 +53,7 @@ namespace Natives
 	cell AMX_NATIVE_CALL GetDynamicObjectRot(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL MoveDynamicObject(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL StopDynamicObject(AMX *amx, cell *params);
+	cell AMX_NATIVE_CALL IsDynamicObjectMoving(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL DestroyAllDynamicObjects(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL CountDynamicObjects(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL CreateDynamicPickup(AMX *amx, cell *params);
