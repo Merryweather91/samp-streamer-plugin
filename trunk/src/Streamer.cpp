@@ -104,13 +104,13 @@ bool Streamer::setVisibleItems(int type, std::size_t value)
 void Streamer::calculateAverageUpdateTime()
 {
 	static boost::chrono::steady_clock::time_point currentTime, lastRecordedTime;
-	static Eigen::Array<double, 5, 1> recordedTimes = Eigen::Array<double, 5, 1>::Zero();
+	static Eigen::Array<float, 5, 1> recordedTimes = Eigen::Array<float, 5, 1>::Zero();
 	currentTime = boost::chrono::steady_clock::now();
 	if (lastRecordedTime.time_since_epoch().count())
 	{
 		if (!(recordedTimes > 0).all())
 		{
-			boost::chrono::duration<double> elapsedTime = currentTime - lastRecordedTime;
+			boost::chrono::duration<float> elapsedTime = currentTime - lastRecordedTime;
 			recordedTimes[(recordedTimes > 0).count()] = elapsedTime.count();
 		}
 		else
@@ -904,7 +904,7 @@ void Streamer::processMovingObjects()
 		{
 			if (o->second->move)
 			{
-				boost::chrono::duration<double, boost::milli> elapsedTime = currentTime - o->second->move->time;
+				boost::chrono::duration<float, boost::milli> elapsedTime = currentTime - o->second->move->time;
 				if (elapsedTime.count() < o->second->move->duration)
 				{
 					o->second->position = o->second->move->position.get<1>() + (o->second->move->position.get<2>() * elapsedTime.count());

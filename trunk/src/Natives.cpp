@@ -573,11 +573,11 @@ cell AMX_NATIVE_CALL Natives::SetDynamicObjectPos(AMX *amx, cell *params)
 		{
 			o->second->move->duration = static_cast<int>((boost::geometry::distance(o->second->move->position.get<0>(), o->second->position) / o->second->move->speed) * 1000.0f);
 			o->second->move->position.get<1>() = o->second->position;
-			o->second->move->position.get<2>() = (o->second->move->position.get<0>() - o->second->position) / o->second->move->duration;
+			o->second->move->position.get<2>() = (o->second->move->position.get<0>() - o->second->position) / static_cast<float>(o->second->move->duration);
 			if (o->second->move->rotation.get<0>().maxCoeff() > -1000.0f)
 			{
 				o->second->move->rotation.get<1>() = o->second->rotation;
-				o->second->move->rotation.get<2>() = (o->second->move->rotation.get<0>() - o->second->rotation) / o->second->move->duration;
+				o->second->move->rotation.get<2>() = (o->second->move->rotation.get<0>() - o->second->rotation) / static_cast<float>(o->second->move->duration);
 			}
 			o->second->move->time = boost::chrono::steady_clock::now();
 		}
@@ -662,12 +662,12 @@ cell AMX_NATIVE_CALL Natives::MoveDynamicObject(AMX *amx, cell *params)
 		o->second->move->duration = static_cast<int>((boost::geometry::distance(position, o->second->position) / amx_ctof(params[5])) * 1000.0f);
 		o->second->move->position.get<0>() = position;
 		o->second->move->position.get<1>() = o->second->position;
-		o->second->move->position.get<2>() = (position - o->second->position) / o->second->move->duration;
+		o->second->move->position.get<2>() = (position - o->second->position) / static_cast<float>(o->second->move->duration);
 		o->second->move->rotation.get<0>() = rotation;
 		if (o->second->move->rotation.get<0>().maxCoeff() > -1000.0f)
 		{
 			o->second->move->rotation.get<1>() = o->second->rotation;
-			o->second->move->rotation.get<2>() = (rotation - o->second->rotation) / o->second->move->duration;
+			o->second->move->rotation.get<2>() = (rotation - o->second->rotation) / static_cast<float>(o->second->move->duration);
 		}
 		o->second->move->speed = amx_ctof(params[5]);
 		o->second->move->time = boost::chrono::steady_clock::now();

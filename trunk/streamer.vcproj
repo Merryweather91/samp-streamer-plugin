@@ -51,6 +51,7 @@
 				FloatingPointModel="2"
 				WarningLevel="3"
 				WarnAsError="true"
+				DisableSpecificWarnings="4244"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
