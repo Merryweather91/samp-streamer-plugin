@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="include"
+				AdditionalIncludeDirectories="include;include/sampgdk"
 				PreprocessorDefinitions="WIN32_LEAN_AND_MEAN;VC_EXTRALEAN;NDEBUG;NOMINMAX;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_WARNINGS;_SECURE_SCL=0;BOOST_ALL_NO_LIB"
 				StringPooling="true"
 				RuntimeLibrary="2"

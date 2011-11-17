@@ -15,7 +15,7 @@
 #ifndef SAMPGDK_SAMP_H
 #define SAMPGDK_SAMP_H
 
-#include <cstddef> // size_t
+#include <sampgdk.h>
 
 namespace sampgdk {
 
@@ -241,6 +241,10 @@ const int KEY_ANALOG_UP = 2048;
 const int KEY_ANALOG_DOWN = 4096;
 const int KEY_ANALOG_LEFT = 8192;
 const int KEY_ANALOG_RIGHT = 16384;
+
+const int KEY_YES = 65536;
+const int KEY_NO = 131072;
+const int KEY_CTRL_BACK = 262144;
 
 const int KEY_UP = -128;
 const int KEY_DOWN = 128;

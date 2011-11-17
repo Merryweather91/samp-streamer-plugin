@@ -149,6 +149,10 @@ void Streamer::startManualUpdate(Player &player)
 void Streamer::performPlayerUpdate(Player &player, bool final, bool automatic)
 {
 	Eigen::Vector3f position = player.position;
+	if (final)
+	{
+		processingFinalPlayer = true;
+	}
 	if (automatic)
 	{
 		int state = sampgdk::GetPlayerState(player.playerID);
@@ -156,11 +160,22 @@ void Streamer::performPlayerUpdate(Player &player, bool final, bool automatic)
 		{
 			return;
 		}
+		player.interiorID = sampgdk::GetPlayerInterior(player.playerID);
+		player.worldID = sampgdk::GetPlayerVirtualWorld(player.playerID);
 		sampgdk::GetPlayerPos(player.playerID, player.position[0], player.position[1], player.position[2]);
 		if (player.position == position)
 		{
 			if (!player.idleUpdate)
 			{
+				std::vector<SharedCell> playerCells;
+				core->getGrid()->findNearbyCells(player, playerCells);
+				if (!playerCells.empty())
+				{
+					if (!core->getData()->pickups.empty())
+					{
+						processPickups(player, playerCells);
+					}
+				}
 				return;
 			}
 		}
@@ -168,8 +183,6 @@ void Streamer::performPlayerUpdate(Player &player, bool final, bool automatic)
 		{
 			position = player.position;
 		}
-		player.interiorID = sampgdk::GetPlayerInterior(player.playerID);
-		player.worldID = sampgdk::GetPlayerVirtualWorld(player.playerID);
 		Eigen::Vector3f velocity = Eigen::Vector3f::Zero();
 		if (state == sampgdk::PLAYER_STATE_ONFOOT)
 		{
@@ -184,10 +197,6 @@ void Streamer::performPlayerUpdate(Player &player, bool final, bool automatic)
 		{
 			player.position += velocity * averageUpdateTime;
 		}
-	}
-	if (final)
-	{
-		processingFinalPlayer = true;
 	}
 	std::vector<SharedCell> playerCells;
 	core->getGrid()->findNearbyCells(player, playerCells);
@@ -222,13 +231,13 @@ void Streamer::performPlayerUpdate(Player &player, bool final, bool automatic)
 			processAreas(player, playerCells);
 		}
 	}
-	if (automatic)
-	{
-		player.position = position;
-	}
 	if (final)
 	{
 		processingFinalPlayer = false;
+	}
+	if (automatic)
+	{
+		player.position = position;
 	}
 }
 

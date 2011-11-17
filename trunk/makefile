@@ -1,10 +1,10 @@
 CXX = g++
 
-INCLUDES = -I./include
+INCLUDES = -I./include -I./include/sampgdk
 LIBS = -lboost_system -lsampgdk -lrt
 
 CXXFLAGS = -O3 -ffast-math -fno-strict-aliasing -fmerge-all-constants -fvisibility=hidden -fvisibility-inlines-hidden -Wall
-LDFLAGS = -s -shared -m32 -L./lib/linux/boost/ -L./lib/linux/sampgdk/
+LDFLAGS = -s -shared -m32 -L./lib/linux/boost -L./lib/linux/sampgdk
 
 BINDIR = ./bin/linux
 OBJDIR = ./obj/linux
