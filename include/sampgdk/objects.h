@@ -15,6 +15,8 @@
 #ifndef SAMPGDK_OBJECTS_H
 #define SAMPGDK_OBJECTS_H
 
+#include <sampgdk.h>
+
 namespace sampgdk {
 
 int CreateObject(int modelid, float x, float y, float z, float rX, float rY, float rZ, float DrawDistance = 0.0);
@@ -30,6 +32,7 @@ bool IsValidObject(int objectid);
 void DestroyObject(int objectid);
 int MoveObject(int objectid, float X, float Y, float Z, float Speed, float RotX = -1000.0, float RotY = -1000.0, float RotZ = -1000.0);
 bool StopObject(int objectid);
+bool IsObjectMoving(int objectid);
 int CreatePlayerObject(int playerid, int modelid, float x, float y, float z, float rX, float rY, float rZ, float DrawDistance = 0.0);
 void SetPlayerObjectPos(int playerid, int objectid, float x, float y, float z);
 bool GetPlayerObjectPos(int playerid, int objectid, float &x, float &y, float &z);
@@ -39,6 +42,7 @@ bool IsValidPlayerObject(int playerid, int objectid);
 void DestroyPlayerObject(int playerid, int objectid);
 int MovePlayerObject(int playerid, int objectid, float x, float y, float z, float Speed, float RotX = -1000.0, float RotY = -1000.0, float RotZ = -1000.0);
 bool StopPlayerObject(int playerid, int objectid);
+bool IsPlayerObjectMoving(int playerid, int objectid);
 
 } // namespace sampgdk
 

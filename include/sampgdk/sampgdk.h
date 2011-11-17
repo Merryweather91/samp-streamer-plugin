@@ -15,7 +15,9 @@
 #ifndef SAMPGDK_H
 #define SAMPGDK_H
 
-#include <sampgdk/amx.h>
+#include <sampgdk/config.h>
+
+#include <sampgdk/amx/amx.h>
 #include <sampgdk/plugincommon.h>
 
 #include <sampgdk/eventhandler.h>

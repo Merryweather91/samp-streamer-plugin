@@ -20,7 +20,7 @@
   #define PLUGIN_EXTERN_C 
 #endif
 
-#if defined(__LINUX__) || defined(__FreeBSD__) || defined(__OpenBSD__)
+#if defined(LINUX) || defined(FREEBSD) || defined(__FreeBSD__) || defined(__OpenBSD__)
   #ifndef __GNUC__
     #pragma message "Warning: Not using a GNU compiler."
   #endif
@@ -48,7 +48,7 @@ enum SUPPORTS_FLAGS
 	SUPPORTS_VERSION		= SAMP_PLUGIN_VERSION,
 	SUPPORTS_VERSION_MASK	= 0xffff,
 	SUPPORTS_AMX_NATIVES	= 0x10000,
-	SUPPORTS_PROCESS_TICK	= 0x20000,
+	SUPPORTS_PROCESS_TICK	= 0x20000
 };
 
 //----------------------------------------------------------
