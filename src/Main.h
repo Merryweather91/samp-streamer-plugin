@@ -16,6 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef MAIN_H
+#define MAIN_H
+
 #define PLUGIN_VERSION "2.6"
 
 #define STREAMER_TYPE_OBJECT (0)
@@ -60,3 +63,5 @@
 typedef void (*logprintf_t)(const char*, ...);
 
 extern logprintf_t logprintf;
+
+#endif
