@@ -176,6 +176,10 @@ void Streamer::performPlayerUpdate(Player &player, bool final, bool automatic)
 						processPickups(player, playerCells);
 					}
 				}
+				if (final)
+				{
+					processingFinalPlayer = false;
+				}
 				return;
 			}
 		}
