@@ -26,7 +26,7 @@ Streamer::Streamer()
 	tickRate = 50;
 	velocityBoundaries = boost::make_tuple(0.25f, 25.0f);
 	visibleMapIcons = 100;
-	visibleObjects = 500;
+	visibleObjects = 400;
 	visiblePickups = 4096;
 	visibleTextLabels = 1024;
 }
@@ -130,8 +130,10 @@ void Streamer::startAutomaticUpdate()
 		processActiveItems();
 		for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
 		{
-			performPlayerUpdate(p->second, isLastPlayer(p, core->getData()->players), true);
+			processingFinalPlayer = isLastPlayer(p, core->getData()->players);
+			performPlayerUpdate(p->second, true);
 		}
+		processingFinalPlayer = false;
 		tickCount = 0;
 	}
 	if (!core->getData()->interfaces.empty())
@@ -143,16 +145,13 @@ void Streamer::startAutomaticUpdate()
 void Streamer::startManualUpdate(Player &player)
 {
 	processActiveItems();
-	performPlayerUpdate(player, true, false);
+	performPlayerUpdate(player, false);
 }
 
-void Streamer::performPlayerUpdate(Player &player, bool final, bool automatic)
+void Streamer::performPlayerUpdate(Player &player, bool automatic)
 {
+	bool playerIsIdle = false;
 	Eigen::Vector3f position = player.position;
-	if (final)
-	{
-		processingFinalPlayer = true;
-	}
 	if (automatic)
 	{
 		int state = sampgdk::GetPlayerState(player.playerID);
@@ -163,81 +162,70 @@ void Streamer::performPlayerUpdate(Player &player, bool final, bool automatic)
 		player.interiorID = sampgdk::GetPlayerInterior(player.playerID);
 		player.worldID = sampgdk::GetPlayerVirtualWorld(player.playerID);
 		sampgdk::GetPlayerPos(player.playerID, player.position[0], player.position[1], player.position[2]);
-		if (player.position == position)
+		if (player.position != position)
 		{
-			if (!player.idleUpdate)
+			position = player.position;
+			Eigen::Vector3f velocity = Eigen::Vector3f::Zero();
+			if (state == sampgdk::PLAYER_STATE_ONFOOT)
 			{
-				std::vector<SharedCell> playerCells;
-				core->getGrid()->findNearbyCells(player, playerCells);
-				if (!playerCells.empty())
-				{
-					if (!core->getData()->pickups.empty())
-					{
-						processPickups(player, playerCells);
-					}
-				}
-				if (final)
-				{
-					processingFinalPlayer = false;
-				}
-				return;
+				sampgdk::GetPlayerVelocity(player.playerID, velocity[0], velocity[1], velocity[2]);
+			}
+			else
+			{
+				sampgdk::GetVehicleVelocity(sampgdk::GetPlayerVehicleID(player.playerID), velocity[0], velocity[1], velocity[2]);
+			}
+			float velocityNorm = velocity.squaredNorm();
+			if (velocityNorm >= velocityBoundaries.get<0>() && velocityNorm <= velocityBoundaries.get<1>())
+			{
+				player.position += velocity * averageUpdateTime;
 			}
 		}
 		else
 		{
-			position = player.position;
-		}
-		Eigen::Vector3f velocity = Eigen::Vector3f::Zero();
-		if (state == sampgdk::PLAYER_STATE_ONFOOT)
-		{
-			sampgdk::GetPlayerVelocity(player.playerID, velocity[0], velocity[1], velocity[2]);
-		}
-		else
-		{
-			sampgdk::GetVehicleVelocity(sampgdk::GetPlayerVehicleID(player.playerID), velocity[0], velocity[1], velocity[2]);
-		}
-		float velocityNorm = velocity.squaredNorm();
-		if (velocityNorm >= velocityBoundaries.get<0>() && velocityNorm <= velocityBoundaries.get<1>())
-		{
-			player.position += velocity * averageUpdateTime;
+			if (!player.idleUpdate)
+			{
+				playerIsIdle = true;
+			}
 		}
 	}
 	std::vector<SharedCell> playerCells;
 	core->getGrid()->findNearbyCells(player, playerCells);
 	if (!playerCells.empty())
 	{
-		if (!core->getData()->objects.empty())
+		if (automatic)
 		{
-			processObjects(player, playerCells);
+			if (!core->getData()->pickups.empty())
+			{
+				processPickups(player, playerCells);
+			}
 		}
-		if (!core->getData()->pickups.empty())
+		if (!playerIsIdle)
 		{
-			processPickups(player, playerCells);
+			if (!core->getData()->objects.empty())
+			{
+				processObjects(player, playerCells);
+			}
+			if (!core->getData()->checkpoints.empty())
+			{
+				processCheckpoints(player, playerCells);
+			}
+			if (!core->getData()->raceCheckpoints.empty())
+			{
+				processRaceCheckpoints(player, playerCells);
+			}
+			if (!core->getData()->mapIcons.empty())
+			{
+				processMapIcons(player, playerCells);
+			}
+			if (!core->getData()->textLabels.empty())
+			{
+				processTextLabels(player, playerCells);
+			}
+			if (!core->getData()->areas.empty())
+			{
+				processAreas(player, playerCells);
+			}
 		}
-		if (!core->getData()->checkpoints.empty())
-		{
-			processCheckpoints(player, playerCells);
-		}
-		if (!core->getData()->raceCheckpoints.empty())
-		{
-			processRaceCheckpoints(player, playerCells);
-		}
-		if (!core->getData()->mapIcons.empty())
-		{
-			processMapIcons(player, playerCells);
-		}
-		if (!core->getData()->textLabels.empty())
-		{
-			processTextLabels(player, playerCells);
-		}
-		if (!core->getData()->areas.empty())
-		{
-			processAreas(player, playerCells);
-		}
-	}
-	if (final)
-	{
-		processingFinalPlayer = false;
 	}
 	if (automatic)
 	{

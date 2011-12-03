@@ -26,7 +26,7 @@ ifeq ($(config),release)
   DEFINES   += 
   INCLUDES  += -Iinclude -Iinclude/sampgdk
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
-  CFLAGS    += $(CPPFLAGS) $(ARCH) -fPIC -ffast-math -fmerge-all-constants -fno-strict-aliasing -fvisibility=hidden -fvisibility-inlines-hidden -O3 -Wall
+  CFLAGS    += $(CPPFLAGS) $(ARCH) -ffast-math -fmerge-all-constants -fno-strict-aliasing -fvisibility=hidden -fvisibility-inlines-hidden -O3 -Wall
   CXXFLAGS  += $(CFLAGS) 
   LDFLAGS   += -s -shared -Llib/linux/boost -Llib/linux/sampgdk
   LIBS      += -lboost_system -lsampgdk -lrt
