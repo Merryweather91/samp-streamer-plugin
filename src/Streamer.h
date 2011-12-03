@@ -43,7 +43,7 @@ public:
 private:
 	void calculateAverageUpdateTime();
 
-	void performPlayerUpdate(Player &player, bool final, bool automatic);
+	void performPlayerUpdate(Player &player, bool automatic);
 
 	void executeCallbacks(const std::multimap<bool, boost::tuple<int, int> > &areaCallbacks);
 	void executeCallbacks(const std::vector<int> &objectCallbacks);
