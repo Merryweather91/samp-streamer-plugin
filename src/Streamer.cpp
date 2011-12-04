@@ -189,7 +189,14 @@ void Streamer::performPlayerUpdate(Player &player, bool automatic)
 		}
 	}
 	std::vector<SharedCell> playerCells;
-	core->getGrid()->findNearbyCells(player, playerCells);
+	if (!playerIsIdle)
+	{
+		core->getGrid()->findAllCells(player, playerCells);
+	}
+	else
+	{
+		core->getGrid()->findMinimalCells(player, playerCells);
+	}
 	if (!playerCells.empty())
 	{
 		if (automatic)
