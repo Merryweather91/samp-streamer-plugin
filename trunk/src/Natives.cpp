@@ -94,21 +94,21 @@ cell AMX_NATIVE_CALL Natives::Streamer_UpdateEx(AMX *amx, cell *params)
 	if (p != core->getData()->players.end())
 	{
 		p->second.position = Eigen::Vector3f(amx_ctof(params[2]), amx_ctof(params[3]), amx_ctof(params[4]));
-		if (static_cast<int>(params[6]) >= 0)
+		if (static_cast<int>(params[5]) >= 0)
 		{
-			p->second.interiorID = sampgdk::GetPlayerInterior(p->first);
+			p->second.worldID = static_cast<int>(params[5]);
 		}
 		else
-		{
-			p->second.interiorID = static_cast<int>(params[6]);
-		}
-		if (static_cast<int>(params[5]) >= 0)
 		{
 			p->second.worldID = sampgdk::GetPlayerVirtualWorld(p->first);
 		}
+		if (static_cast<int>(params[6]) >= 0)
+		{
+			p->second.interiorID = static_cast<int>(params[6]);
+		}
 		else
 		{
-			p->second.worldID = static_cast<int>(params[5]);
+			p->second.interiorID = sampgdk::GetPlayerInterior(p->first);
 		}
 		core->getStreamer()->startManualUpdate(p->second);
 		return 1;

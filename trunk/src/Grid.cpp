@@ -391,7 +391,7 @@ void Grid::eraseCellIfEmpty(const SharedCell &cell)
 	}
 }
 
-void Grid::findNearbyCells(Player &player, std::vector<SharedCell> &playerCells)
+void Grid::findAllCells(Player &player, std::vector<SharedCell> &playerCells)
 {
 	boost::unordered_set<std::pair<int, int> > discoveredCells;
 	for (int i = 0; i < 9; ++i)
@@ -408,6 +408,20 @@ void Grid::findNearbyCells(Player &player, std::vector<SharedCell> &playerCells)
 	playerCells.push_back(globalCell);
 	playerCells.push_back(player.visibleCell);
 	player.visibleCell = SharedCell(new Cell());
+}
+
+void Grid::findMinimalCells(Player &player, std::vector<SharedCell> &playerCells)
+{
+	for (int i = 0; i < 9; ++i)
+	{
+		Eigen::Vector2f position = Eigen::Vector2f(player.position[0], player.position[1]) + translationMatrix.col(i);
+		boost::unordered_map<std::pair<int, int>, SharedCell>::iterator c = cells.find(getCellID(position, false));
+		if (c != cells.end())
+		{
+			playerCells.push_back(c->second);
+		}
+	}
+	playerCells.push_back(globalCell);
 }
 
 std::pair<int, int> Grid::getCellID(const Eigen::Vector2f &position, bool insert)

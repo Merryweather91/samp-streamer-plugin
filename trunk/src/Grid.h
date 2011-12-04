@@ -32,7 +32,8 @@ public:
 	void addRaceCheckpoint(const Element::SharedRaceCheckpoint &raceCheckpoint);
 	void addTextLabel(const Element::SharedTextLabel &textLabel);
 	void eraseAllItems(int type);
-	void findNearbyCells(Player &player, std::vector<SharedCell> &playerCells);
+	void findAllCells(Player &player, std::vector<SharedCell> &playerCells);
+	void findMinimalCells(Player &player, std::vector<SharedCell> &playerCells);
 	void rebuildGrid();
 	void removeArea(const Element::SharedArea &area, bool reassign = false);
 	void removeCheckpoint(const Element::SharedCheckpoint &checkpoint, bool reassign = false);
