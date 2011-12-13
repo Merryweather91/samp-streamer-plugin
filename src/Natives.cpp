@@ -1861,3 +1861,63 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicPolygonEx(AMX *amx, cell *params)
 	core->getData()->areas.insert(std::make_pair(areaID, area));
 	return static_cast<cell>(areaID);
 }
+
+cell AMX_NATIVE_CALL Natives::Streamer_CallbackHook(AMX *amx, cell *params)
+{
+	core->getEvents()->setInterface(amx);
+	switch (static_cast<int>(params[1]))
+	{
+		case STREAMER_OPC:
+		{
+			cell *playerid = NULL;
+			amx_GetAddr(amx, params[2], &playerid);
+			return static_cast<cell>(core->getEvents()->OnPlayerConnect(static_cast<int>(*playerid)));
+		}
+		break;
+		case STREAMER_OPDC:
+		{
+			cell *playerid = NULL, *reason = NULL;
+			amx_GetAddr(amx, params[2], &playerid);
+			amx_GetAddr(amx, params[3], &reason);
+			return static_cast<cell>(core->getEvents()->OnPlayerDisconnect(static_cast<int>(*playerid), static_cast<int>(*reason)));
+		}
+		break;
+		case STREAMER_OPPP:
+		{
+			cell *playerid = NULL, *pickupid = NULL;
+			amx_GetAddr(amx, params[2], &playerid);
+			amx_GetAddr(amx, params[3], &pickupid);
+			return static_cast<cell>(core->getEvents()->OnPlayerPickUpPickup(static_cast<int>(*playerid), static_cast<int>(*pickupid)));
+		}
+		break;
+		case STREAMER_OPEC:
+		{
+			cell *playerid = NULL;
+			amx_GetAddr(amx, params[2], &playerid);
+			return static_cast<cell>(core->getEvents()->OnPlayerEnterCheckpoint(static_cast<int>(*playerid)));
+		}
+		break;
+		case STREAMER_OPLC:
+		{
+			cell *playerid = NULL;
+			amx_GetAddr(amx, params[2], &playerid);
+			return static_cast<cell>(core->getEvents()->OnPlayerLeaveCheckpoint(static_cast<int>(*playerid)));
+		}
+		break;
+		case STREAMER_OPERC:
+		{
+			cell *playerid = NULL;
+			amx_GetAddr(amx, params[2], &playerid);
+			return static_cast<cell>(core->getEvents()->OnPlayerEnterRaceCheckpoint(static_cast<int>(*playerid)));
+		}
+		break;
+		case STREAMER_OPLRC:
+		{
+			cell *playerid = NULL;
+			amx_GetAddr(amx, params[2], &playerid);
+			return static_cast<cell>(core->getEvents()->OnPlayerLeaveRaceCheckpoint(static_cast<int>(*playerid)));
+		}
+		break;
+	}
+	return 0;
+}

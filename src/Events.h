@@ -19,18 +19,23 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
-class Events : public sampgdk::EventHandler
+class Events
 {
 public:
-	Events();
+	bool OnPlayerConnect(int playerid);
+	bool OnPlayerDisconnect(int playerid, int reason);
+	bool OnPlayerPickUpPickup(int playerid, int pickupid);
+	bool OnPlayerEnterCheckpoint(int playerid);
+	bool OnPlayerLeaveCheckpoint(int playerid);
+	bool OnPlayerEnterRaceCheckpoint(int playerid);
+	bool OnPlayerLeaveRaceCheckpoint(int playerid);
 
-	virtual bool OnPlayerConnect(int playerid);
-	virtual bool OnPlayerDisconnect(int playerid, int reason);
-	virtual bool OnPlayerPickUpPickup(int playerid, int pickupid);
-	virtual bool OnPlayerEnterCheckpoint(int playerid);
-	virtual bool OnPlayerLeaveCheckpoint(int playerid);
-	virtual bool OnPlayerEnterRaceCheckpoint(int playerid);
-	virtual bool OnPlayerLeaveRaceCheckpoint(int playerid);
+	inline void setInterface(AMX *amx)
+	{
+		interface = amx;
+	}
+private:
+	AMX *interface;
 };
 
 #endif

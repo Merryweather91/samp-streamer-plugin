@@ -133,6 +133,7 @@ AMX_NATIVE_INFO natives[] =
 	{ "CreateDynamicSphereEx", Natives::CreateDynamicSphereEx },
 	{ "CreateDynamicCubeEx", Natives::CreateDynamicCubeEx },
 	{ "CreateDynamicPolygonEx", Natives::CreateDynamicPolygonEx },
+	{ "Streamer_CallbackHook", Natives::Streamer_CallbackHook },
 	{ 0, 0 }
 };
 
