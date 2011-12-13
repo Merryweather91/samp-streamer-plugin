@@ -23,6 +23,7 @@
 
 #include "Cell.h"
 #include "Data.h"
+#include "Events.h"
 #include "Identifier.h"
 #include "Grid.h"
 #include "Element.h"
@@ -34,22 +35,28 @@ class Core
 public:
 	Core();
 
-	inline Data * getData()
+	inline Data *getData()
 	{
 		return data.get();
 	}
 
-	inline Grid * getGrid()
+	inline Events *getEvents()
+	{
+		return events.get();
+	}
+
+	inline Grid *getGrid()
 	{
 		return grid.get();
 	}
 
-	inline Streamer * getStreamer()
+	inline Streamer *getStreamer()
 	{
 		return streamer.get();
 	}
 private:
 	boost::scoped_ptr<Data> data;
+	boost::scoped_ptr<Events> events;
 	boost::scoped_ptr<Grid> grid;
 	boost::scoped_ptr<Streamer> streamer;
 };

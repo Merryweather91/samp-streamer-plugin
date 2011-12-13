@@ -21,7 +21,7 @@ namespace sampgdk {
 
 // Limits and internal constants
 const int MAX_PLAYER_NAME = 24;
-const int MAX_PLAYERS = 500;
+const int MAX_PLAYERS = 800;
 const int MAX_VEHICLES = 2000;
 const int INVALID_PLAYER_ID = 0xFFFF;
 const int INVALID_VEHICLE_ID = 0xFFFF;

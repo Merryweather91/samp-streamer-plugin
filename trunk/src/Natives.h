@@ -23,6 +23,14 @@
 		return 0; \
 	}
 
+#define STREAMER_OPC (0)
+#define STREAMER_OPDC (1)
+#define STREAMER_OPPP (2)
+#define STREAMER_OPEC (3)
+#define STREAMER_OPLC (4)
+#define STREAMER_OPERC (5)
+#define STREAMER_OPLRC (6)
+
 namespace Natives
 {
 	cell AMX_NATIVE_CALL Streamer_TickRate(AMX *amx, cell *params);
@@ -114,4 +122,5 @@ namespace Natives
 	cell AMX_NATIVE_CALL CreateDynamicSphereEx(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL CreateDynamicCubeEx(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL CreateDynamicPolygonEx(AMX *amx, cell *params);
+	cell AMX_NATIVE_CALL Streamer_CallbackHook(AMX *amx, cell *params);
 }

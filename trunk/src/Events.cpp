@@ -17,14 +17,6 @@
 */
 
 #include "Main.h"
-#include "Events.h"
-
-static Events events;
-
-Events::Events()
-{
-	this->Register();
-}
 
 bool Events::OnPlayerConnect(int playerid)
 {
@@ -61,6 +53,14 @@ bool Events::OnPlayerPickUpPickup(int playerid, int pickupid)
 	{
 		if (i->second == pickupid)
 		{
+			boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.find(i->first);
+			if (p != core->getData()->pickups.end())
+			{
+				if (p->second->amx != interface)
+				{
+					break;
+				}
+			}
 			int pickupid = i->first;
 			for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 			{
