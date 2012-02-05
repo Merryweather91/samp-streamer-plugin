@@ -78,9 +78,9 @@ cell AMX_NATIVE_CALL Natives::Streamer_Update(AMX *amx, cell *params)
 	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
 	if (p != core->getData()->players.end())
 	{
-		sampgdk::GetPlayerPos(p->first, p->second.position[0], p->second.position[1], p->second.position[2]);
-		p->second.interiorID = sampgdk::GetPlayerInterior(p->first);
-		p->second.worldID = sampgdk::GetPlayerVirtualWorld(p->first);
+		GetPlayerPos(p->first, &p->second.position[0], &p->second.position[1], &p->second.position[2]);
+		p->second.interiorID = GetPlayerInterior(p->first);
+		p->second.worldID = GetPlayerVirtualWorld(p->first);
 		core->getStreamer()->startManualUpdate(p->second);
 		return 1;
 	}
@@ -100,7 +100,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_UpdateEx(AMX *amx, cell *params)
 		}
 		else
 		{
-			p->second.worldID = sampgdk::GetPlayerVirtualWorld(p->first);
+			p->second.worldID = GetPlayerVirtualWorld(p->first);
 		}
 		if (static_cast<int>(params[6]) >= 0)
 		{
@@ -108,7 +108,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_UpdateEx(AMX *amx, cell *params)
 		}
 		else
 		{
-			p->second.interiorID = sampgdk::GetPlayerInterior(p->first);
+			p->second.interiorID = GetPlayerInterior(p->first);
 		}
 		core->getStreamer()->startManualUpdate(p->second);
 		return 1;
@@ -365,7 +365,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_DestroyAllVisibleItems(AMX *amx, cell *pa
 			{
 				for (boost::unordered_map<int, int>::iterator o = p->second.internalObjects.begin(); o != p->second.internalObjects.end(); ++o)
 				{
-					sampgdk::DestroyPlayerObject(p->first, o->second);
+					DestroyPlayerObject(p->first, o->second);
 				}
 				p->second.internalObjects.clear();
 				return 1;
@@ -375,7 +375,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_DestroyAllVisibleItems(AMX *amx, cell *pa
 			{
 				for (boost::unordered_map<int, int>::iterator q = core->getStreamer()->internalPickups.begin(); q != core->getStreamer()->internalPickups.end(); ++q)
 				{
-					sampgdk::DestroyPickup(q->second);
+					DestroyPickup(q->second);
 				}
 				core->getStreamer()->internalPickups.clear();
 				return 1;
@@ -385,7 +385,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_DestroyAllVisibleItems(AMX *amx, cell *pa
 			{
 				if (p->second.visibleCheckpoint)
 				{
-					sampgdk::DisablePlayerCheckpoint(p->first);
+					DisablePlayerCheckpoint(p->first);
 					p->second.activeCheckpoint = 0;
 					p->second.visibleCheckpoint = 0;
 				}
@@ -396,7 +396,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_DestroyAllVisibleItems(AMX *amx, cell *pa
 			{
 				if (p->second.visibleRaceCheckpoint)
 				{
-					sampgdk::DisablePlayerRaceCheckpoint(p->first);
+					DisablePlayerRaceCheckpoint(p->first);
 					p->second.activeRaceCheckpoint = 0;
 					p->second.visibleRaceCheckpoint = 0;
 				}
@@ -407,7 +407,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_DestroyAllVisibleItems(AMX *amx, cell *pa
 			{
 				for (boost::unordered_map<int, int>::iterator m = p->second.internalMapIcons.begin(); m != p->second.internalMapIcons.end(); ++m)
 				{
-					sampgdk::RemovePlayerMapIcon(p->first, m->second);
+					RemovePlayerMapIcon(p->first, m->second);
 				}
 				p->second.internalMapIcons.clear();
 				return 1;
@@ -417,7 +417,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_DestroyAllVisibleItems(AMX *amx, cell *pa
 			{
 				for (boost::unordered_map<int, int>::iterator t = p->second.internalTextLabels.begin(); t != p->second.internalTextLabels.end(); ++t)
 				{
-					sampgdk::DeletePlayer3DTextLabel(p->first, t->second);
+					DeletePlayer3DTextLabel(p->first, t->second);
 				}
 				p->second.internalTextLabels.clear();
 				return 1;
@@ -559,7 +559,7 @@ cell AMX_NATIVE_CALL Natives::SetDynamicObjectPos(AMX *amx, cell *params)
 			boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
 			if (i != p->second.internalObjects.end())
 			{
-				sampgdk::SetPlayerObjectPos(p->first, i->second, o->second->position[0], o->second->position[1], o->second->position[2]);
+				SetPlayerObjectPos(p->first, i->second, o->second->position[0], o->second->position[1], o->second->position[2]);
 			}
 		}
 		if (position[0] != o->second->position[0] || position[1] != o->second->position[1])
@@ -620,7 +620,7 @@ cell AMX_NATIVE_CALL Natives::SetDynamicObjectRot(AMX *amx, cell *params)
 			boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
 			if (i != p->second.internalObjects.end())
 			{
-				sampgdk::SetPlayerObjectRot(p->first, i->second, o->second->rotation[0], o->second->rotation[1], o->second->rotation[2]);
+				SetPlayerObjectRot(p->first, i->second, o->second->rotation[0], o->second->rotation[1], o->second->rotation[2]);
 			}
 		}
 		return 1;
@@ -676,8 +676,8 @@ cell AMX_NATIVE_CALL Natives::MoveDynamicObject(AMX *amx, cell *params)
 			boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
 			if (i != p->second.internalObjects.end())
 			{
-				sampgdk::StopPlayerObject(p->first, i->second);
-				sampgdk::MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
+				StopPlayerObject(p->first, i->second);
+				MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
 			}
 		}
 		core->getStreamer()->movingObjects.insert(o->second);
@@ -699,7 +699,7 @@ cell AMX_NATIVE_CALL Natives::StopDynamicObject(AMX *amx, cell *params)
 				boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
 				if (i != p->second.internalObjects.end())
 				{
-					sampgdk::StopPlayerObject(p->first, i->second);
+					StopPlayerObject(p->first, i->second);
 				}
 			}
 			o->second->move.reset();
@@ -731,7 +731,7 @@ cell AMX_NATIVE_CALL Natives::DestroyAllDynamicObjects(AMX *amx, cell *params)
 	{
 		for (boost::unordered_map<int, int>::iterator o = p->second.internalObjects.begin(); o != p->second.internalObjects.end(); ++o)
 		{
-			sampgdk::DestroyPlayerObject(p->first, o->second);
+			DestroyPlayerObject(p->first, o->second);
 		}
 		p->second.internalObjects.clear();
 	}
@@ -798,7 +798,7 @@ cell AMX_NATIVE_CALL Natives::DestroyAllDynamicPickups(AMX *amx, cell *params)
 	Element::Pickup::identifier.reset();
 	for (boost::unordered_map<int, int>::iterator p = core->getStreamer()->internalPickups.begin(); p != core->getStreamer()->internalPickups.end(); ++p)
 	{
-		sampgdk::DestroyPickup(p->second);
+		DestroyPickup(p->second);
 	}
 	core->getStreamer()->internalPickups.clear();
 	core->getGrid()->eraseAllItems(STREAMER_TYPE_PICKUP);
@@ -878,7 +878,7 @@ cell AMX_NATIVE_CALL Natives::TogglePlayerDynamicCP(AMX *amx, cell *params)
 			{
 				if (p->second.visibleCheckpoint == static_cast<int>(params[2]))
 				{
-					sampgdk::DisablePlayerCheckpoint(p->first);
+					DisablePlayerCheckpoint(p->first);
 					p->second.activeCheckpoint = 0;
 					p->second.visibleCheckpoint = 0;
 				}
@@ -901,7 +901,7 @@ cell AMX_NATIVE_CALL Natives::TogglePlayerAllDynamicCPs(AMX *amx, cell *params)
 		{
 			if (p->second.visibleCheckpoint != 0)
 			{
-				sampgdk::DisablePlayerCheckpoint(p->first);
+				DisablePlayerCheckpoint(p->first);
 				p->second.activeCheckpoint = 0;
 				p->second.visibleCheckpoint = 0;
 			}
@@ -937,7 +937,7 @@ cell AMX_NATIVE_CALL Natives::DestroyAllDynamicCPs(AMX *amx, cell *params)
 		p->second.disabledCheckpoints.clear();
 		if (p->second.visibleCheckpoint != 0)
 		{
-			sampgdk::DisablePlayerCheckpoint(p->first);
+			DisablePlayerCheckpoint(p->first);
 			p->second.activeCheckpoint = 0;
 			p->second.visibleCheckpoint = 0;
 		}
@@ -1021,7 +1021,7 @@ cell AMX_NATIVE_CALL Natives::TogglePlayerDynamicRaceCP(AMX *amx, cell *params)
 			{
 				if (p->second.visibleRaceCheckpoint == static_cast<int>(params[2]))
 				{
-					sampgdk::DisablePlayerRaceCheckpoint(p->first);
+					DisablePlayerRaceCheckpoint(p->first);
 					p->second.activeRaceCheckpoint = 0;
 					p->second.visibleRaceCheckpoint = 0;
 				}
@@ -1044,7 +1044,7 @@ cell AMX_NATIVE_CALL Natives::TogglePlayerAllDynamicRaceCPs(AMX *amx, cell *para
 		{
 			if (p->second.visibleRaceCheckpoint != 0)
 			{
-				sampgdk::DisablePlayerRaceCheckpoint(p->first);
+				DisablePlayerRaceCheckpoint(p->first);
 				p->second.activeRaceCheckpoint = 0;
 				p->second.visibleRaceCheckpoint = 0;
 			}
@@ -1080,7 +1080,7 @@ cell AMX_NATIVE_CALL Natives::DestroyAllDynamicRaceCPs(AMX *amx, cell *params)
 		p->second.disabledRaceCheckpoints.clear();
 		if (p->second.visibleRaceCheckpoint != 0)
 		{
-			sampgdk::DisablePlayerRaceCheckpoint(p->first);
+			DisablePlayerRaceCheckpoint(p->first);
 			p->second.activeRaceCheckpoint = 0;
 			p->second.visibleRaceCheckpoint = 0;
 		}
@@ -1150,7 +1150,7 @@ cell AMX_NATIVE_CALL Natives::DestroyAllDynamicMapIcons(AMX *amx, cell *params)
 	{
 		for (boost::unordered_map<int, int>::iterator m = p->second.internalMapIcons.begin(); m != p->second.internalMapIcons.end(); ++m)
 		{
-			sampgdk::RemovePlayerMapIcon(p->first, m->second);
+			RemovePlayerMapIcon(p->first, m->second);
 		}
 		p->second.mapIconIdentifier.reset();
 		p->second.internalMapIcons.clear();
@@ -1238,7 +1238,7 @@ cell AMX_NATIVE_CALL Natives::UpdateDynamic3DTextLabelText(AMX *amx, cell *param
 			boost::unordered_map<int, int>::iterator i = p->second.internalTextLabels.find(t->first);
 			if (i != p->second.internalTextLabels.end())
 			{
-				sampgdk::UpdatePlayer3DTextLabelText(p->first, i->second, t->second->color, t->second->text.c_str());
+				UpdatePlayer3DTextLabelText(p->first, i->second, t->second->color, t->second->text.c_str());
 			}
 		}
 		return 1;
@@ -1253,7 +1253,7 @@ cell AMX_NATIVE_CALL Natives::DestroyAllDynamic3DTextLabels(AMX *amx, cell *para
 	{
 		for (boost::unordered_map<int, int>::iterator t = p->second.internalTextLabels.begin(); t != p->second.internalTextLabels.end(); ++t)
 		{
-			sampgdk::DeletePlayer3DTextLabel(p->first, t->second);
+			DeletePlayer3DTextLabel(p->first, t->second);
 		}
 		p->second.internalTextLabels.clear();
 	}
@@ -1380,7 +1380,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicPolygon(AMX *amx, cell *params)
 	area->areaID = areaID;
 	area->extraID = 0;
 	area->type = STREAMER_AREA_TYPE_POLYGON;
-	Utility::getArrayFromNative(amx, params[1], params[4], boost::get<Element::Polygon2D>(area->position));
+	Utility::getPolygonFromNative(amx, params[1], params[4], boost::get<Element::Polygon2D>(area->position));
 	Element::Box2D box = boost::geometry::return_envelope<Element::Box2D>(boost::get<Element::Polygon2D>(area->position).get<0>());
 	area->size = boost::geometry::comparable_distance(box.min_corner(), box.max_corner());
 	boost::get<Element::Polygon2D>(area->position).get<1>() = Eigen::Vector2f(amx_ctof(params[2]), amx_ctof(params[3]));
@@ -1850,7 +1850,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicPolygonEx(AMX *amx, cell *params)
 	area->areaID = areaID;
 	area->extraID = 0;
 	area->type = STREAMER_AREA_TYPE_POLYGON;
-	Utility::getArrayFromNative(amx, params[1], params[4], boost::get<Element::Polygon2D>(area->position));
+	Utility::getPolygonFromNative(amx, params[1], params[4], boost::get<Element::Polygon2D>(area->position));
 	Element::Box2D box = boost::geometry::return_envelope<Element::Box2D>(boost::get<Element::Polygon2D>(area->position).get<0>());
 	area->size = boost::geometry::comparable_distance(box.min_corner(), box.max_corner());
 	boost::get<Element::Polygon2D>(area->position).get<1>() = Eigen::Vector2f(amx_ctof(params[2]), amx_ctof(params[3]));

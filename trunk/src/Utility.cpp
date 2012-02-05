@@ -40,11 +40,14 @@ bool Utility::catchRuntimeErrorsInInterface(AMX *amx)
 			char *name = reinterpret_cast<char*>(amx->base + natives[i].nameofs);
 			if (std::string(name).find("Streamer_") != std::string::npos)
 			{
-				logprintf("*** Streamer Plugin: Obsolete or invalid native \"%s\" found (script needs to be recompiled with the latest include file)", name);
 				natives[i].address = reinterpret_cast<cell>(hookedNative);
 				anyNativesHooked = true;
 			}
 		}
+	}
+	if (anyNativesHooked)
+	{
+		logprintf("*** Streamer Plugin: Obsolete or invalid native found (script needs to be recompiled with the latest include file)");
 	}
 	return anyNativesHooked;
 }
@@ -144,6 +147,7 @@ boost::unordered_map<int, Element::SharedArea>::iterator Utility::destroyArea(bo
 	{
 		p->second.disabledAreas.erase(a->first);
 		p->second.internalAreas.erase(a->first);
+		p->second.visibleCell->areas.erase(a->first);
 	}
 	core->getGrid()->removeArea(a->second);
 	return core->getData()->areas.erase(a);
@@ -156,11 +160,12 @@ boost::unordered_map<int, Element::SharedCheckpoint>::iterator Utility::destroyC
 	{
 		if (p->second.visibleCheckpoint == c->first)
 		{
-			sampgdk::DisablePlayerCheckpoint(p->first);
+			DisablePlayerCheckpoint(p->first);
 			p->second.activeCheckpoint = 0;
 			p->second.visibleCheckpoint = 0;
 		}
 		p->second.disabledCheckpoints.erase(c->first);
+		p->second.visibleCell->checkpoints.erase(c->first);
 	}
 	core->getGrid()->removeCheckpoint(c->second);
 	return core->getData()->checkpoints.erase(c);
@@ -174,10 +179,11 @@ boost::unordered_map<int, Element::SharedMapIcon>::iterator Utility::destroyMapI
 		boost::unordered_map<int, int>::iterator i = p->second.internalMapIcons.find(m->first);
 		if (i != p->second.internalMapIcons.end())
 		{
-			sampgdk::RemovePlayerMapIcon(p->first, i->second);
+			RemovePlayerMapIcon(p->first, i->second);
 			p->second.mapIconIdentifier.remove(i->second, p->second.internalMapIcons.size());
 			p->second.internalMapIcons.quick_erase(i);
 		}
+		p->second.visibleCell->mapIcons.erase(m->first);
 	}
 	core->getGrid()->removeMapIcon(m->second);
 	return core->getData()->mapIcons.erase(m);
@@ -191,9 +197,10 @@ boost::unordered_map<int, Element::SharedObject>::iterator Utility::destroyObjec
 		boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
 		if (i != p->second.internalObjects.end())
 		{
-			sampgdk::DestroyPlayerObject(p->first, i->second);
+			DestroyPlayerObject(p->first, i->second);
 			p->second.internalObjects.quick_erase(i);
 		}
+		p->second.visibleCell->objects.erase(o->first);
 	}
 	core->getGrid()->removeObject(o->second);
 	return core->getData()->objects.erase(o);
@@ -205,7 +212,7 @@ boost::unordered_map<int, Element::SharedPickup>::iterator Utility::destroyPicku
 	boost::unordered_map<int, int>::iterator i = core->getStreamer()->internalPickups.find(p->first);
 	if (i != core->getStreamer()->internalPickups.end())
 	{
-		sampgdk::DestroyPickup(i->second);
+		DestroyPickup(i->second);
 		core->getStreamer()->internalPickups.quick_erase(i);
 	}
 	core->getGrid()->removePickup(p->second);
@@ -219,11 +226,12 @@ boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator Utility::dest
 	{
 		if (p->second.visibleRaceCheckpoint == r->first)
 		{
-			sampgdk::DisablePlayerRaceCheckpoint(p->first);
+			DisablePlayerRaceCheckpoint(p->first);
 			p->second.activeRaceCheckpoint = 0;
 			p->second.visibleRaceCheckpoint = 0;
 		}
 		p->second.disabledRaceCheckpoints.erase(r->first);
+		p->second.visibleCell->raceCheckpoints.erase(r->first);
 	}
 	core->getGrid()->removeRaceCheckpoint(r->second);
 	return core->getData()->raceCheckpoints.erase(r);
@@ -237,15 +245,16 @@ boost::unordered_map<int, Element::SharedTextLabel>::iterator Utility::destroyTe
 		boost::unordered_map<int, int>::iterator i = p->second.internalTextLabels.find(t->first);
 		if (i != p->second.internalTextLabels.end())
 		{
-			sampgdk::DeletePlayer3DTextLabel(p->first, i->second);
+			DeletePlayer3DTextLabel(p->first, i->second);
 			p->second.internalTextLabels.quick_erase(i);
 		}
+		p->second.visibleCell->textLabels.erase(t->first);
 	}
 	core->getGrid()->removeTextLabel(t->second);
 	return core->getData()->textLabels.erase(t);
 }
 
-void Utility::getArrayFromNative(AMX *amx, cell input, cell size, Element::Polygon2D &polygon)
+void Utility::getPolygonFromNative(AMX *amx, cell input, cell size, Element::Polygon2D &polygon)
 {
 	cell *array = NULL;
 	std::vector<Eigen::Vector2f> points;

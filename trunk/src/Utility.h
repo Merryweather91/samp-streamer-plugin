@@ -102,7 +102,7 @@ namespace Utility
 		}
 	}
 
-	void getArrayFromNative(AMX *amx, cell input, cell size, Element::Polygon2D &polygon);
+	void getPolygonFromNative(AMX *amx, cell input, cell size, Element::Polygon2D &polygon);
 	std::string getStringFromNative(AMX *amx, cell input);
 }
 
