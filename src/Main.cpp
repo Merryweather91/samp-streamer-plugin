@@ -30,7 +30,7 @@ PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports()
 PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppPluginData)
 {
 	core.reset(new Core);
-	sampgdk::Wrapper::GetInstance().Initialize(ppPluginData);
+	sampgdk_initialize(ppPluginData);
 	logprintf = (logprintf_t)ppPluginData[PLUGIN_DATA_LOGPRINTF];
 	logprintf("\n\n*** Streamer Plugin v%s by Incognito loaded ***\n", PLUGIN_VERSION);
 	return true;

@@ -724,11 +724,11 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
 						if (i != p->second.internalObjects.end())
 						{
-							sampgdk::DestroyPlayerObject(p->first, i->second);
-							i->second = sampgdk::CreatePlayerObject(p->first, o->second->modelID, o->second->position[0], o->second->position[1], o->second->position[2], o->second->rotation[0], o->second->rotation[1], o->second->rotation[2], o->second->drawDistance);
+							DestroyPlayerObject(p->first, i->second);
+							i->second = CreatePlayerObject(p->first, o->second->modelID, o->second->position[0], o->second->position[1], o->second->position[2], o->second->rotation[0], o->second->rotation[1], o->second->rotation[2], o->second->drawDistance);
 							if (o->second->move)
 							{
-								sampgdk::MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
+								MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
 							}
 						}
 					}
@@ -792,8 +792,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					boost::unordered_map<int, int>::iterator i = core->getStreamer()->internalPickups.find(p->first);
 					if (i != core->getStreamer()->internalPickups.end())
 					{
-						sampgdk::DestroyPickup(i->second);
-						i->second = sampgdk::CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], -1);
+						DestroyPickup(i->second);
+						i->second = CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], -1);
 					}
 				}
 				return (reassign || update);
@@ -862,8 +862,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					{
 						if (p->second.visibleCheckpoint == c->first)
 						{
-							sampgdk::DisablePlayerCheckpoint(p->first);
-							sampgdk::SetPlayerCheckpoint(p->first, c->second->position[0], c->second->position[1], c->second->position[2], c->second->size);
+							DisablePlayerCheckpoint(p->first);
+							SetPlayerCheckpoint(p->first, c->second->position[0], c->second->position[1], c->second->position[2], c->second->size);
 						}
 					}
 				}
@@ -952,8 +952,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					{
 						if (p->second.visibleRaceCheckpoint == r->first)
 						{
-							sampgdk::DisablePlayerRaceCheckpoint(p->first);
-							sampgdk::SetPlayerRaceCheckpoint(p->first, r->second->type, r->second->position[0], r->second->position[1], r->second->position[2], r->second->next[0], r->second->next[1], r->second->next[2], r->second->size);
+							DisablePlayerRaceCheckpoint(p->first);
+							SetPlayerRaceCheckpoint(p->first, r->second->type, r->second->position[0], r->second->position[1], r->second->position[2], r->second->next[0], r->second->next[1], r->second->next[2], r->second->size);
 						}
 					}
 				}
@@ -1018,8 +1018,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						boost::unordered_map<int, int>::iterator i = p->second.internalMapIcons.find(m->first);
 						if (i != p->second.internalMapIcons.end())
 						{
-							sampgdk::RemovePlayerMapIcon(p->first, i->second);
-							sampgdk::SetPlayerMapIcon(p->first, i->second, m->second->position[0], m->second->position[1], m->second->position[2], m->second->type, m->second->color, m->second->style);
+							RemovePlayerMapIcon(p->first, i->second);
+							SetPlayerMapIcon(p->first, i->second, m->second->position[0], m->second->position[1], m->second->position[2], m->second->type, m->second->color, m->second->style);
 						}
 					}
 				}
@@ -1090,8 +1090,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						boost::unordered_map<int, int>::iterator i = p->second.internalTextLabels.find(t->first);
 						if (i != p->second.internalTextLabels.end())
 						{
-							sampgdk::DeletePlayer3DTextLabel(p->first, i->second);
-							i->second = sampgdk::CreatePlayer3DTextLabel(p->first, t->second->text.c_str(), t->second->color, t->second->position[0], t->second->position[1], t->second->position[2], t->second->drawDistance, (t->second->attach ? t->second->attach->player : INVALID_GENERIC_ID), (t->second->attach ? t->second->attach->vehicle : INVALID_GENERIC_ID), t->second->testLOS);
+							DeletePlayer3DTextLabel(p->first, i->second);
+							i->second = CreatePlayer3DTextLabel(p->first, t->second->text.c_str(), t->second->color, t->second->position[0], t->second->position[1], t->second->position[2], t->second->drawDistance, (t->second->attach ? t->second->attach->player : INVALID_GENERIC_ID), (t->second->attach ? t->second->attach->vehicle : INVALID_GENERIC_ID), t->second->testLOS);
 						}
 					}
 				}
@@ -1627,11 +1627,11 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
 						if (i != p->second.internalObjects.end())
 						{
-							sampgdk::DestroyPlayerObject(p->first, i->second);
-							i->second = sampgdk::CreatePlayerObject(p->first, o->second->modelID, o->second->position[0], o->second->position[1], o->second->position[2], o->second->rotation[0], o->second->rotation[1], o->second->rotation[2], o->second->drawDistance);
+							DestroyPlayerObject(p->first, i->second);
+							i->second = CreatePlayerObject(p->first, o->second->modelID, o->second->position[0], o->second->position[1], o->second->position[2], o->second->rotation[0], o->second->rotation[1], o->second->rotation[2], o->second->drawDistance);
 							if (o->second->move)
 							{
-								sampgdk::MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
+								MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
 							}
 						}
 					}
@@ -1678,8 +1678,8 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					boost::unordered_map<int, int>::iterator i = core->getStreamer()->internalPickups.find(p->first);
 					if (i != core->getStreamer()->internalPickups.end())
 					{
-						sampgdk::DestroyPickup(i->second);
-						i->second = sampgdk::CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], -1);
+						DestroyPickup(i->second);
+						i->second = CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], -1);
 					}
 					return 1;
 				}
@@ -1743,8 +1743,8 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					{
 						if (p->second.visibleRaceCheckpoint == r->first)
 						{
-							sampgdk::DisablePlayerRaceCheckpoint(p->first);
-							sampgdk::SetPlayerRaceCheckpoint(p->first, r->second->type, r->second->position[0], r->second->position[1], r->second->position[2], r->second->next[0], r->second->next[1], r->second->next[2], r->second->size);
+							DisablePlayerRaceCheckpoint(p->first);
+							SetPlayerRaceCheckpoint(p->first, r->second->type, r->second->position[0], r->second->position[1], r->second->position[2], r->second->next[0], r->second->next[1], r->second->next[2], r->second->size);
 						}
 					}
 					return 1;
@@ -1798,8 +1798,8 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						boost::unordered_map<int, int>::iterator i = p->second.internalMapIcons.find(m->first);
 						if (i != p->second.internalMapIcons.end())
 						{
-							sampgdk::RemovePlayerMapIcon(p->first, i->second);
-							sampgdk::SetPlayerMapIcon(p->first, i->second, m->second->position[0], m->second->position[1], m->second->position[2], m->second->type, m->second->color, m->second->style);
+							RemovePlayerMapIcon(p->first, i->second);
+							SetPlayerMapIcon(p->first, i->second, m->second->position[0], m->second->position[1], m->second->position[2], m->second->type, m->second->color, m->second->style);
 						}
 					}
 					return 1;
@@ -1900,8 +1900,8 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						boost::unordered_map<int, int>::iterator i = p->second.internalTextLabels.find(t->first);
 						if (i != p->second.internalTextLabels.end())
 						{
-							sampgdk::DeletePlayer3DTextLabel(p->first, i->second);
-							i->second = sampgdk::CreatePlayer3DTextLabel(p->first, t->second->text.c_str(), t->second->color, t->second->position[0], t->second->position[1], t->second->position[2], t->second->drawDistance, (t->second->attach ? t->second->attach->player : INVALID_GENERIC_ID), (t->second->attach ? t->second->attach->vehicle : INVALID_GENERIC_ID), t->second->testLOS);
+							DeletePlayer3DTextLabel(p->first, i->second);
+							i->second = CreatePlayer3DTextLabel(p->first, t->second->text.c_str(), t->second->color, t->second->position[0], t->second->position[1], t->second->position[2], t->second->drawDistance, (t->second->attach ? t->second->attach->player : INVALID_GENERIC_ID), (t->second->attach ? t->second->attach->vehicle : INVALID_GENERIC_ID), t->second->testLOS);
 						}
 					}
 					return 1;

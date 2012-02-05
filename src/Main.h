@@ -55,8 +55,15 @@
 #include "../include/boost/unordered_map.hpp"
 #include "../include/boost/unordered_set.hpp"
 #include "../include/boost/variant.hpp"
+
 #include "../include/Eigen/Core"
-#include "../include/sampgdk/sampgdk.h"
+
+#include "../include/sampgdk/core.h"
+#include "../include/sampgdk/players.h"
+#include "../include/sampgdk/plugin.h"
+#include "../include/sampgdk/samp.h"
+#include "../include/sampgdk/objects.h"
+#include "../include/sampgdk/vehicles.h"
 
 #include "Core.h"
 
