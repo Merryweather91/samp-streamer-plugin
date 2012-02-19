@@ -34,7 +34,7 @@ namespace Utility
 	boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator destroyRaceCheckpoint(boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r);
 	boost::unordered_map<int, Element::SharedTextLabel>::iterator destroyTextLabel(boost::unordered_map<int, Element::SharedTextLabel>::iterator t);
 
-	inline bool addToContainer(std::set<int> &container, int value)
+	inline bool addToContainer(boost::unordered_set<int> &container, int value)
 	{
 		if (value >= 0)
 		{
@@ -63,12 +63,16 @@ namespace Utility
 		return false;
 	}
 
-	inline bool removeFromContainer(std::set<int> &container, int value)
+	inline bool removeFromContainer(boost::unordered_set<int> &container, int value)
 	{
 		if (value >= 0)
 		{
 			container.erase(value);
 			return true;
+		}
+		else
+		{
+			container.clear();
 		}
 		return false;
 	}

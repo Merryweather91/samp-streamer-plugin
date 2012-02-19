@@ -160,7 +160,7 @@ boost::unordered_map<int, Element::SharedCheckpoint>::iterator Utility::destroyC
 	{
 		if (p->second.visibleCheckpoint == c->first)
 		{
-			DisablePlayerCheckpoint(p->first);
+			sampgdk::DisablePlayerCheckpoint(p->first);
 			p->second.activeCheckpoint = 0;
 			p->second.visibleCheckpoint = 0;
 		}
@@ -179,7 +179,7 @@ boost::unordered_map<int, Element::SharedMapIcon>::iterator Utility::destroyMapI
 		boost::unordered_map<int, int>::iterator i = p->second.internalMapIcons.find(m->first);
 		if (i != p->second.internalMapIcons.end())
 		{
-			RemovePlayerMapIcon(p->first, i->second);
+			sampgdk::RemovePlayerMapIcon(p->first, i->second);
 			p->second.mapIconIdentifier.remove(i->second, p->second.internalMapIcons.size());
 			p->second.internalMapIcons.quick_erase(i);
 		}
@@ -197,7 +197,7 @@ boost::unordered_map<int, Element::SharedObject>::iterator Utility::destroyObjec
 		boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
 		if (i != p->second.internalObjects.end())
 		{
-			DestroyPlayerObject(p->first, i->second);
+			sampgdk::DestroyPlayerObject(p->first, i->second);
 			p->second.internalObjects.quick_erase(i);
 		}
 		p->second.visibleCell->objects.erase(o->first);
@@ -212,7 +212,7 @@ boost::unordered_map<int, Element::SharedPickup>::iterator Utility::destroyPicku
 	boost::unordered_map<int, int>::iterator i = core->getStreamer()->internalPickups.find(p->first);
 	if (i != core->getStreamer()->internalPickups.end())
 	{
-		DestroyPickup(i->second);
+		sampgdk::DestroyPickup(i->second);
 		core->getStreamer()->internalPickups.quick_erase(i);
 	}
 	core->getGrid()->removePickup(p->second);
@@ -226,7 +226,7 @@ boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator Utility::dest
 	{
 		if (p->second.visibleRaceCheckpoint == r->first)
 		{
-			DisablePlayerRaceCheckpoint(p->first);
+			sampgdk::DisablePlayerRaceCheckpoint(p->first);
 			p->second.activeRaceCheckpoint = 0;
 			p->second.visibleRaceCheckpoint = 0;
 		}
@@ -245,7 +245,7 @@ boost::unordered_map<int, Element::SharedTextLabel>::iterator Utility::destroyTe
 		boost::unordered_map<int, int>::iterator i = p->second.internalTextLabels.find(t->first);
 		if (i != p->second.internalTextLabels.end())
 		{
-			DeletePlayer3DTextLabel(p->first, i->second);
+			sampgdk::DeletePlayer3DTextLabel(p->first, i->second);
 			p->second.internalTextLabels.quick_erase(i);
 		}
 		p->second.visibleCell->textLabels.erase(t->first);

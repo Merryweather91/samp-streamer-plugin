@@ -24,7 +24,7 @@ ifeq ($(config),release)
   TARGETDIR  = bin/linux/Release
   TARGET     = $(TARGETDIR)/streamer.so
   DEFINES   += 
-  INCLUDES  += -Iinclude -Iinclude/sampgdk
+  INCLUDES  += -Iinclude
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -ffast-math -fmerge-all-constants -fno-strict-aliasing -fvisibility=hidden -fvisibility-inlines-hidden -O3 -Wall
   CXXFLAGS  += $(CFLAGS) 
