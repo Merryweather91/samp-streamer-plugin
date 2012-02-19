@@ -20,23 +20,26 @@
 
 bool Events::OnPlayerConnect(int playerid)
 {
-	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(playerid);
-	if (p == core->getData()->players.end())
+	if (playerid >= 0 && playerid < sampgdk::MAX_PLAYERS)
 	{
-		Player player;
-		player.activeCheckpoint = 0;
-		player.activeRaceCheckpoint = 0;
-		player.idleUpdate = false;
-		player.interiorID = 0;
-		player.playerID = playerid;
-		player.position.setZero();
-		player.visibleCell = SharedCell(new Cell());
-		player.visibleCheckpoint = 0;
-		player.visibleRaceCheckpoint = 0;
-		player.visibleObjects = core->getStreamer()->getVisibleItems(STREAMER_TYPE_OBJECT);
-		player.visibleTextLabels = core->getStreamer()->getVisibleItems(STREAMER_TYPE_3D_TEXT_LABEL);
-		player.worldID = 0;
-		core->getData()->players.insert(std::make_pair(playerid, player));
+		boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(playerid);
+		if (p == core->getData()->players.end())
+		{
+			Player player;
+			player.activeCheckpoint = 0;
+			player.activeRaceCheckpoint = 0;
+			player.idleUpdate = false;
+			player.interiorID = 0;
+			player.playerID = playerid;
+			player.position.setZero();
+			player.visibleCell = SharedCell(new Cell());
+			player.visibleCheckpoint = 0;
+			player.visibleRaceCheckpoint = 0;
+			player.visibleObjects = core->getStreamer()->getVisibleItems(STREAMER_TYPE_OBJECT);
+			player.visibleTextLabels = core->getStreamer()->getVisibleItems(STREAMER_TYPE_3D_TEXT_LABEL);
+			player.worldID = 0;
+			core->getData()->players.insert(std::make_pair(playerid, player));
+		}
 	}
 	return true;
 }

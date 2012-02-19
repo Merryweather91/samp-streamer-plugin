@@ -724,11 +724,11 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
 						if (i != p->second.internalObjects.end())
 						{
-							DestroyPlayerObject(p->first, i->second);
-							i->second = CreatePlayerObject(p->first, o->second->modelID, o->second->position[0], o->second->position[1], o->second->position[2], o->second->rotation[0], o->second->rotation[1], o->second->rotation[2], o->second->drawDistance);
+							sampgdk::DestroyPlayerObject(p->first, i->second);
+							i->second = sampgdk::CreatePlayerObject(p->first, o->second->modelID, o->second->position[0], o->second->position[1], o->second->position[2], o->second->rotation[0], o->second->rotation[1], o->second->rotation[2], o->second->drawDistance);
 							if (o->second->move)
 							{
-								MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
+								sampgdk::MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
 							}
 						}
 					}
@@ -792,8 +792,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					boost::unordered_map<int, int>::iterator i = core->getStreamer()->internalPickups.find(p->first);
 					if (i != core->getStreamer()->internalPickups.end())
 					{
-						DestroyPickup(i->second);
-						i->second = CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], -1);
+						sampgdk::DestroyPickup(i->second);
+						i->second = sampgdk::CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], -1);
 					}
 				}
 				return (reassign || update);
@@ -862,8 +862,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					{
 						if (p->second.visibleCheckpoint == c->first)
 						{
-							DisablePlayerCheckpoint(p->first);
-							SetPlayerCheckpoint(p->first, c->second->position[0], c->second->position[1], c->second->position[2], c->second->size);
+							sampgdk::DisablePlayerCheckpoint(p->first);
+							sampgdk::SetPlayerCheckpoint(p->first, c->second->position[0], c->second->position[1], c->second->position[2], c->second->size);
 						}
 					}
 				}
@@ -952,8 +952,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					{
 						if (p->second.visibleRaceCheckpoint == r->first)
 						{
-							DisablePlayerRaceCheckpoint(p->first);
-							SetPlayerRaceCheckpoint(p->first, r->second->type, r->second->position[0], r->second->position[1], r->second->position[2], r->second->next[0], r->second->next[1], r->second->next[2], r->second->size);
+							sampgdk::DisablePlayerRaceCheckpoint(p->first);
+							sampgdk::SetPlayerRaceCheckpoint(p->first, r->second->type, r->second->position[0], r->second->position[1], r->second->position[2], r->second->next[0], r->second->next[1], r->second->next[2], r->second->size);
 						}
 					}
 				}
@@ -1018,8 +1018,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						boost::unordered_map<int, int>::iterator i = p->second.internalMapIcons.find(m->first);
 						if (i != p->second.internalMapIcons.end())
 						{
-							RemovePlayerMapIcon(p->first, i->second);
-							SetPlayerMapIcon(p->first, i->second, m->second->position[0], m->second->position[1], m->second->position[2], m->second->type, m->second->color, m->second->style);
+							sampgdk::RemovePlayerMapIcon(p->first, i->second);
+							sampgdk::SetPlayerMapIcon(p->first, i->second, m->second->position[0], m->second->position[1], m->second->position[2], m->second->type, m->second->color, m->second->style);
 						}
 					}
 				}
@@ -1090,8 +1090,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						boost::unordered_map<int, int>::iterator i = p->second.internalTextLabels.find(t->first);
 						if (i != p->second.internalTextLabels.end())
 						{
-							DeletePlayer3DTextLabel(p->first, i->second);
-							i->second = CreatePlayer3DTextLabel(p->first, t->second->text.c_str(), t->second->color, t->second->position[0], t->second->position[1], t->second->position[2], t->second->drawDistance, (t->second->attach ? t->second->attach->player : INVALID_GENERIC_ID), (t->second->attach ? t->second->attach->vehicle : INVALID_GENERIC_ID), t->second->testLOS);
+							sampgdk::DeletePlayer3DTextLabel(p->first, i->second);
+							i->second = sampgdk::CreatePlayer3DTextLabel(p->first, t->second->text.c_str(), t->second->color, t->second->position[0], t->second->position[1], t->second->position[2], t->second->drawDistance, (t->second->attach ? t->second->attach->player : INVALID_GENERIC_ID), (t->second->attach ? t->second->attach->vehicle : INVALID_GENERIC_ID), t->second->testLOS);
 						}
 					}
 				}
@@ -1155,6 +1155,7 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							}
 							break;
 						}
+						return 1;
 					}
 					break;
 					case MaxX:
@@ -1210,6 +1211,7 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							}
 							break;
 						}
+						return 1;
 					}
 					break;
 					case MinX:
@@ -1248,7 +1250,6 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							}
 							break;
 						}
-						return 1;
 					}
 					break;
 					case MinZ:
@@ -1266,6 +1267,7 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							}
 							break;
 						}
+						return 1;
 					}
 					break;
 					case Size:
@@ -1569,6 +1571,11 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 						return a->second->extraID;
 					}
 					break;
+					case Type:
+					{
+						return a->second->type;
+					}
+					break;
 					default:
 					{
 						logprintf("*** Streamer_GetIntData: Invalid data specified");
@@ -1627,11 +1634,11 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
 						if (i != p->second.internalObjects.end())
 						{
-							DestroyPlayerObject(p->first, i->second);
-							i->second = CreatePlayerObject(p->first, o->second->modelID, o->second->position[0], o->second->position[1], o->second->position[2], o->second->rotation[0], o->second->rotation[1], o->second->rotation[2], o->second->drawDistance);
+							sampgdk::DestroyPlayerObject(p->first, i->second);
+							i->second = sampgdk::CreatePlayerObject(p->first, o->second->modelID, o->second->position[0], o->second->position[1], o->second->position[2], o->second->rotation[0], o->second->rotation[1], o->second->rotation[2], o->second->drawDistance);
 							if (o->second->move)
 							{
-								MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
+								sampgdk::MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
 							}
 						}
 					}
@@ -1678,8 +1685,8 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					boost::unordered_map<int, int>::iterator i = core->getStreamer()->internalPickups.find(p->first);
 					if (i != core->getStreamer()->internalPickups.end())
 					{
-						DestroyPickup(i->second);
-						i->second = CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], -1);
+						sampgdk::DestroyPickup(i->second);
+						i->second = sampgdk::CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], -1);
 					}
 					return 1;
 				}
@@ -1743,8 +1750,8 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					{
 						if (p->second.visibleRaceCheckpoint == r->first)
 						{
-							DisablePlayerRaceCheckpoint(p->first);
-							SetPlayerRaceCheckpoint(p->first, r->second->type, r->second->position[0], r->second->position[1], r->second->position[2], r->second->next[0], r->second->next[1], r->second->next[2], r->second->size);
+							sampgdk::DisablePlayerRaceCheckpoint(p->first);
+							sampgdk::SetPlayerRaceCheckpoint(p->first, r->second->type, r->second->position[0], r->second->position[1], r->second->position[2], r->second->next[0], r->second->next[1], r->second->next[2], r->second->size);
 						}
 					}
 					return 1;
@@ -1798,8 +1805,8 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						boost::unordered_map<int, int>::iterator i = p->second.internalMapIcons.find(m->first);
 						if (i != p->second.internalMapIcons.end())
 						{
-							RemovePlayerMapIcon(p->first, i->second);
-							SetPlayerMapIcon(p->first, i->second, m->second->position[0], m->second->position[1], m->second->position[2], m->second->type, m->second->color, m->second->style);
+							sampgdk::RemovePlayerMapIcon(p->first, i->second);
+							sampgdk::SetPlayerMapIcon(p->first, i->second, m->second->position[0], m->second->position[1], m->second->position[2], m->second->type, m->second->color, m->second->style);
 						}
 					}
 					return 1;
@@ -1900,8 +1907,8 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						boost::unordered_map<int, int>::iterator i = p->second.internalTextLabels.find(t->first);
 						if (i != p->second.internalTextLabels.end())
 						{
-							DeletePlayer3DTextLabel(p->first, i->second);
-							i->second = CreatePlayer3DTextLabel(p->first, t->second->text.c_str(), t->second->color, t->second->position[0], t->second->position[1], t->second->position[2], t->second->drawDistance, (t->second->attach ? t->second->attach->player : INVALID_GENERIC_ID), (t->second->attach ? t->second->attach->vehicle : INVALID_GENERIC_ID), t->second->testLOS);
+							sampgdk::DeletePlayer3DTextLabel(p->first, i->second);
+							i->second = sampgdk::CreatePlayer3DTextLabel(p->first, t->second->text.c_str(), t->second->color, t->second->position[0], t->second->position[1], t->second->position[2], t->second->drawDistance, (t->second->attach ? t->second->attach->player : INVALID_GENERIC_ID), (t->second->attach ? t->second->attach->vehicle : INVALID_GENERIC_ID), t->second->testLOS);
 						}
 					}
 					return 1;
@@ -2001,6 +2008,15 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						if (o->second->extras.find(static_cast<int>(params[4])) != o->second->extras.end())
+						{
+							return 1;
+						}
+						return 0;
+					}
+					break;
 					case InteriorID:
 					{
 						if (static_cast<int>(params[4]) >= 0)
@@ -2076,6 +2092,15 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						if (p->second->extras.find(static_cast<int>(params[4])) != p->second->extras.end())
+						{
+							return 1;
+						}
+						return 0;
+					}
+					break;
 					case InteriorID:
 					{
 						if (static_cast<int>(params[4]) >= 0)
@@ -2150,6 +2175,15 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						if (c->second->extras.find(static_cast<int>(params[4])) != c->second->extras.end())
+						{
+							return 1;
+						}
+						return 0;
+					}
+					break;
 					case InteriorID:
 					{
 						if (static_cast<int>(params[4]) >= 0)
@@ -2225,6 +2259,15 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						if (r->second->extras.find(static_cast<int>(params[4])) != r->second->extras.end())
+						{
+							return 1;
+						}
+						return 0;
+					}
+					break;
 					case InteriorID:
 					{
 						if (static_cast<int>(params[4]) >= 0)
@@ -2300,6 +2343,15 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						if (m->second->extras.find(static_cast<int>(params[4])) != m->second->extras.end())
+						{
+							return 1;
+						}
+						return 0;
+					}
+					break;
 					case InteriorID:
 					{
 						if (static_cast<int>(params[4]) >= 0)
@@ -2375,6 +2427,15 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						if (t->second->extras.find(static_cast<int>(params[4])) != t->second->extras.end())
+						{
+							return 1;
+						}
+						return 0;
+					}
+					break;
 					case InteriorID:
 					{
 						if (static_cast<int>(params[4]) >= 0)
@@ -2450,6 +2511,15 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						if (a->second->extras.find(static_cast<int>(params[4])) != a->second->extras.end())
+						{
+							return 1;
+						}
+						return 0;
+					}
+					break;
 					case InteriorID:
 					{
 						if (static_cast<int>(params[4]) >= 0)
@@ -2538,6 +2608,11 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						o->second->extras.insert(static_cast<int>(params[4]));
+					}
+					break;
 					case InteriorID:
 					{
 						Utility::addToContainer(o->second->interiors, static_cast<int>(params[4]));
@@ -2574,6 +2649,11 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						p->second->extras.insert(static_cast<int>(params[4]));
+					}
+					break;
 					case InteriorID:
 					{
 						Utility::addToContainer(p->second->interiors, static_cast<int>(params[4]));
@@ -2609,6 +2689,11 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						c->second->extras.insert(static_cast<int>(params[4]));
+					}
+					break;
 					case InteriorID:
 					{
 						Utility::addToContainer(c->second->interiors, static_cast<int>(params[4]));
@@ -2644,6 +2729,11 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						r->second->extras.insert(static_cast<int>(params[4]));
+					}
+					break;
 					case InteriorID:
 					{
 						Utility::addToContainer(r->second->interiors, static_cast<int>(params[4]));
@@ -2679,6 +2769,11 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						m->second->extras.insert(static_cast<int>(params[4]));
+					}
+					break;
 					case InteriorID:
 					{
 						Utility::addToContainer(m->second->interiors, static_cast<int>(params[4]));
@@ -2714,6 +2809,11 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						t->second->extras.insert(static_cast<int>(params[4]));
+					}
+					break;
 					case InteriorID:
 					{
 						Utility::addToContainer(t->second->interiors, static_cast<int>(params[4]));
@@ -2749,6 +2849,11 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						a->second->extras.insert(static_cast<int>(params[4]));
+					}
+					break;
 					case InteriorID:
 					{
 						Utility::addToContainer(a->second->interiors, static_cast<int>(params[4]));
@@ -2797,6 +2902,11 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						o->second->extras.erase(static_cast<int>(params[4]));
+					}
+					break;
 					case InteriorID:
 					{
 						Utility::removeFromContainer(o->second->interiors, static_cast<int>(params[4]));
@@ -2832,6 +2942,11 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						p->second->extras.erase(static_cast<int>(params[4]));
+					}
+					break;
 					case InteriorID:
 					{
 						Utility::removeFromContainer(p->second->interiors, static_cast<int>(params[4]));
@@ -2867,6 +2982,11 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						c->second->extras.erase(static_cast<int>(params[4]));
+					}
+					break;
 					case InteriorID:
 					{
 						Utility::removeFromContainer(c->second->interiors, static_cast<int>(params[4]));
@@ -2902,6 +3022,11 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						r->second->extras.erase(static_cast<int>(params[4]));
+					}
+					break;
 					case InteriorID:
 					{
 						Utility::removeFromContainer(r->second->interiors, static_cast<int>(params[4]));
@@ -2937,6 +3062,11 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						m->second->extras.erase(static_cast<int>(params[4]));
+					}
+					break;
 					case InteriorID:
 					{
 						Utility::removeFromContainer(m->second->interiors, static_cast<int>(params[4]));
@@ -2972,6 +3102,11 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						t->second->extras.erase(static_cast<int>(params[4]));
+					}
+					break;
 					case InteriorID:
 					{
 						Utility::removeFromContainer(t->second->interiors, static_cast<int>(params[4]));
@@ -3007,6 +3142,11 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case ExtraID:
+					{
+						a->second->extras.erase(static_cast<int>(params[4]));
+					}
+					break;
 					case InteriorID:
 					{
 						Utility::removeFromContainer(a->second->interiors, static_cast<int>(params[4]));
