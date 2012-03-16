@@ -1,6 +1,6 @@
 /*
     SA-MP Streamer Plugin v2.6
-    Copyright © 2011 Incognito
+    Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 
 bool Events::OnPlayerConnect(int playerid)
 {
-	if (playerid >= 0 && playerid < sampgdk::MAX_PLAYERS)
+	if (playerid >= 0 && playerid < MAX_PLAYERS)
 	{
 		boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(playerid);
 		if (p == core->getData()->players.end())

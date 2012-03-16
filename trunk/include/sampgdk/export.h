@@ -13,14 +13,15 @@
  * limitations under the License.
  */
 
-#ifndef SAMPGDK_GPCI_H
-#define SAMPGDK_GPCI_H
+#ifndef SAMPGDK_EXPORT_H
+#define SAMPGDK_EXPORT_H
+
+#undef SAMPGDK_EXPORT
+#undef SAMPGDK_CALL
 
 #include <sampgdk/config.h>
-#include <sampgdk/export.h>
 
-#include <cstddef>
+#define SAMPGDK_EXPORT
+#define SAMPGDK_CALL
 
-SAMPGDK_EXPORT bool SAMPGDK_CALL gpci(int playerid, char *buffer, std::size_t size);
-
-#endif /* !SAMPGDK_GPCI_H */
+#endif /* SAMPGDK_EXPORT_H */

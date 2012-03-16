@@ -1,6 +1,6 @@
 /*
     SA-MP Streamer Plugin v2.6
-    Copyright © 2011 Incognito
+    Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports()
 PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppPluginData)
 {
 	core.reset(new Core);
-	sampgdk::Wrapper::Initialize(ppPluginData);
+	sampgdk_initialize(ppPluginData);
 	logprintf = (logprintf_t)ppPluginData[PLUGIN_DATA_LOGPRINTF];
 	logprintf("\n\n*** Streamer Plugin v%s by Incognito loaded ***\n", PLUGIN_VERSION);
 	return true;
