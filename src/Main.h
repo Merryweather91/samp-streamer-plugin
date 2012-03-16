@@ -1,6 +1,6 @@
 /*
     SA-MP Streamer Plugin v2.6
-    Copyright © 2011 Incognito
+    Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -58,7 +58,12 @@
 
 #include "../include/Eigen/Core"
 
-#include "../include/sampgdk/sampgdk.h"
+#include "../include/sampgdk/core.h"
+#include "../include/sampgdk/objects.h"
+#include "../include/sampgdk/players.h"
+#include "../include/sampgdk/plugin.h"
+#include "../include/sampgdk/samp.h"
+#include "../include/sampgdk/vehicles.h"
 
 #include "Core.h"
 

@@ -9,7 +9,7 @@ LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 		BLOCK "04090025"
 		{
 			VALUE "FileDescription", "SA-MP Streamer Plugin"
-			VALUE "LegalCopyright", "Copyright © Streamer 2011"
+			VALUE "LegalCopyright", "Copyright © Streamer 2012"
 			VALUE "OriginalFilename", "streamer.dll"
 			VALUE "ProductName", "SA-MP Streamer Plugin"
 			VALUE "ProductVersion", "v2.6"
