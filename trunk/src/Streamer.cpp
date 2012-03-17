@@ -612,27 +612,19 @@ void Streamer::processObjects(Player &player, const std::vector<SharedCell> &pla
 
 void Streamer::processPickups(Player &player, const std::vector<SharedCell> &playerCells)
 {
-	static boost::unordered_map<int, Element::SharedPickup> discoveredPickups, existingPickups;
+	static boost::unordered_map<int, Element::SharedPickup> discoveredPickups;
 	for (std::vector<SharedCell>::const_iterator c = playerCells.begin(); c != playerCells.end(); ++c)
 	{
 		for (boost::unordered_map<int, Element::SharedPickup>::const_iterator p = (*c)->pickups.begin(); p != (*c)->pickups.end(); ++p)
 		{
-			boost::unordered_map<int, Element::SharedPickup>::iterator d = discoveredPickups.find(p->first), e = existingPickups.find(p->first);
-			if (d == discoveredPickups.end() && e == existingPickups.end())
+			boost::unordered_map<int, Element::SharedPickup>::iterator d = discoveredPickups.find(p->first);
+			if (d == discoveredPickups.end())
 			{
 				if (checkPlayer(p->second->players, player.playerID, p->second->interiors, player.interiorID, p->second->worlds, player.worldID))
 				{
 					if (boost::geometry::comparable_distance(player.position, p->second->position) <= p->second->streamDistance)
 					{
-						boost::unordered_map<int, int>::iterator i = internalPickups.find(p->first);
-						if (i == internalPickups.end())
-						{
-							discoveredPickups.insert(*p);
-						}
-						else
-						{
-							existingPickups.insert(*p);
-						}
+						discoveredPickups.insert(*p);
 					}
 				}
 			}
@@ -643,18 +635,18 @@ void Streamer::processPickups(Player &player, const std::vector<SharedCell> &pla
 		boost::unordered_map<int, int>::iterator i = internalPickups.begin();
 		while (i != internalPickups.end())
 		{
-			boost::unordered_map<int, Element::SharedPickup>::iterator e = existingPickups.find(i->first);
-			if (e == existingPickups.end())
+			boost::unordered_map<int, Element::SharedPickup>::iterator d = discoveredPickups.find(i->first);
+			if (d == discoveredPickups.end())
 			{
 				DestroyPickup(i->second);
 				i = internalPickups.erase(i);
 			}
 			else
 			{
+				discoveredPickups.quick_erase(d);
 				++i;
 			}
 		}
-		existingPickups.clear();
 		for (boost::unordered_map<int, Element::SharedPickup>::iterator d = discoveredPickups.begin(); d != discoveredPickups.end(); ++d)
 		{
 			if (internalPickups.size() == visiblePickups)
