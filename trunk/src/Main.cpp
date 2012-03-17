@@ -30,7 +30,7 @@ PLUGIN_EXPORT unsigned int PLUGIN_CALL Supports()
 PLUGIN_EXPORT bool PLUGIN_CALL Load(void **ppPluginData)
 {
 	core.reset(new Core);
-	sampgdk_initialize(ppPluginData);
+	sampgdk_initialize_plugin(ppPluginData);
 	logprintf = (logprintf_t)ppPluginData[PLUGIN_DATA_LOGPRINTF];
 	logprintf("\n\n*** Streamer Plugin v%s by Incognito loaded ***\n", PLUGIN_VERSION);
 	return true;
@@ -56,6 +56,8 @@ AMX_NATIVE_INFO natives[] =
 	{ "Streamer_SetFloatData", Natives::Streamer_SetFloatData },
 	{ "Streamer_GetIntData", Natives::Streamer_GetIntData },
 	{ "Streamer_SetIntData", Natives::Streamer_SetIntData },
+	{ "Streamer_GetArrayData", Natives::Streamer_GetArrayData },
+	{ "Streamer_SetArrayData", Natives::Streamer_SetArrayData },
 	{ "Streamer_IsInArrayData", Natives::Streamer_IsInArrayData },
 	{ "Streamer_AppendArrayData", Natives::Streamer_AppendArrayData },
 	{ "Streamer_RemoveArrayData", Natives::Streamer_RemoveArrayData },

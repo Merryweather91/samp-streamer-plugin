@@ -48,17 +48,56 @@ namespace Utility
 		return false;
 	}
 
-	template<size_t N>
-	inline bool addToContainer(std::bitset<N> &container, size_t value)
+	template<std::size_t N>
+	inline bool addToContainer(std::bitset<N> &container, int value)
 	{
-		if (value >= 0 && value < container.size())
+		if (value >= 0 && static_cast<std::size_t>(value) < N)
 		{
-			container.set(value);
+			container.set(static_cast<std::size_t>(value));
 			return true;
 		}
 		else
 		{
 			container.set();
+		}
+		return false;
+	}
+
+	inline bool isInContainer(boost::unordered_set<int> &container, int value)
+	{
+		if (value >= 0)
+		{
+			if (container.find(value) != container.end())
+			{
+				return true;
+			}
+		}
+		else
+		{
+			if (container.empty())
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+
+	template<std::size_t N>
+	inline bool isInContainer(std::bitset<N> &container, int value)
+	{
+		if (value >= 0 && static_cast<std::size_t>(value) < N)
+		{
+			if (container[static_cast<std::size_t>(value)])
+			{
+				return true;
+			}
+		}
+		else
+		{
+			if (container.count() == N)
+			{
+				return true;
+			}
 		}
 		return false;
 	}
@@ -77,12 +116,12 @@ namespace Utility
 		return false;
 	}
 
-	template<size_t N>
-	inline bool removeFromContainer(std::bitset<N> &container, size_t value)
+	template<std::size_t N>
+	inline bool removeFromContainer(std::bitset<N> &container, int value)
 	{
-		if (value >= 0 && value < container.size())
+		if (value >= 0 && static_cast<std::size_t>(value) < N)
 		{
-			container.reset(value);
+			container.reset(static_cast<std::size_t>(value));
 			return true;
 		}
 		else
@@ -93,20 +132,58 @@ namespace Utility
 	}
 
 	template<typename T>
-	inline void getArrayFromNative(AMX *amx, cell input, cell size, T &container)
+	inline bool convertArrayToContainer(AMX *amx, cell input, cell size, T &container)
 	{
 		cell *array = NULL;
 		amx_GetAddr(amx, input, &array);
-		for (size_t i = 0; i < static_cast<size_t>(size); ++i)
+		removeFromContainer(container, -1);
+		for (std::size_t i = 0; i < static_cast<std::size_t>(size); ++i)
 		{
-			if (!addToContainer(container, array[i]))
+			if (!addToContainer(container, static_cast<std::size_t>(array[i])))
 			{
-				return;
+				return false;
 			}
 		}
+		return true;
 	}
 
-	void getPolygonFromNative(AMX *amx, cell input, cell size, Element::Polygon2D &polygon);
+	inline bool convertContainerToArray(AMX *amx, cell input, cell size, boost::unordered_set<int> &container)
+	{
+		cell *array = NULL;
+		boost::unordered_set<int>::iterator c = container.begin();
+		amx_GetAddr(amx, input, &array);
+		for (std::size_t i = 0; i < static_cast<std::size_t>(size); ++i)
+		{
+			if (c == container.end())
+			{
+				return false;
+			}
+			array[i] = *c++;
+		}
+		return true;
+	}
+
+	template<std::size_t N>
+	inline bool convertContainerToArray(AMX *amx, cell input, cell size, std::bitset<N> &container)
+	{
+		cell *array = NULL;
+		std::size_t i = 0;
+		amx_GetAddr(amx, input, &array);
+		for (std::size_t c = 0; c < static_cast<std::size_t>(size); ++c)
+		{
+			if (c >= N)
+			{
+				return false;
+			}
+			if (container[c])
+			{
+				array[i++] = c;
+			}
+		}
+		return true;
+	}
+
+	void convertArrayToPolygon(AMX *amx, cell input, cell size, Element::Polygon2D &polygon);
 	std::string getStringFromNative(AMX *amx, cell input);
 }
 

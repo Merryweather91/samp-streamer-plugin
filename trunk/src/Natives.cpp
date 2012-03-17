@@ -28,7 +28,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_TickRate(AMX *amx, cell *params)
 	CHECK_PARAMS(1, "Streamer_TickRate");
 	if (!core->getStreamer()->setTickRate(static_cast<int>(params[1])))
 	{
-		logprintf("*** Streamer_TickRate: Invalid tickrate specified");
+		logprintf("*** Streamer_TickRate: Invalid tick rate specified");
 		return 0;
 	}
 	return 1;
@@ -151,6 +151,19 @@ cell AMX_NATIVE_CALL Natives::Streamer_SetIntData(AMX *amx, cell *params)
 	CHECK_PARAMS(4, "Streamer_SetIntData");
 	return static_cast<cell>(Manipulation::setIntData(amx, params));
 }
+
+cell AMX_NATIVE_CALL Natives::Streamer_GetArrayData(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(5, "Streamer_GetArrayData");
+	return static_cast<cell>(Manipulation::getArrayData(amx, params));
+}
+
+cell AMX_NATIVE_CALL Natives::Streamer_SetArrayData(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(5, "Streamer_SetArrayData");
+	return static_cast<cell>(Manipulation::setArrayData(amx, params));
+}
+
 
 cell AMX_NATIVE_CALL Natives::Streamer_IsInArrayData(AMX *amx, cell *params)
 {
@@ -516,7 +529,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicObject(AMX *amx, cell *params)
 	object->rotation = Eigen::Vector3f(amx_ctof(params[5]), amx_ctof(params[6]), amx_ctof(params[7]));
 	Utility::addToContainer(object->worlds, static_cast<int>(params[8]));
 	Utility::addToContainer(object->interiors, static_cast<int>(params[9]));
-	Utility::addToContainer(object->players, static_cast<size_t>(params[10]));
+	Utility::addToContainer(object->players, static_cast<int>(params[10]));
 	object->streamDistance = amx_ctof(params[11]) * amx_ctof(params[11]);
 	core->getGrid()->addObject(object);
 	core->getData()->objects.insert(std::make_pair(objectID, object));
@@ -763,7 +776,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicPickup(AMX *amx, cell *params)
 	pickup->position = Eigen::Vector3f(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
 	Utility::addToContainer(pickup->worlds, static_cast<int>(params[6]));
 	Utility::addToContainer(pickup->interiors, static_cast<int>(params[7]));
-	Utility::addToContainer(pickup->players, static_cast<size_t>(params[8]));
+	Utility::addToContainer(pickup->players, static_cast<int>(params[8]));
 	pickup->streamDistance = amx_ctof(params[9]) * amx_ctof(params[9]);
 	core->getGrid()->addPickup(pickup);
 	core->getData()->pickups.insert(std::make_pair(pickupID, pickup));
@@ -827,7 +840,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicCP(AMX *amx, cell *params)
 	checkpoint->size = amx_ctof(params[4]);
 	Utility::addToContainer(checkpoint->worlds, static_cast<int>(params[5]));
 	Utility::addToContainer(checkpoint->interiors, static_cast<int>(params[6]));
-	Utility::addToContainer(checkpoint->players, static_cast<size_t>(params[7]));
+	Utility::addToContainer(checkpoint->players, static_cast<int>(params[7]));
 	checkpoint->streamDistance = amx_ctof(params[8]) * amx_ctof(params[8]);
 	core->getGrid()->addCheckpoint(checkpoint);
 	core->getData()->checkpoints.insert(std::make_pair(checkpointID, checkpoint));
@@ -970,7 +983,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicRaceCP(AMX *amx, cell *params)
 	raceCheckpoint->size = amx_ctof(params[8]);
 	Utility::addToContainer(raceCheckpoint->worlds, static_cast<int>(params[9]));
 	Utility::addToContainer(raceCheckpoint->interiors, static_cast<int>(params[10]));
-	Utility::addToContainer(raceCheckpoint->players, static_cast<size_t>(params[11]));
+	Utility::addToContainer(raceCheckpoint->players, static_cast<int>(params[11]));
 	raceCheckpoint->streamDistance = amx_ctof(params[12]) * amx_ctof(params[12]);
 	core->getGrid()->addRaceCheckpoint(raceCheckpoint);
 	core->getData()->raceCheckpoints.insert(std::make_pair(raceCheckpointID, raceCheckpoint));
@@ -1113,7 +1126,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicMapIcon(AMX *amx, cell *params)
 	mapIcon->color = static_cast<int>(params[5]);
 	Utility::addToContainer(mapIcon->worlds, static_cast<int>(params[6]));
 	Utility::addToContainer(mapIcon->interiors, static_cast<int>(params[7]));
-	Utility::addToContainer(mapIcon->players, static_cast<size_t>(params[8]));
+	Utility::addToContainer(mapIcon->players, static_cast<int>(params[8]));
 	mapIcon->streamDistance = amx_ctof(params[9]) * amx_ctof(params[9]);
 	core->getGrid()->addMapIcon(mapIcon);
 	core->getData()->mapIcons.insert(std::make_pair(mapIconID, mapIcon));
@@ -1195,7 +1208,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamic3DTextLabel(AMX *amx, cell *params)
 	textLabel->testLOS = static_cast<int>(params[9]) != 0;
 	Utility::addToContainer(textLabel->worlds, static_cast<int>(params[10]));
 	Utility::addToContainer(textLabel->interiors, static_cast<int>(params[11]));
-	Utility::addToContainer(textLabel->players, static_cast<size_t>(params[12]));
+	Utility::addToContainer(textLabel->players, static_cast<int>(params[12]));
 	textLabel->streamDistance = amx_ctof(params[13]) * amx_ctof(params[13]);
 	core->getGrid()->addTextLabel(textLabel);
 	core->getData()->textLabels.insert(std::make_pair(textLabelID, textLabel));
@@ -1285,7 +1298,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicCircle(AMX *amx, cell *params)
 	area->size = amx_ctof(params[3]) * amx_ctof(params[3]);
 	Utility::addToContainer(area->worlds, static_cast<int>(params[4]));
 	Utility::addToContainer(area->interiors, static_cast<int>(params[5]));
-	Utility::addToContainer(area->players, static_cast<size_t>(params[6]));
+	Utility::addToContainer(area->players, static_cast<int>(params[6]));
 	core->getGrid()->addArea(area);
 	core->getData()->areas.insert(std::make_pair(areaID, area));
 	return static_cast<cell>(areaID);
@@ -1309,7 +1322,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicRectangle(AMX *amx, cell *params)
 	area->size = boost::geometry::comparable_distance(boost::get<Element::Box2D>(area->position).min_corner(), boost::get<Element::Box2D>(area->position).max_corner());
 	Utility::addToContainer(area->worlds, static_cast<int>(params[5]));
 	Utility::addToContainer(area->interiors, static_cast<int>(params[6]));
-	Utility::addToContainer(area->players, static_cast<size_t>(params[7]));
+	Utility::addToContainer(area->players, static_cast<int>(params[7]));
 	core->getGrid()->addArea(area);
 	core->getData()->areas.insert(std::make_pair(areaID, area));
 	return static_cast<cell>(areaID);
@@ -1332,7 +1345,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicSphere(AMX *amx, cell *params)
 	area->size = amx_ctof(params[4]) * amx_ctof(params[4]);
 	Utility::addToContainer(area->worlds, static_cast<int>(params[5]));
 	Utility::addToContainer(area->interiors, static_cast<int>(params[6]));
-	Utility::addToContainer(area->players, static_cast<size_t>(params[7]));
+	Utility::addToContainer(area->players, static_cast<int>(params[7]));
 	core->getGrid()->addArea(area);
 	core->getData()->areas.insert(std::make_pair(areaID, area));
 	return static_cast<cell>(areaID);
@@ -1356,7 +1369,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicCube(AMX *amx, cell *params)
 	area->size = boost::geometry::comparable_distance(Eigen::Vector2f(boost::get<Element::Box3D>(area->position).min_corner()[0], boost::get<Element::Box3D>(area->position).min_corner()[1]), Eigen::Vector2f(boost::get<Element::Box3D>(area->position).max_corner()[0], boost::get<Element::Box3D>(area->position).max_corner()[1]));
 	Utility::addToContainer(area->worlds, static_cast<int>(params[7]));
 	Utility::addToContainer(area->interiors, static_cast<int>(params[8]));
-	Utility::addToContainer(area->players, static_cast<size_t>(params[9]));
+	Utility::addToContainer(area->players, static_cast<int>(params[9]));
 	core->getGrid()->addArea(area);
 	core->getData()->areas.insert(std::make_pair(areaID, area));
 	return static_cast<cell>(areaID);
@@ -1380,13 +1393,13 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicPolygon(AMX *amx, cell *params)
 	area->areaID = areaID;
 	area->extraID = 0;
 	area->type = STREAMER_AREA_TYPE_POLYGON;
-	Utility::getPolygonFromNative(amx, params[1], params[4], boost::get<Element::Polygon2D>(area->position));
+	Utility::convertArrayToPolygon(amx, params[1], params[4], boost::get<Element::Polygon2D>(area->position));
 	Element::Box2D box = boost::geometry::return_envelope<Element::Box2D>(boost::get<Element::Polygon2D>(area->position).get<0>());
 	area->size = boost::geometry::comparable_distance(box.min_corner(), box.max_corner());
 	boost::get<Element::Polygon2D>(area->position).get<1>() = Eigen::Vector2f(amx_ctof(params[2]), amx_ctof(params[3]));
 	Utility::addToContainer(area->worlds, static_cast<int>(params[5]));
 	Utility::addToContainer(area->interiors, static_cast<int>(params[6]));
-	Utility::addToContainer(area->players, static_cast<size_t>(params[7]));
+	Utility::addToContainer(area->players, static_cast<int>(params[7]));
 	core->getGrid()->addArea(area);
 	core->getData()->areas.insert(std::make_pair(areaID, area));
 	return static_cast<cell>(areaID);
@@ -1596,9 +1609,9 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicObjectEx(AMX *amx, cell *params)
 	object->rotation = Eigen::Vector3f(amx_ctof(params[5]), amx_ctof(params[6]), amx_ctof(params[7]));
 	object->drawDistance = amx_ctof(params[8]) * amx_ctof(params[8]);
 	object->streamDistance = amx_ctof(params[9]) * amx_ctof(params[9]);
-	Utility::getArrayFromNative(amx, params[10], params[13], object->worlds);
-	Utility::getArrayFromNative(amx, params[11], params[14], object->interiors);
-	Utility::getArrayFromNative(amx, params[12], params[15], object->players);
+	Utility::convertArrayToContainer(amx, params[10], params[13], object->worlds);
+	Utility::convertArrayToContainer(amx, params[11], params[14], object->interiors);
+	Utility::convertArrayToContainer(amx, params[12], params[15], object->players);
 	core->getGrid()->addObject(object);
 	core->getData()->objects.insert(std::make_pair(objectID, object));
 	return static_cast<cell>(objectID);
@@ -1621,9 +1634,9 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicPickupEx(AMX *amx, cell *params)
 	pickup->type = static_cast<int>(params[2]);
 	pickup->position = Eigen::Vector3f(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
 	pickup->streamDistance = amx_ctof(params[6]) * amx_ctof(params[6]);
-	Utility::getArrayFromNative(amx, params[7], params[10], pickup->worlds);
-	Utility::getArrayFromNative(amx, params[8], params[11], pickup->interiors);
-	Utility::getArrayFromNative(amx, params[9], params[12], pickup->players);
+	Utility::convertArrayToContainer(amx, params[7], params[10], pickup->worlds);
+	Utility::convertArrayToContainer(amx, params[8], params[11], pickup->interiors);
+	Utility::convertArrayToContainer(amx, params[9], params[12], pickup->players);
 	core->getGrid()->addPickup(pickup);
 	core->getData()->pickups.insert(std::make_pair(pickupID, pickup));
 	return static_cast<cell>(pickupID);
@@ -1644,9 +1657,9 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicCPEx(AMX *amx, cell *params)
 	checkpoint->position = Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3]));
 	checkpoint->size = amx_ctof(params[4]);
 	checkpoint->streamDistance = amx_ctof(params[5]) * amx_ctof(params[5]);
-	Utility::getArrayFromNative(amx, params[6], params[9], checkpoint->worlds);
-	Utility::getArrayFromNative(amx, params[7], params[10], checkpoint->interiors);
-	Utility::getArrayFromNative(amx, params[8], params[11], checkpoint->players);
+	Utility::convertArrayToContainer(amx, params[6], params[9], checkpoint->worlds);
+	Utility::convertArrayToContainer(amx, params[7], params[10], checkpoint->interiors);
+	Utility::convertArrayToContainer(amx, params[8], params[11], checkpoint->players);
 	core->getGrid()->addCheckpoint(checkpoint);
 	core->getData()->checkpoints.insert(std::make_pair(checkpointID, checkpoint));
 	return static_cast<cell>(checkpointID);
@@ -1669,9 +1682,9 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicRaceCPEx(AMX *amx, cell *params)
 	raceCheckpoint->next = Eigen::Vector3f(amx_ctof(params[5]), amx_ctof(params[6]), amx_ctof(params[7]));
 	raceCheckpoint->size = amx_ctof(params[8]);
 	raceCheckpoint->streamDistance = amx_ctof(params[9]) * amx_ctof(params[9]);
-	Utility::getArrayFromNative(amx, params[10], params[13], raceCheckpoint->worlds);
-	Utility::getArrayFromNative(amx, params[11], params[14], raceCheckpoint->interiors);
-	Utility::getArrayFromNative(amx, params[12], params[15], raceCheckpoint->players);
+	Utility::convertArrayToContainer(amx, params[10], params[13], raceCheckpoint->worlds);
+	Utility::convertArrayToContainer(amx, params[11], params[14], raceCheckpoint->interiors);
+	Utility::convertArrayToContainer(amx, params[12], params[15], raceCheckpoint->players);
 	core->getGrid()->addRaceCheckpoint(raceCheckpoint);
 	core->getData()->raceCheckpoints.insert(std::make_pair(raceCheckpointID, raceCheckpoint));
 	return static_cast<cell>(raceCheckpointID);
@@ -1694,9 +1707,9 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicMapIconEx(AMX *amx, cell *params)
 	mapIcon->color = static_cast<int>(params[5]);
 	mapIcon->style = static_cast<int>(params[6]);
 	mapIcon->streamDistance = amx_ctof(params[7]) * amx_ctof(params[7]);
-	Utility::getArrayFromNative(amx, params[8], params[11], mapIcon->worlds);
-	Utility::getArrayFromNative(amx, params[9], params[12], mapIcon->interiors);
-	Utility::getArrayFromNative(amx, params[10], params[13], mapIcon->players);
+	Utility::convertArrayToContainer(amx, params[8], params[11], mapIcon->worlds);
+	Utility::convertArrayToContainer(amx, params[9], params[12], mapIcon->interiors);
+	Utility::convertArrayToContainer(amx, params[10], params[13], mapIcon->players);
 	core->getGrid()->addMapIcon(mapIcon);
 	core->getData()->mapIcons.insert(std::make_pair(mapIconID, mapIcon));
 	return static_cast<cell>(mapIconID);
@@ -1731,9 +1744,9 @@ cell AMX_NATIVE_CALL Natives::CreateDynamic3DTextLabelEx(AMX *amx, cell *params)
 	}
 	textLabel->testLOS = static_cast<int>(params[9]) != 0;
 	textLabel->streamDistance = amx_ctof(params[10]) * amx_ctof(params[10]);
-	Utility::getArrayFromNative(amx, params[11], params[14], textLabel->worlds);
-	Utility::getArrayFromNative(amx, params[12], params[15], textLabel->interiors);
-	Utility::getArrayFromNative(amx, params[13], params[16], textLabel->players);
+	Utility::convertArrayToContainer(amx, params[11], params[14], textLabel->worlds);
+	Utility::convertArrayToContainer(amx, params[12], params[15], textLabel->interiors);
+	Utility::convertArrayToContainer(amx, params[13], params[16], textLabel->players);
 	core->getGrid()->addTextLabel(textLabel);
 	core->getData()->textLabels.insert(std::make_pair(textLabelID, textLabel));
 	return static_cast<cell>(textLabelID);
@@ -1754,9 +1767,9 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicCircleEx(AMX *amx, cell *params)
 	area->type = STREAMER_AREA_TYPE_CIRCLE;
 	area->position = Eigen::Vector2f(amx_ctof(params[1]), amx_ctof(params[2]));
 	area->size = amx_ctof(params[3]) * amx_ctof(params[3]);
-	Utility::getArrayFromNative(amx, params[4], params[7], area->worlds);
-	Utility::getArrayFromNative(amx, params[5], params[8], area->interiors);
-	Utility::getArrayFromNative(amx, params[6], params[9], area->players);
+	Utility::convertArrayToContainer(amx, params[4], params[7], area->worlds);
+	Utility::convertArrayToContainer(amx, params[5], params[8], area->interiors);
+	Utility::convertArrayToContainer(amx, params[6], params[9], area->players);
 	core->getGrid()->addArea(area);
 	core->getData()->areas.insert(std::make_pair(areaID, area));
 	return static_cast<cell>(areaID);
@@ -1778,9 +1791,9 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicRectangleEx(AMX *amx, cell *params)
 	area->position = Element::Box2D(Eigen::Vector2f(amx_ctof(params[1]), amx_ctof(params[2])), Eigen::Vector2f(amx_ctof(params[3]), amx_ctof(params[4])));
 	boost::geometry::correct(boost::get<Element::Box2D>(area->position));
 	area->size = boost::geometry::comparable_distance(boost::get<Element::Box2D>(area->position).min_corner(), boost::get<Element::Box2D>(area->position).max_corner());
-	Utility::getArrayFromNative(amx, params[5], params[8], area->worlds);
-	Utility::getArrayFromNative(amx, params[6], params[9], area->interiors);
-	Utility::getArrayFromNative(amx, params[7], params[10], area->players);
+	Utility::convertArrayToContainer(amx, params[5], params[8], area->worlds);
+	Utility::convertArrayToContainer(amx, params[6], params[9], area->interiors);
+	Utility::convertArrayToContainer(amx, params[7], params[10], area->players);
 	core->getGrid()->addArea(area);
 	core->getData()->areas.insert(std::make_pair(areaID, area));
 	return static_cast<cell>(areaID);
@@ -1801,9 +1814,9 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicSphereEx(AMX *amx, cell *params)
 	area->type = STREAMER_AREA_TYPE_SPHERE;
 	area->position = Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3]));
 	area->size = amx_ctof(params[4]) * amx_ctof(params[4]);
-	Utility::getArrayFromNative(amx, params[5], params[8], area->worlds);
-	Utility::getArrayFromNative(amx, params[6], params[9], area->interiors);
-	Utility::getArrayFromNative(amx, params[7], params[10], area->players);
+	Utility::convertArrayToContainer(amx, params[5], params[8], area->worlds);
+	Utility::convertArrayToContainer(amx, params[6], params[9], area->interiors);
+	Utility::convertArrayToContainer(amx, params[7], params[10], area->players);
 	core->getGrid()->addArea(area);
 	core->getData()->areas.insert(std::make_pair(areaID, area));
 	return static_cast<cell>(areaID);
@@ -1825,9 +1838,9 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicCubeEx(AMX *amx, cell *params)
 	area->position = Element::Box3D(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), Eigen::Vector3f(amx_ctof(params[4]), amx_ctof(params[5]), amx_ctof(params[6])));
 	boost::geometry::correct(boost::get<Element::Box3D>(area->position));
 	area->size = boost::geometry::comparable_distance(Eigen::Vector2f(boost::get<Element::Box3D>(area->position).min_corner()[0], boost::get<Element::Box3D>(area->position).min_corner()[1]), Eigen::Vector2f(boost::get<Element::Box3D>(area->position).max_corner()[0], boost::get<Element::Box3D>(area->position).max_corner()[1]));
-	Utility::getArrayFromNative(amx, params[7], params[10], area->worlds);
-	Utility::getArrayFromNative(amx, params[8], params[11], area->interiors);
-	Utility::getArrayFromNative(amx, params[9], params[12], area->players);
+	Utility::convertArrayToContainer(amx, params[7], params[10], area->worlds);
+	Utility::convertArrayToContainer(amx, params[8], params[11], area->interiors);
+	Utility::convertArrayToContainer(amx, params[9], params[12], area->players);
 	core->getGrid()->addArea(area);
 	core->getData()->areas.insert(std::make_pair(areaID, area));
 	return static_cast<cell>(areaID);
@@ -1850,13 +1863,13 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicPolygonEx(AMX *amx, cell *params)
 	area->areaID = areaID;
 	area->extraID = 0;
 	area->type = STREAMER_AREA_TYPE_POLYGON;
-	Utility::getPolygonFromNative(amx, params[1], params[4], boost::get<Element::Polygon2D>(area->position));
+	Utility::convertArrayToPolygon(amx, params[1], params[4], boost::get<Element::Polygon2D>(area->position));
 	Element::Box2D box = boost::geometry::return_envelope<Element::Box2D>(boost::get<Element::Polygon2D>(area->position).get<0>());
 	area->size = boost::geometry::comparable_distance(box.min_corner(), box.max_corner());
 	boost::get<Element::Polygon2D>(area->position).get<1>() = Eigen::Vector2f(amx_ctof(params[2]), amx_ctof(params[3]));
-	Utility::getArrayFromNative(amx, params[5], params[8], area->worlds);
-	Utility::getArrayFromNative(amx, params[6], params[9], area->interiors);
-	Utility::getArrayFromNative(amx, params[7], params[10], area->players);
+	Utility::convertArrayToContainer(amx, params[5], params[8], area->worlds);
+	Utility::convertArrayToContainer(amx, params[6], params[9], area->interiors);
+	Utility::convertArrayToContainer(amx, params[7], params[10], area->players);
 	core->getGrid()->addArea(area);
 	core->getData()->areas.insert(std::make_pair(areaID, area));
 	return static_cast<cell>(areaID);
