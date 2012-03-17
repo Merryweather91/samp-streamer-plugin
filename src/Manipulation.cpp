@@ -1997,6 +1997,564 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 	return 0;
 }
 
+int Manipulation::getArrayData(AMX *amx, cell *params)
+{
+	switch (static_cast<int>(params[1]))
+	{
+		case STREAMER_TYPE_OBJECT:
+		{
+			boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
+			if (o != core->getData()->objects.end())
+			{
+				switch (static_cast<int>(params[3]))
+				{
+					case ExtraID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], o->second->extras) != 0;
+					}
+					break;
+					case InteriorID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], o->second->interiors) != 0;
+					}
+					break;
+					case PlayerID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], o->second->players) != 0;
+					}
+					break;
+					case WorldID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], o->second->worlds) != 0;
+					}
+					break;
+					default:
+					{
+						logprintf("*** Streamer_GetArrayData: Invalid data specified");
+					}
+					break;
+				}
+				return 0;
+			}
+			logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+		}
+		break;
+		case STREAMER_TYPE_PICKUP:
+		{
+			boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
+			if (p != core->getData()->pickups.end())
+			{
+				switch (static_cast<int>(params[3]))
+				{
+					case ExtraID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], p->second->extras) != 0;
+					}
+					break;
+					case InteriorID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], p->second->interiors) != 0;
+					}
+					break;
+					case PlayerID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], p->second->players) != 0;
+					}
+					break;
+					case WorldID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], p->second->worlds) != 0;
+					}
+					break;
+					default:
+					{
+						logprintf("*** Streamer_GetArrayData: Invalid data specified");
+					}
+					break;
+				}
+				return 0;
+			}
+			logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+		}
+		break;
+		case STREAMER_TYPE_CP:
+		{
+			boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
+			if (c != core->getData()->checkpoints.end())
+			{
+				switch (static_cast<int>(params[3]))
+				{
+					case ExtraID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], c->second->extras) != 0;
+					}
+					break;
+					case InteriorID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], c->second->interiors) != 0;
+					}
+					break;
+					case PlayerID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], c->second->players) != 0;
+					}
+					break;
+					case WorldID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], c->second->worlds) != 0;
+					}
+					break;
+					default:
+					{
+						logprintf("*** Streamer_GetArrayData: Invalid data specified");
+					}
+					break;
+				}
+				return 0;
+			}
+			logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+		}
+		break;
+		case STREAMER_TYPE_RACE_CP:
+		{
+			boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
+			if (r != core->getData()->raceCheckpoints.end())
+			{
+				switch (static_cast<int>(params[3]))
+				{
+					case ExtraID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], r->second->extras) != 0;
+					}
+					break;
+					case InteriorID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], r->second->interiors) != 0;
+					}
+					break;
+					case PlayerID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], r->second->players) != 0;
+					}
+					break;
+					case WorldID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], r->second->worlds) != 0;
+					}
+					break;
+					default:
+					{
+						logprintf("*** Streamer_GetArrayData: Invalid data specified");
+					}
+					break;
+				}
+				return 0;
+			}
+			logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+		}
+		break;
+		case STREAMER_TYPE_MAP_ICON:
+		{
+			boost::unordered_map<int, Element::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
+			if (m != core->getData()->mapIcons.end())
+			{
+				switch (static_cast<int>(params[3]))
+				{
+					case ExtraID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], m->second->extras) != 0;
+					}
+					break;
+					case InteriorID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], m->second->interiors) != 0;
+					}
+					break;
+					case PlayerID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], m->second->players) != 0;
+					}
+					break;
+					case WorldID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], m->second->worlds) != 0;
+					}
+					break;
+					default:
+					{
+						logprintf("*** Streamer_GetArrayData: Invalid data specified");
+					}
+					break;
+				}
+				return 0;
+			}
+			logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+		}
+		break;
+		case STREAMER_TYPE_3D_TEXT_LABEL:
+		{
+			boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
+			if (t != core->getData()->textLabels.end())
+			{
+				switch (static_cast<int>(params[3]))
+				{
+					case ExtraID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], t->second->extras) != 0;
+					}
+					break;
+					case InteriorID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], t->second->interiors) != 0;
+					}
+					break;
+					case PlayerID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], t->second->players) != 0;
+					}
+					break;
+					case WorldID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], t->second->worlds) != 0;
+					}
+					break;
+					default:
+					{
+						logprintf("*** Streamer_GetArrayData: Invalid data specified");
+					}
+					break;
+				}
+				return 0;
+			}
+			logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+		}
+		break;
+		case STREAMER_TYPE_AREA:
+		{
+			boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
+			if (a != core->getData()->areas.end())
+			{
+				switch (static_cast<int>(params[3]))
+				{
+					case ExtraID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], a->second->extras) != 0;
+					}
+					break;
+					case InteriorID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], a->second->interiors) != 0;
+					}
+					break;
+					case PlayerID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], a->second->players) != 0;
+					}
+					break;
+					case WorldID:
+					{
+						return Utility::convertContainerToArray(amx, params[4], params[5], a->second->worlds) != 0;
+					}
+					break;
+					default:
+					{
+						logprintf("*** Streamer_GetArrayData: Invalid data specified");
+					}
+					break;
+				}
+				return 0;
+			}
+			logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+		}
+		break;
+		default:
+		{
+			logprintf("*** Streamer_GetArrayData: Invalid type specified");
+		}
+		break;
+	}
+	return 0;
+}
+
+int Manipulation::setArrayData(AMX *amx, cell *params)
+{
+	switch (static_cast<int>(params[1]))
+	{
+		case STREAMER_TYPE_OBJECT:
+		{
+			boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
+			if (o != core->getData()->objects.end())
+			{
+				switch (static_cast<int>(params[3]))
+				{
+					case ExtraID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], o->second->extras) != 0;
+					}
+					break;
+					case InteriorID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], o->second->interiors) != 0;
+					}
+					break;
+					case PlayerID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], o->second->players) != 0;
+					}
+					break;
+					case WorldID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], o->second->worlds) != 0;
+					}
+					break;
+					default:
+					{
+						logprintf("*** Streamer_SetArrayData: Invalid data specified");
+					}
+					break;
+				}
+				return 0;
+			}
+			logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+		}
+		break;
+		case STREAMER_TYPE_PICKUP:
+		{
+			boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
+			if (p != core->getData()->pickups.end())
+			{
+				switch (static_cast<int>(params[3]))
+				{
+					case ExtraID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], p->second->extras) != 0;
+					}
+					break;
+					case InteriorID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], p->second->interiors) != 0;
+					}
+					break;
+					case PlayerID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], p->second->players) != 0;
+					}
+					break;
+					case WorldID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], p->second->worlds) != 0;
+					}
+					break;
+					default:
+					{
+						logprintf("*** Streamer_SetArrayData: Invalid data specified");
+					}
+					break;
+				}
+				return 0;
+			}
+			logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+		}
+		break;
+		case STREAMER_TYPE_CP:
+		{
+			boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
+			if (c != core->getData()->checkpoints.end())
+			{
+				switch (static_cast<int>(params[3]))
+				{
+					case ExtraID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], c->second->extras) != 0;
+					}
+					break;
+					case InteriorID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], c->second->interiors) != 0;
+					}
+					break;
+					case PlayerID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], c->second->players) != 0;
+					}
+					break;
+					case WorldID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], c->second->worlds) != 0;
+					}
+					break;
+					default:
+					{
+						logprintf("*** Streamer_SetArrayData: Invalid data specified");
+					}
+					break;
+				}
+				return 0;
+			}
+			logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+		}
+		break;
+		case STREAMER_TYPE_RACE_CP:
+		{
+			boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
+			if (r != core->getData()->raceCheckpoints.end())
+			{
+				switch (static_cast<int>(params[3]))
+				{
+					case ExtraID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], r->second->extras) != 0;
+					}
+					break;
+					case InteriorID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], r->second->interiors) != 0;
+					}
+					break;
+					case PlayerID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], r->second->players) != 0;
+					}
+					break;
+					case WorldID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], r->second->worlds) != 0;
+					}
+					break;
+					default:
+					{
+						logprintf("*** Streamer_SetArrayData: Invalid data specified");
+					}
+					break;
+				}
+				return 0;
+			}
+			logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+		}
+		break;
+		case STREAMER_TYPE_MAP_ICON:
+		{
+			boost::unordered_map<int, Element::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
+			if (m != core->getData()->mapIcons.end())
+			{
+				switch (static_cast<int>(params[3]))
+				{
+					case ExtraID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], m->second->extras) != 0;
+					}
+					break;
+					case InteriorID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], m->second->interiors) != 0;
+					}
+					break;
+					case PlayerID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], m->second->players) != 0;
+					}
+					break;
+					case WorldID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], m->second->worlds) != 0;
+					}
+					break;
+					default:
+					{
+						logprintf("*** Streamer_SetArrayData: Invalid data specified");
+					}
+					break;
+				}
+				return 0;
+			}
+			logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+		}
+		break;
+		case STREAMER_TYPE_3D_TEXT_LABEL:
+		{
+			boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
+			if (t != core->getData()->textLabels.end())
+			{
+				switch (static_cast<int>(params[3]))
+				{
+					case ExtraID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], t->second->extras) != 0;
+					}
+					break;
+					case InteriorID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], t->second->interiors) != 0;
+					}
+					break;
+					case PlayerID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], t->second->players) != 0;
+					}
+					break;
+					case WorldID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], t->second->worlds) != 0;
+					}
+					break;
+					default:
+					{
+						logprintf("*** Streamer_SetArrayData: Invalid data specified");
+					}
+					break;
+				}
+				return 0;
+			}
+			logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+		}
+		break;
+		case STREAMER_TYPE_AREA:
+		{
+			boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
+			if (a != core->getData()->areas.end())
+			{
+				switch (static_cast<int>(params[3]))
+				{
+					case ExtraID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], a->second->extras) != 0;
+					}
+					break;
+					case InteriorID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], a->second->interiors) != 0;
+					}
+					break;
+					case PlayerID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], a->second->players) != 0;
+					}
+					break;
+					case WorldID:
+					{
+						return Utility::convertArrayToContainer(amx, params[4], params[5], a->second->worlds) != 0;
+					}
+					break;
+					default:
+					{
+						logprintf("*** Streamer_SetArrayData: Invalid data specified");
+					}
+					break;
+				}
+				return 0;
+			}
+			logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+		}
+		break;
+		default:
+		{
+			logprintf("*** Streamer_SetArrayData: Invalid type specified");
+		}
+		break;
+	}
+	return 0;
+}
+
 int Manipulation::isInArrayData(AMX *amx, cell *params)
 {
 	switch (static_cast<int>(params[1]))
@@ -2010,68 +2568,22 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						if (o->second->extras.find(static_cast<int>(params[4])) != o->second->extras.end())
-						{
-							return 1;
-						}
-						return 0;
+						return Utility::isInContainer(o->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						if (static_cast<int>(params[4]) >= 0)
-						{
-							if (o->second->interiors.find(static_cast<int>(params[4])) != o->second->interiors.end())
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (o->second->interiors.empty())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(o->second->interiors, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case PlayerID:
 					{
-						if (static_cast<size_t>(params[4]) >= 0 && static_cast<size_t>(params[4]) < o->second->players.size())
-						{
-							if (o->second->players[static_cast<size_t>(params[4])])
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (o->second->players.count() == o->second->players.size())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(o->second->players, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case WorldID:
 					{
-						if (static_cast<int>(params[4]) >= 0)
-						{
-							if (o->second->worlds.find(static_cast<int>(params[4])) != o->second->worlds.end())
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (o->second->worlds.empty())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(o->second->worlds, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					default:
@@ -2094,67 +2606,22 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						if (p->second->extras.find(static_cast<int>(params[4])) != p->second->extras.end())
-						{
-							return 1;
-						}
-						return 0;
+						return Utility::isInContainer(p->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						if (static_cast<int>(params[4]) >= 0)
-						{
-							if (p->second->interiors.find(static_cast<int>(params[4])) != p->second->interiors.end())
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (p->second->interiors.empty())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(p->second->interiors, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case PlayerID:
 					{
-						if (static_cast<size_t>(params[4]) >= 0 && static_cast<size_t>(params[4]) < p->second->players.size())
-						{
-							if (p->second->players[static_cast<size_t>(params[4])])
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (p->second->players.count() == p->second->players.size())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(p->second->players, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case WorldID:
 					{
-						if (static_cast<int>(params[4]) >= 0)
-						{
-							if (p->second->worlds.find(static_cast<int>(params[4])) != p->second->worlds.end())
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (p->second->worlds.empty())
-							{
-								return 1;
-							}
-						}
+						return Utility::isInContainer(p->second->worlds, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					default:
@@ -2177,68 +2644,22 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						if (c->second->extras.find(static_cast<int>(params[4])) != c->second->extras.end())
-						{
-							return 1;
-						}
-						return 0;
+						return Utility::isInContainer(c->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						if (static_cast<int>(params[4]) >= 0)
-						{
-							if (c->second->interiors.find(static_cast<int>(params[4])) != c->second->interiors.end())
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (c->second->interiors.empty())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(c->second->interiors, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case PlayerID:
 					{
-						if (static_cast<size_t>(params[4]) >= 0 && static_cast<size_t>(params[4]) < c->second->players.size())
-						{
-							if (c->second->players[static_cast<size_t>(params[4])])
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (c->second->players.count() == c->second->players.size())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(c->second->players, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case WorldID:
 					{
-						if (static_cast<int>(params[4]) >= 0)
-						{
-							if (c->second->worlds.find(static_cast<int>(params[4])) != c->second->worlds.end())
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (c->second->worlds.empty())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(c->second->worlds, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					default:
@@ -2261,68 +2682,22 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						if (r->second->extras.find(static_cast<int>(params[4])) != r->second->extras.end())
-						{
-							return 1;
-						}
-						return 0;
+						return Utility::isInContainer(r->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						if (static_cast<int>(params[4]) >= 0)
-						{
-							if (r->second->interiors.find(static_cast<int>(params[4])) != r->second->interiors.end())
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (r->second->interiors.empty())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(r->second->interiors, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case PlayerID:
 					{
-						if (static_cast<size_t>(params[4]) >= 0 && static_cast<size_t>(params[4]) < r->second->players.size())
-						{
-							if (r->second->players[static_cast<size_t>(params[4])])
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (r->second->players.count() == r->second->players.size())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(r->second->players, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case WorldID:
 					{
-						if (static_cast<int>(params[4]) >= 0)
-						{
-							if (r->second->worlds.find(static_cast<int>(params[4])) != r->second->worlds.end())
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (r->second->worlds.empty())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(r->second->worlds, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					default:
@@ -2345,68 +2720,22 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						if (m->second->extras.find(static_cast<int>(params[4])) != m->second->extras.end())
-						{
-							return 1;
-						}
-						return 0;
+						return Utility::isInContainer(m->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						if (static_cast<int>(params[4]) >= 0)
-						{
-							if (m->second->interiors.find(static_cast<int>(params[4])) != m->second->interiors.end())
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (m->second->interiors.empty())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(m->second->interiors, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case PlayerID:
 					{
-						if (static_cast<size_t>(params[4]) >= 0 && static_cast<size_t>(params[4]) < m->second->players.size())
-						{
-							if (m->second->players[static_cast<size_t>(params[4])])
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (m->second->players.count() == m->second->players.size())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(m->second->players, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case WorldID:
 					{
-						if (static_cast<int>(params[4]) >= 0)
-						{
-							if (m->second->worlds.find(static_cast<int>(params[4])) != m->second->worlds.end())
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (m->second->worlds.empty())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(m->second->worlds, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					default:
@@ -2429,68 +2758,22 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						if (t->second->extras.find(static_cast<int>(params[4])) != t->second->extras.end())
-						{
-							return 1;
-						}
-						return 0;
+						return Utility::isInContainer(t->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						if (static_cast<int>(params[4]) >= 0)
-						{
-							if (t->second->interiors.find(static_cast<int>(params[4])) != t->second->interiors.end())
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (t->second->interiors.empty())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(t->second->interiors, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case PlayerID:
 					{
-						if (static_cast<size_t>(params[4]) >= 0 && static_cast<size_t>(params[4]) < t->second->players.size())
-						{
-							if (t->second->players[static_cast<size_t>(params[4])])
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (t->second->players.count() == t->second->players.size())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(t->second->players, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case WorldID:
 					{
-						if (static_cast<int>(params[4]) >= 0)
-						{
-							if (t->second->worlds.find(static_cast<int>(params[4])) != t->second->worlds.end())
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (t->second->worlds.empty())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(t->second->worlds, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					default:
@@ -2513,68 +2796,22 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						if (a->second->extras.find(static_cast<int>(params[4])) != a->second->extras.end())
-						{
-							return 1;
-						}
-						return 0;
+						return Utility::isInContainer(a->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						if (static_cast<int>(params[4]) >= 0)
-						{
-							if (a->second->interiors.find(static_cast<int>(params[4])) != a->second->interiors.end())
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (a->second->interiors.empty())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(a->second->interiors, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case PlayerID:
 					{
-						if (static_cast<size_t>(params[4]) >= 0 && static_cast<size_t>(params[4]) < a->second->players.size())
-						{
-							if (a->second->players[static_cast<size_t>(params[4])])
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (a->second->players.count() == a->second->players.size())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(a->second->players, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case WorldID:
 					{
-						if (static_cast<int>(params[4]) >= 0)
-						{
-							if (a->second->worlds.find(static_cast<int>(params[4])) != a->second->worlds.end())
-							{
-								return 1;
-							}
-						}
-						else
-						{
-							if (a->second->worlds.empty())
-							{
-								return 1;
-							}
-						}
-						return 0;
+						return Utility::isInContainer(a->second->worlds, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					default:
@@ -2610,24 +2847,24 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						o->second->extras.insert(static_cast<int>(params[4]));
+						return Utility::addToContainer(o->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						Utility::addToContainer(o->second->interiors, static_cast<int>(params[4]));
+						return Utility::addToContainer(o->second->interiors, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case PlayerID:
 					{
-						Utility::addToContainer(o->second->players, static_cast<size_t>(params[4]));
+						return Utility::addToContainer(o->second->players, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case WorldID:
 					{
-						Utility::addToContainer(o->second->worlds, static_cast<int>(params[4]));
+						return Utility::addToContainer(o->second->worlds, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
@@ -2651,24 +2888,25 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						p->second->extras.insert(static_cast<int>(params[4]));
+						return Utility::addToContainer(p->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						Utility::addToContainer(p->second->interiors, static_cast<int>(params[4]));
+						return Utility::addToContainer(p->second->interiors, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case PlayerID:
 					{
-						Utility::addToContainer(p->second->players, static_cast<size_t>(params[4]));
+						return Utility::addToContainer(p->second->players, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case WorldID:
 					{
-						Utility::addToContainer(p->second->worlds, static_cast<int>(params[4]));
+						return Utility::addToContainer(p->second->worlds, static_cast<int>(params[4])) != 0;
+						return 1;
 					}
 					break;
 					default:
@@ -2691,24 +2929,25 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						c->second->extras.insert(static_cast<int>(params[4]));
+						return Utility::addToContainer(c->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						Utility::addToContainer(c->second->interiors, static_cast<int>(params[4]));
+						return Utility::addToContainer(c->second->interiors, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case PlayerID:
 					{
-						Utility::addToContainer(c->second->players, static_cast<size_t>(params[4]));
+						return Utility::addToContainer(c->second->players, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case WorldID:
 					{
-						Utility::addToContainer(c->second->worlds, static_cast<int>(params[4]));
+						return Utility::addToContainer(c->second->worlds, static_cast<int>(params[4])) != 0;
+						return 1;
 					}
 					break;
 					default:
@@ -2731,24 +2970,25 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						r->second->extras.insert(static_cast<int>(params[4]));
+						return Utility::addToContainer(r->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						Utility::addToContainer(r->second->interiors, static_cast<int>(params[4]));
+						return Utility::addToContainer(r->second->interiors, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case PlayerID:
 					{
-						Utility::addToContainer(r->second->players, static_cast<size_t>(params[4]));
+						return Utility::addToContainer(r->second->players, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case WorldID:
 					{
-						Utility::addToContainer(r->second->worlds, static_cast<int>(params[4]));
+						return Utility::addToContainer(r->second->worlds, static_cast<int>(params[4])) != 0;
+						return 1;
 					}
 					break;
 					default:
@@ -2771,24 +3011,25 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						m->second->extras.insert(static_cast<int>(params[4]));
+						return Utility::addToContainer(m->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						Utility::addToContainer(m->second->interiors, static_cast<int>(params[4]));
+						return Utility::addToContainer(m->second->interiors, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case PlayerID:
 					{
-						Utility::addToContainer(m->second->players, static_cast<size_t>(params[4]));
+						return Utility::addToContainer(m->second->players, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case WorldID:
 					{
-						Utility::addToContainer(m->second->worlds, static_cast<int>(params[4]));
+						return Utility::addToContainer(m->second->worlds, static_cast<int>(params[4])) != 0;
+						return 1;
 					}
 					break;
 					default:
@@ -2811,24 +3052,25 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						t->second->extras.insert(static_cast<int>(params[4]));
+						return Utility::addToContainer(t->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						Utility::addToContainer(t->second->interiors, static_cast<int>(params[4]));
+						return Utility::addToContainer(t->second->interiors, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case PlayerID:
 					{
-						Utility::addToContainer(t->second->players, static_cast<size_t>(params[4]));
+						return Utility::addToContainer(t->second->players, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case WorldID:
 					{
-						Utility::addToContainer(t->second->worlds, static_cast<int>(params[4]));
+						return Utility::addToContainer(t->second->worlds, static_cast<int>(params[4])) != 0;
+						return 1;
 					}
 					break;
 					default:
@@ -2851,24 +3093,25 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						a->second->extras.insert(static_cast<int>(params[4]));
+						return Utility::addToContainer(a->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						Utility::addToContainer(a->second->interiors, static_cast<int>(params[4]));
+						return Utility::addToContainer(a->second->interiors, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case PlayerID:
 					{
-						Utility::addToContainer(a->second->players, static_cast<size_t>(params[4]));
+						return Utility::addToContainer(a->second->players, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case WorldID:
 					{
-						Utility::addToContainer(a->second->worlds, static_cast<int>(params[4]));
+						return Utility::addToContainer(a->second->worlds, static_cast<int>(params[4])) != 0;
+						return 1;
 					}
 					break;
 					default:
@@ -2904,24 +3147,25 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						o->second->extras.erase(static_cast<int>(params[4]));
+						return Utility::removeFromContainer(o->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						Utility::removeFromContainer(o->second->interiors, static_cast<int>(params[4]));
+						return Utility::removeFromContainer(o->second->interiors, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case PlayerID:
 					{
-						Utility::removeFromContainer(o->second->players, static_cast<size_t>(params[4]));
+						return Utility::removeFromContainer(o->second->players, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case WorldID:
 					{
-						Utility::removeFromContainer(o->second->worlds, static_cast<int>(params[4]));
+						return Utility::removeFromContainer(o->second->worlds, static_cast<int>(params[4])) != 0;
+						return 1;
 					}
 					break;
 					default:
@@ -2944,24 +3188,25 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						p->second->extras.erase(static_cast<int>(params[4]));
+						return Utility::removeFromContainer(p->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						Utility::removeFromContainer(p->second->interiors, static_cast<int>(params[4]));
+						return Utility::removeFromContainer(p->second->interiors, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case PlayerID:
 					{
-						Utility::removeFromContainer(p->second->players, static_cast<size_t>(params[4]));
+						return Utility::removeFromContainer(p->second->players, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case WorldID:
 					{
-						Utility::removeFromContainer(p->second->worlds, static_cast<int>(params[4]));
+						return Utility::removeFromContainer(p->second->worlds, static_cast<int>(params[4])) != 0;
+						return 1;
 					}
 					break;
 					default:
@@ -2984,24 +3229,25 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						c->second->extras.erase(static_cast<int>(params[4]));
+						return Utility::removeFromContainer(c->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						Utility::removeFromContainer(c->second->interiors, static_cast<int>(params[4]));
+						return Utility::removeFromContainer(c->second->interiors, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case PlayerID:
 					{
-						Utility::removeFromContainer(c->second->players, static_cast<size_t>(params[4]));
+						return Utility::removeFromContainer(c->second->players, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case WorldID:
 					{
-						Utility::removeFromContainer(c->second->worlds, static_cast<int>(params[4]));
+						return Utility::removeFromContainer(c->second->worlds, static_cast<int>(params[4])) != 0;
+						return 1;
 					}
 					break;
 					default:
@@ -3024,24 +3270,25 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						r->second->extras.erase(static_cast<int>(params[4]));
+						return Utility::removeFromContainer(r->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						Utility::removeFromContainer(r->second->interiors, static_cast<int>(params[4]));
+						return Utility::removeFromContainer(r->second->interiors, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case PlayerID:
 					{
-						Utility::removeFromContainer(r->second->players, static_cast<size_t>(params[4]));
+						return Utility::removeFromContainer(r->second->players, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case WorldID:
 					{
-						Utility::removeFromContainer(r->second->worlds, static_cast<int>(params[4]));
+						return Utility::removeFromContainer(r->second->worlds, static_cast<int>(params[4])) != 0;
+						return 1;
 					}
 					break;
 					default:
@@ -3064,24 +3311,25 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						m->second->extras.erase(static_cast<int>(params[4]));
+						return Utility::removeFromContainer(m->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						Utility::removeFromContainer(m->second->interiors, static_cast<int>(params[4]));
+						return Utility::removeFromContainer(m->second->interiors, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case PlayerID:
 					{
-						Utility::removeFromContainer(m->second->players, static_cast<size_t>(params[4]));
+						return Utility::removeFromContainer(m->second->players, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case WorldID:
 					{
-						Utility::removeFromContainer(m->second->worlds, static_cast<int>(params[4]));
+						return Utility::removeFromContainer(m->second->worlds, static_cast<int>(params[4])) != 0;
+						return 1;
 					}
 					break;
 					default:
@@ -3104,24 +3352,25 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						t->second->extras.erase(static_cast<int>(params[4]));
+						return Utility::removeFromContainer(t->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						Utility::removeFromContainer(t->second->interiors, static_cast<int>(params[4]));
+						return Utility::removeFromContainer(t->second->interiors, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case PlayerID:
 					{
-						Utility::removeFromContainer(t->second->players, static_cast<size_t>(params[4]));
+						return Utility::removeFromContainer(t->second->players, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case WorldID:
 					{
-						Utility::removeFromContainer(t->second->worlds, static_cast<int>(params[4]));
+						return Utility::removeFromContainer(t->second->worlds, static_cast<int>(params[4])) != 0;
+						return 1;
 					}
 					break;
 					default:
@@ -3144,24 +3393,25 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 				{
 					case ExtraID:
 					{
-						a->second->extras.erase(static_cast<int>(params[4]));
+						return Utility::removeFromContainer(a->second->extras, static_cast<int>(params[4])) != 0;
 					}
 					break;
 					case InteriorID:
 					{
-						Utility::removeFromContainer(a->second->interiors, static_cast<int>(params[4]));
+						return Utility::removeFromContainer(a->second->interiors, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case PlayerID:
 					{
-						Utility::removeFromContainer(a->second->players, static_cast<size_t>(params[4]));
+						return Utility::removeFromContainer(a->second->players, static_cast<int>(params[4])) != 0;
 						return 1;
 					}
 					break;
 					case WorldID:
 					{
-						Utility::removeFromContainer(a->second->worlds, static_cast<int>(params[4]));
+						return Utility::removeFromContainer(a->second->worlds, static_cast<int>(params[4])) != 0;
+						return 1;
 					}
 					break;
 					default:

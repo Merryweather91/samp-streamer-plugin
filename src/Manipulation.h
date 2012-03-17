@@ -62,6 +62,8 @@ namespace Manipulation
 	int setFloatData(AMX *amx, cell *params);
 	int getIntData(AMX *amx, cell *params);
 	int setIntData(AMX *amx, cell *params);
+	int getArrayData(AMX *amx, cell *params);
+	int setArrayData(AMX *amx, cell *params);
 	int isInArrayData(AMX *amx, cell *params);
 	int appendArrayData(AMX *amx, cell *params);
 	int removeArrayData(AMX *amx, cell *params);

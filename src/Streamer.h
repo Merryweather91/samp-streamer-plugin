@@ -75,7 +75,7 @@ private:
 	float averageUpdateTime;
 	bool processingFinalPlayer;
 
-	template<size_t N>
+	template<std::size_t N>
 	inline bool checkPlayer(const std::bitset<N> &a, const int b, const boost::unordered_set<int> &c, const int d, const boost::unordered_set<int> &e, const int f)
 	{
 		return (a[b] && (c.empty() || c.find(d) != c.end()) && (e.empty() || e.find(f) != e.end()));

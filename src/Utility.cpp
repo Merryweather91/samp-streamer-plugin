@@ -254,12 +254,12 @@ boost::unordered_map<int, Element::SharedTextLabel>::iterator Utility::destroyTe
 	return core->getData()->textLabels.erase(t);
 }
 
-void Utility::getPolygonFromNative(AMX *amx, cell input, cell size, Element::Polygon2D &polygon)
+void Utility::convertArrayToPolygon(AMX *amx, cell input, cell size, Element::Polygon2D &polygon)
 {
 	cell *array = NULL;
 	std::vector<Eigen::Vector2f> points;
 	amx_GetAddr(amx, input, &array);
-	for (size_t i = 0; i < static_cast<size_t>(size); i += 2)
+	for (std::size_t i = 0; i < static_cast<std::size_t>(size); i += 2)
 	{
 		points.push_back(Eigen::Vector2f(amx_ctof(array[i]), amx_ctof(array[i + 1])));
 	}
