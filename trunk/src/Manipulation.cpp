@@ -2853,19 +2853,16 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 					case InteriorID:
 					{
 						return Utility::addToContainer(o->second->interiors, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case PlayerID:
 					{
 						return Utility::addToContainer(o->second->players, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case WorldID:
 					{
 						return Utility::addToContainer(o->second->worlds, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					default:
@@ -2894,19 +2891,16 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 					case InteriorID:
 					{
 						return Utility::addToContainer(p->second->interiors, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case PlayerID:
 					{
 						return Utility::addToContainer(p->second->players, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case WorldID:
 					{
 						return Utility::addToContainer(p->second->worlds, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					default:
@@ -2935,19 +2929,16 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 					case InteriorID:
 					{
 						return Utility::addToContainer(c->second->interiors, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case PlayerID:
 					{
 						return Utility::addToContainer(c->second->players, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case WorldID:
 					{
 						return Utility::addToContainer(c->second->worlds, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					default:
@@ -2976,19 +2967,16 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 					case InteriorID:
 					{
 						return Utility::addToContainer(r->second->interiors, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case PlayerID:
 					{
 						return Utility::addToContainer(r->second->players, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case WorldID:
 					{
 						return Utility::addToContainer(r->second->worlds, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					default:
@@ -3017,19 +3005,16 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 					case InteriorID:
 					{
 						return Utility::addToContainer(m->second->interiors, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case PlayerID:
 					{
 						return Utility::addToContainer(m->second->players, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case WorldID:
 					{
 						return Utility::addToContainer(m->second->worlds, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					default:
@@ -3058,19 +3043,16 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 					case InteriorID:
 					{
 						return Utility::addToContainer(t->second->interiors, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case PlayerID:
 					{
 						return Utility::addToContainer(t->second->players, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case WorldID:
 					{
 						return Utility::addToContainer(t->second->worlds, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					default:
@@ -3099,19 +3081,16 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 					case InteriorID:
 					{
 						return Utility::addToContainer(a->second->interiors, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case PlayerID:
 					{
 						return Utility::addToContainer(a->second->players, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case WorldID:
 					{
 						return Utility::addToContainer(a->second->worlds, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					default:
@@ -3153,19 +3132,16 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 					case InteriorID:
 					{
 						return Utility::removeFromContainer(o->second->interiors, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case PlayerID:
 					{
 						return Utility::removeFromContainer(o->second->players, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case WorldID:
 					{
 						return Utility::removeFromContainer(o->second->worlds, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					default:
@@ -3194,19 +3170,16 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 					case InteriorID:
 					{
 						return Utility::removeFromContainer(p->second->interiors, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case PlayerID:
 					{
 						return Utility::removeFromContainer(p->second->players, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case WorldID:
 					{
 						return Utility::removeFromContainer(p->second->worlds, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					default:
@@ -3235,19 +3208,16 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 					case InteriorID:
 					{
 						return Utility::removeFromContainer(c->second->interiors, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case PlayerID:
 					{
 						return Utility::removeFromContainer(c->second->players, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case WorldID:
 					{
 						return Utility::removeFromContainer(c->second->worlds, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					default:
@@ -3276,19 +3246,16 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 					case InteriorID:
 					{
 						return Utility::removeFromContainer(r->second->interiors, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case PlayerID:
 					{
 						return Utility::removeFromContainer(r->second->players, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case WorldID:
 					{
 						return Utility::removeFromContainer(r->second->worlds, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					default:
@@ -3317,19 +3284,16 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 					case InteriorID:
 					{
 						return Utility::removeFromContainer(m->second->interiors, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case PlayerID:
 					{
 						return Utility::removeFromContainer(m->second->players, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case WorldID:
 					{
 						return Utility::removeFromContainer(m->second->worlds, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					default:
@@ -3358,19 +3322,16 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 					case InteriorID:
 					{
 						return Utility::removeFromContainer(t->second->interiors, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case PlayerID:
 					{
 						return Utility::removeFromContainer(t->second->players, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case WorldID:
 					{
 						return Utility::removeFromContainer(t->second->worlds, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					default:
@@ -3399,19 +3360,16 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 					case InteriorID:
 					{
 						return Utility::removeFromContainer(a->second->interiors, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case PlayerID:
 					{
 						return Utility::removeFromContainer(a->second->players, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					case WorldID:
 					{
 						return Utility::removeFromContainer(a->second->worlds, static_cast<int>(params[4])) != 0;
-						return 1;
 					}
 					break;
 					default:
