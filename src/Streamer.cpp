@@ -255,8 +255,8 @@ void Streamer::executeCallbacks(const std::multimap<bool, boost::tuple<int, int>
 				int index = 0;
 				if (!amx_FindPublic(*a, "OnPlayerEnterDynamicArea", &index))
 				{
-					amx_Push(*a, c->second.get<0>());
-					amx_Push(*a, c->second.get<1>());
+					amx_Push(*a, static_cast<cell>(c->second.get<0>()));
+					amx_Push(*a, static_cast<cell>(c->second.get<1>()));
 					amx_Exec(*a, NULL, index);
 				}
 			}
@@ -268,8 +268,8 @@ void Streamer::executeCallbacks(const std::multimap<bool, boost::tuple<int, int>
 				int index = 0;
 				if (!amx_FindPublic(*a, "OnPlayerLeaveDynamicArea", &index))
 				{
-					amx_Push(*a, c->second.get<0>());
-					amx_Push(*a, c->second.get<1>());
+					amx_Push(*a, static_cast<cell>(c->second.get<0>()));
+					amx_Push(*a, static_cast<cell>(c->second.get<1>()));
 					amx_Exec(*a, NULL, index);
 				}
 			}
@@ -286,7 +286,7 @@ void Streamer::executeCallbacks(const std::vector<int> &objectCallbacks)
 			int index = 0;
 			if (!amx_FindPublic(*a, "OnDynamicObjectMoved", &index))
 			{
-				amx_Push(*a, *c);
+				amx_Push(*a, static_cast<cell>(*c));
 				amx_Exec(*a, NULL, index);
 			}
 		}
