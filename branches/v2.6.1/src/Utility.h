@@ -169,9 +169,9 @@ namespace Utility
 		cell *array = NULL;
 		std::size_t i = 0;
 		amx_GetAddr(amx, input, &array);
-		for (std::size_t c = 0; c < static_cast<std::size_t>(size); ++c)
+		for (std::size_t c = 0; c < N; ++c)
 		{
-			if (c >= N)
+			if (i == static_cast<std::size_t>(size))
 			{
 				return false;
 			}
