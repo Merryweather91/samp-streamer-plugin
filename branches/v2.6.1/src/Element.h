@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -113,6 +113,19 @@ namespace Element
 		int references;
 		Eigen::Vector3f rotation;
 		float streamDistance;
+
+		struct Attach
+		{
+			Attach();
+
+			Eigen::Vector3f position;
+			Eigen::Vector3f offset;
+			int references;
+			Eigen::Vector3f rotation;
+			int vehicle;
+		};
+
+		boost::intrusive_ptr<Attach> attach;
 
 		struct Move
 		{
@@ -282,6 +295,19 @@ namespace boost
 		if (!(--object->references))
 		{
 			delete object;
+		}
+	}
+
+	inline void intrusive_ptr_add_ref(Element::Object::Attach *attach)
+	{
+		++attach->references;
+	}
+
+	inline void intrusive_ptr_release(Element::Object::Attach *attach)
+	{
+		if (!(--attach->references))
+		{
+			delete attach;
 		}
 	}
 

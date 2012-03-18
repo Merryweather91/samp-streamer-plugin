@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -25,11 +25,13 @@
 
 #define STREAMER_OPC (0)
 #define STREAMER_OPDC (1)
-#define STREAMER_OPPP (2)
-#define STREAMER_OPEC (3)
-#define STREAMER_OPLC (4)
-#define STREAMER_OPERC (5)
-#define STREAMER_OPLRC (6)
+#define STREAMER_OPEO (2)
+#define STREAMER_OPSO (3)
+#define STREAMER_OPPP (4)
+#define STREAMER_OPEC (5)
+#define STREAMER_OPLC (6)
+#define STREAMER_OPERC (7)
+#define STREAMER_OPLRC (8)
 
 namespace Natives
 {
@@ -64,6 +66,9 @@ namespace Natives
 	cell AMX_NATIVE_CALL MoveDynamicObject(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL StopDynamicObject(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL IsDynamicObjectMoving(AMX *amx, cell *params);
+	cell AMX_NATIVE_CALL AttachCameraToDynamicObject(AMX *amx, cell *params);
+	cell AMX_NATIVE_CALL AttachDynamicObjectToVehicle(AMX *amx, cell *params);
+	cell AMX_NATIVE_CALL EditDynamicObject(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL DestroyAllDynamicObjects(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL CountDynamicObjects(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL CreateDynamicPickup(AMX *amx, cell *params);

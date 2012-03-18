@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,8 @@ class Events
 public:
 	bool OnPlayerConnect(int playerid);
 	bool OnPlayerDisconnect(int playerid, int reason);
+	bool OnPlayerEditObject(int playerid, int playerobject, int objectid, int response, float x, float y, float z, float rx, float ry, float rz);
+	bool OnPlayerSelectObject(int playerid, int type, int objectid, int modelid, float x, float y, float z);
 	bool OnPlayerPickUpPickup(int playerid, int pickupid);
 	bool OnPlayerEnterCheckpoint(int playerid);
 	bool OnPlayerLeaveCheckpoint(int playerid);

@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -36,6 +36,7 @@ public:
 	void startManualUpdate(Player &player);
 
 	boost::unordered_set<Element::SharedArea> attachedAreas;
+	boost::unordered_set<Element::SharedObject> attachedObjects;
 	boost::unordered_set<Element::SharedTextLabel> attachedTextLabels;
 	boost::unordered_set<Element::SharedObject> movingObjects;
 
@@ -59,6 +60,7 @@ private:
 	void processActiveItems();
 
 	void processAttachedAreas();
+	void processAttachedObjects();
 	void processAttachedTextLabels();
 	void processMovingObjects();
 

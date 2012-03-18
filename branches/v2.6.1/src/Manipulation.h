@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -20,8 +20,17 @@ namespace Manipulation
 {
 	enum
 	{
+		AttachOffsetX,
+		AttachOffsetY,
+		AttachOffsetZ,
 		AttachedPlayer,
+		AttachRX,
+		AttachRY,
+		AttachRZ,
 		AttachedVehicle,
+		AttachX,
+		AttachY,
+		AttachZ,
 		Color,
 		DrawDistance,
 		ExtraID,

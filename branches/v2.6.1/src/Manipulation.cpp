@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -35,6 +35,87 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 				amx_GetAddr(amx, params[4], &result);
 				switch (static_cast<int>(params[3]))
 				{
+					case AttachOffsetX:
+					{
+						if (o->second->attach)
+						{
+							*result = amx_ftoc(o->second->attach->offset[0]);
+							return 1;
+						}
+					}
+					break;
+					case AttachOffsetY:
+					{
+						if (o->second->attach)
+						{
+							*result = amx_ftoc(o->second->attach->offset[1]);
+							return 1;
+						}
+					}
+					break;
+					case AttachOffsetZ:
+					{
+						if (o->second->attach)
+						{
+							*result = amx_ftoc(o->second->attach->offset[2]);
+							return 1;
+						}
+					}
+					break;
+					case AttachRX:
+					{
+						if (o->second->attach)
+						{
+							*result = amx_ftoc(o->second->attach->rotation[0]);
+							return 1;
+						}
+					}
+					break;
+					case AttachRY:
+					{
+						if (o->second->attach)
+						{
+							*result = amx_ftoc(o->second->attach->rotation[1]);
+							return 1;
+						}
+					}
+					break;
+					case AttachRZ:
+					{
+						if (o->second->attach)
+						{
+							*result = amx_ftoc(o->second->attach->rotation[2]);
+							return 1;
+						}
+					}
+					break;
+					case AttachX:
+					{
+						if (o->second->attach)
+						{
+							*result = amx_ftoc(o->second->attach->position[0]);
+							return 1;
+						}
+					}
+					break;
+					case AttachY:
+					{
+						if (o->second->attach)
+						{
+							*result = amx_ftoc(o->second->attach->position[1]);
+							return 1;
+						}
+					}
+					break;
+					case AttachZ:
+					{
+						if (o->second->attach)
+						{
+							*result = amx_ftoc(o->second->attach->position[2]);
+							return 1;
+						}
+					}
+					break;
 					case DrawDistance:
 					{
 						*result = amx_ftoc(o->second->drawDistance);
@@ -378,6 +459,33 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 				amx_GetAddr(amx, params[4], &result);
 				switch (static_cast<int>(params[3]))
 				{
+					case AttachX:
+					{
+						if (t->second->attach)
+						{
+							*result = amx_ftoc(t->second->attach->position[0]);
+							return 1;
+						}
+					}
+					break;
+					case AttachY:
+					{
+						if (t->second->attach)
+						{
+							*result = amx_ftoc(t->second->attach->position[1]);
+							return 1;
+						}
+					}
+					break;
+					case AttachZ:
+					{
+						if (t->second->attach)
+						{
+							*result = amx_ftoc(t->second->attach->position[2]);
+							return 1;
+						}
+					}
+					break;
 					case DrawDistance:
 					{
 						*result = amx_ftoc(t->second->drawDistance);
@@ -391,18 +499,21 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 						return 1;
 					}
 					break;
+					case AttachOffsetX:
 					case X:
 					{
 						*result = amx_ftoc(t->second->position[0]);
 						return 1;
 					}
 					break;
+					case AttachOffsetY:
 					case Y:
 					{
 						*result = amx_ftoc(t->second->position[1]);
 						return 1;
 					}
 					break;
+					case AttachOffsetZ:
 					case Z:
 					{
 						*result = amx_ftoc(t->second->position[2]);
@@ -429,53 +540,31 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 				amx_GetAddr(amx, params[4], &result);
 				switch (static_cast<int>(params[3]))
 				{
-					case X:
+					case AttachX:
 					{
-						switch (a->second->type)
+						if (a->second->attach)
 						{
-							case STREAMER_AREA_TYPE_CIRCLE:
-							{
-								*result = amx_ftoc(boost::get<Eigen::Vector2f>(a->second->position)[0]);
-							}
-							break;
-							case STREAMER_AREA_TYPE_SPHERE:
-							{
-								*result = amx_ftoc(boost::get<Eigen::Vector3f>(a->second->position)[0]);
-							}
-							break;
+							*result = amx_ftoc(a->second->attach->position[0]);
+							return 1;
 						}
-						return 1;
 					}
 					break;
-					case Y:
+					case AttachY:
 					{
-						switch (a->second->type)
+						if (a->second->attach)
 						{
-							case STREAMER_AREA_TYPE_CIRCLE:
-							{
-								*result = amx_ftoc(boost::get<Eigen::Vector2f>(a->second->position)[1]);
-							}
-							break;
-							case STREAMER_AREA_TYPE_SPHERE:
-							{
-								*result = amx_ftoc(boost::get<Eigen::Vector3f>(a->second->position)[1]);
-							}
-							break;
+							*result = amx_ftoc(a->second->attach->position[1]);
+							return 1;
 						}
-						return 1;
 					}
 					break;
-					case Z:
+					case AttachZ:
 					{
-						switch (a->second->type)
+						if (a->second->attach)
 						{
-							case STREAMER_AREA_TYPE_SPHERE:
-							{
-								*result = amx_ftoc(boost::get<Eigen::Vector3f>(a->second->position)[2]);
-							}
-							break;
+							*result = amx_ftoc(a->second->attach->position[2]);
+							return 1;
 						}
-						return 1;
 					}
 					break;
 					case MaxX:
@@ -593,6 +682,55 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 						return 1;
 					}
 					break;
+					case X:
+					{
+						switch (a->second->type)
+						{
+							case STREAMER_AREA_TYPE_CIRCLE:
+							{
+								*result = amx_ftoc(boost::get<Eigen::Vector2f>(a->second->position)[0]);
+							}
+							break;
+							case STREAMER_AREA_TYPE_SPHERE:
+							{
+								*result = amx_ftoc(boost::get<Eigen::Vector3f>(a->second->position)[0]);
+							}
+							break;
+						}
+						return 1;
+					}
+					break;
+					case Y:
+					{
+						switch (a->second->type)
+						{
+							case STREAMER_AREA_TYPE_CIRCLE:
+							{
+								*result = amx_ftoc(boost::get<Eigen::Vector2f>(a->second->position)[1]);
+							}
+							break;
+							case STREAMER_AREA_TYPE_SPHERE:
+							{
+								*result = amx_ftoc(boost::get<Eigen::Vector3f>(a->second->position)[1]);
+							}
+							break;
+						}
+						return 1;
+					}
+					break;
+					case Z:
+					{
+						switch (a->second->type)
+						{
+							case STREAMER_AREA_TYPE_SPHERE:
+							{
+								*result = amx_ftoc(boost::get<Eigen::Vector3f>(a->second->position)[2]);
+							}
+							break;
+						}
+						return 1;
+					}
+					break;
 					default:
 					{
 						logprintf("*** Streamer_GetFloatData: Invalid data specified");
@@ -625,6 +763,60 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case AttachOffsetX:
+					{
+						if (o->second->attach)
+						{
+							o->second->attach->offset[0] = amx_ctof(params[4]);
+							update = true;
+						}
+					}
+					break;
+					case AttachOffsetY:
+					{
+						if (o->second->attach)
+						{
+							o->second->attach->offset[1] = amx_ctof(params[4]);
+							update = true;
+						}
+					}
+					break;
+					case AttachOffsetZ:
+					{
+						if (o->second->attach)
+						{
+							o->second->attach->offset[2] = amx_ctof(params[4]);
+							update = true;
+						}
+					}
+					break;
+					case AttachRX:
+					{
+						if (o->second->attach)
+						{
+							o->second->attach->rotation[0] = amx_ctof(params[4]);
+							update = true;
+						}
+					}
+					break;
+					case AttachRY:
+					{
+						if (o->second->attach)
+						{
+							o->second->attach->rotation[1] = amx_ctof(params[4]);
+							update = true;
+						}
+					}
+					break;
+					case AttachRZ:
+					{
+						if (o->second->attach)
+						{
+							o->second->attach->rotation[2] = amx_ctof(params[4]);
+							update = true;
+						}
+					}
+					break;
 					case DrawDistance:
 					{
 						o->second->drawDistance = amx_ctof(params[4]);
@@ -726,6 +918,10 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						{
 							DestroyPlayerObject(p->first, i->second);
 							i->second = CreatePlayerObject(p->first, o->second->modelID, o->second->position[0], o->second->position[1], o->second->position[2], o->second->rotation[0], o->second->rotation[1], o->second->rotation[2], o->second->drawDistance);
+							if (o->second->attach)
+							{
+								AttachPlayerObjectToVehicle(p->first, i->second, o->second->attach->vehicle, o->second->attach->offset[0], o->second->attach->offset[1], o->second->attach->offset[2], o->second->attach->rotation[0], o->second->attach->rotation[1], o->second->attach->rotation[2]);		
+							}
 							if (o->second->move)
 							{
 								MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
@@ -1047,6 +1243,7 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						reassign = true;
 					}
 					break;
+					case AttachOffsetX:
 					case X:
 					{
 						t->second->position[0] = amx_ctof(params[4]);
@@ -1057,6 +1254,7 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						update = true;
 					}
 					break;
+					case AttachOffsetY:
 					case Y:
 					{
 						t->second->position[1] = amx_ctof(params[4]);
@@ -1067,6 +1265,7 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						update = true;
 					}
 					break;
+					case AttachOffsetZ:
 					case Z:
 					{
 						t->second->position[2] = amx_ctof(params[4]);
@@ -1107,57 +1306,6 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
-					case X:
-					{
-						switch (a->second->type)
-						{
-							case STREAMER_AREA_TYPE_CIRCLE:
-							{
-								boost::get<Eigen::Vector2f>(a->second->position)[0] = amx_ctof(params[4]);
-								reassign = true;
-							}
-							break;
-							case STREAMER_AREA_TYPE_SPHERE:
-							{
-								boost::get<Eigen::Vector3f>(a->second->position)[0] = amx_ctof(params[4]);
-								reassign = true;
-							}
-							break;
-						}
-					}
-					break;
-					case Y:
-					{
-						switch (a->second->type)
-						{
-							case STREAMER_AREA_TYPE_CIRCLE:
-							{
-								boost::get<Eigen::Vector2f>(a->second->position)[1] = amx_ctof(params[4]);
-								reassign = true;
-							}
-							break;
-							case STREAMER_AREA_TYPE_SPHERE:
-							{
-								boost::get<Eigen::Vector3f>(a->second->position)[1] = amx_ctof(params[4]);
-								reassign = true;
-							}
-							break;
-						}
-					}
-					break;
-					case Z:
-					{
-						switch (a->second->type)
-						{
-							case STREAMER_AREA_TYPE_SPHERE:
-							{
-								boost::get<Eigen::Vector3f>(a->second->position)[2] = amx_ctof(params[4]);
-							}
-							break;
-						}
-						return 1;
-					}
-					break;
 					case MaxX:
 					{
 						switch (a->second->type)
@@ -1284,6 +1432,57 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						}
 					}
 					break;
+					case X:
+					{
+						switch (a->second->type)
+						{
+							case STREAMER_AREA_TYPE_CIRCLE:
+							{
+								boost::get<Eigen::Vector2f>(a->second->position)[0] = amx_ctof(params[4]);
+								reassign = true;
+							}
+							break;
+							case STREAMER_AREA_TYPE_SPHERE:
+							{
+								boost::get<Eigen::Vector3f>(a->second->position)[0] = amx_ctof(params[4]);
+								reassign = true;
+							}
+							break;
+						}
+					}
+					break;
+					case Y:
+					{
+						switch (a->second->type)
+						{
+							case STREAMER_AREA_TYPE_CIRCLE:
+							{
+								boost::get<Eigen::Vector2f>(a->second->position)[1] = amx_ctof(params[4]);
+								reassign = true;
+							}
+							break;
+							case STREAMER_AREA_TYPE_SPHERE:
+							{
+								boost::get<Eigen::Vector3f>(a->second->position)[1] = amx_ctof(params[4]);
+								reassign = true;
+							}
+							break;
+						}
+					}
+					break;
+					case Z:
+					{
+						switch (a->second->type)
+						{
+							case STREAMER_AREA_TYPE_SPHERE:
+							{
+								boost::get<Eigen::Vector3f>(a->second->position)[2] = amx_ctof(params[4]);
+							}
+							break;
+						}
+						return 1;
+					}
+					break;
 					default:
 					{
 						logprintf("*** Streamer_SetFloatData: Invalid data specified");
@@ -1335,6 +1534,18 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case AttachedVehicle:
+					{
+						if (o->second->attach)
+						{
+							return o->second->attach->vehicle;
+						}
+						else
+						{
+							return INVALID_GENERIC_ID;
+						}
+					}
+					break;
 					case ExtraID:
 					{
 						return o->second->extraID;
@@ -1609,6 +1820,31 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case AttachedVehicle:
+					{
+						if (static_cast<int>(params[4]) != INVALID_GENERIC_ID)
+						{
+							o->second->attach = boost::intrusive_ptr<Element::Object::Attach>(new Element::Object::Attach);
+							o->second->attach->vehicle = static_cast<int>(params[4]);
+							o->second->attach->offset.setZero();
+							o->second->attach->rotation.setZero();
+							core->getStreamer()->attachedObjects.insert(o->second);
+						}
+						else
+						{
+							if (o->second->attach)
+							{
+								if (o->second->attach->vehicle != INVALID_GENERIC_ID)
+								{
+									o->second->attach.reset();
+									core->getStreamer()->attachedObjects.erase(o->second);
+									core->getGrid()->removeObject(o->second, true);
+								}
+							}
+						}
+						update = true;
+					}
+					break;
 					case ExtraID:
 					{
 						o->second->extraID = static_cast<int>(params[4]);
@@ -1636,6 +1872,10 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						{
 							DestroyPlayerObject(p->first, i->second);
 							i->second = CreatePlayerObject(p->first, o->second->modelID, o->second->position[0], o->second->position[1], o->second->position[2], o->second->rotation[0], o->second->rotation[1], o->second->rotation[2], o->second->drawDistance);
+							if (o->second->attach)
+							{
+								AttachPlayerObjectToVehicle(p->first, i->second, o->second->attach->vehicle, o->second->attach->offset[0], o->second->attach->offset[1], o->second->attach->offset[2], o->second->attach->rotation[0], o->second->attach->rotation[1], o->second->attach->rotation[2]);
+							}
 							if (o->second->move)
 							{
 								MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
@@ -1840,6 +2080,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 								{
 									t->second->attach.reset();
 									core->getStreamer()->attachedTextLabels.erase(t->second);
+									core->getGrid()->removeTextLabel(t->second, true);
 								}
 							}
 						}
@@ -1863,6 +2104,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 								{
 									t->second->attach.reset();
 									core->getStreamer()->attachedTextLabels.erase(t->second);
+									core->getGrid()->removeTextLabel(t->second, true);
 								}
 							}
 						}
@@ -1942,6 +2184,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 								{
 									a->second->attach.reset();
 									core->getStreamer()->attachedAreas.erase(a->second);
+									core->getGrid()->removeArea(a->second, true);
 								}
 							}
 						}
@@ -1965,6 +2208,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 								{
 									a->second->attach.reset();
 									core->getStreamer()->attachedAreas.erase(a->second);
+									core->getGrid()->removeArea(a->second, true);
 								}
 							}
 						}
