@@ -70,8 +70,8 @@ bool Events::OnPlayerPickUpPickup(int playerid, int pickupid)
 				int index = 0;
 				if (!amx_FindPublic(*a, "OnPlayerPickUpDynamicPickup", &index))
 				{
-					amx_Push(*a, pickupid);
-					amx_Push(*a, playerid);
+					amx_Push(*a, static_cast<cell>(pickupid));
+					amx_Push(*a, static_cast<cell>(playerid));
 					amx_Exec(*a, NULL, index);
 				}
 			}
@@ -95,8 +95,8 @@ bool Events::OnPlayerEnterCheckpoint(int playerid)
 				int index = 0;
 				if (!amx_FindPublic(*a, "OnPlayerEnterDynamicCP", &index))
 				{
-					amx_Push(*a, checkpointid);
-					amx_Push(*a, playerid);
+					amx_Push(*a, static_cast<cell>(checkpointid));
+					amx_Push(*a, static_cast<cell>(playerid));
 					amx_Exec(*a, NULL, index);
 				}
 			}
@@ -119,8 +119,8 @@ bool Events::OnPlayerLeaveCheckpoint(int playerid)
 				int index = 0;
 				if (!amx_FindPublic(*a, "OnPlayerLeaveDynamicCP", &index))
 				{
-					amx_Push(*a, checkpointid);
-					amx_Push(*a, playerid);
+					amx_Push(*a, static_cast<cell>(checkpointid));
+					amx_Push(*a, static_cast<cell>(playerid));
 					amx_Exec(*a, NULL, index);
 				}
 			}
@@ -143,8 +143,8 @@ bool Events::OnPlayerEnterRaceCheckpoint(int playerid)
 				int index = 0;
 				if (!amx_FindPublic(*a, "OnPlayerEnterDynamicRaceCP", &index))
 				{
-					amx_Push(*a, checkpointid);
-					amx_Push(*a, playerid);
+					amx_Push(*a, static_cast<cell>(checkpointid));
+					amx_Push(*a, static_cast<cell>(playerid));
 					amx_Exec(*a, NULL, index);
 				}
 			}
@@ -167,8 +167,8 @@ bool Events::OnPlayerLeaveRaceCheckpoint(int playerid)
 				int index = 0;
 				if (!amx_FindPublic(*a, "OnPlayerLeaveDynamicRaceCP", &index))
 				{
-					amx_Push(*a, checkpointid);
-					amx_Push(*a, playerid);
+					amx_Push(*a, static_cast<cell>(checkpointid));
+					amx_Push(*a, static_cast<cell>(playerid));
 					amx_Exec(*a, NULL, index);
 				}
 			}
