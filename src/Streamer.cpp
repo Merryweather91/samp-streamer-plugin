@@ -820,33 +820,29 @@ void Streamer::processActiveItems()
 
 void Streamer::processAttachedAreas()
 {
-	for (boost::unordered_set<Element::SharedArea>::iterator m = attachedAreas.begin(); m != attachedAreas.end(); ++m)
+	for (boost::unordered_set<Element::SharedArea>::iterator a = attachedAreas.begin(); a != attachedAreas.end(); ++a)
 	{
-		boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find((*m)->areaID);
-		if (a != core->getData()->areas.end())
+		if ((*a)->attach)
 		{
-			if (a->second->attach)
+			bool adjust = false;
+			if ((*a)->attach->player != INVALID_GENERIC_ID)
 			{
-				bool adjust = false;
-				if (a->second->attach->player != INVALID_GENERIC_ID)
+				adjust = GetPlayerPos((*a)->attach->player, &(*a)->attach->position[0], &(*a)->attach->position[1], &(*a)->attach->position[2]);
+			}
+			else if ((*a)->attach->vehicle != INVALID_GENERIC_ID)
+			{
+				adjust = GetVehiclePos((*a)->attach->vehicle, &(*a)->attach->position[0], &(*a)->attach->position[1], &(*a)->attach->position[2]);
+			}
+			if (adjust)
+			{
+				if ((*a)->cell)
 				{
-					adjust = GetPlayerPos(a->second->attach->player, &a->second->attach->position[0], &a->second->attach->position[1], &a->second->attach->position[2]);
+					core->getGrid()->removeArea(*a, true);
 				}
-				else if (a->second->attach->vehicle != INVALID_GENERIC_ID)
-				{
-					adjust = GetVehiclePos(a->second->attach->vehicle, &a->second->attach->position[0], &a->second->attach->position[1], &a->second->attach->position[2]);
-				}
-				if (adjust)
-				{
-					if (a->second->cell)
-					{
-						core->getGrid()->removeArea(a->second, true);
-					}
-				}
-				else
-				{
-					a->second->attach->position.fill(std::numeric_limits<float>::infinity());
-				}
+			}
+			else
+			{
+				(*a)->attach->position.fill(std::numeric_limits<float>::infinity());
 			}
 		}
 	}
@@ -854,33 +850,29 @@ void Streamer::processAttachedAreas()
 
 void Streamer::processAttachedTextLabels()
 {
-	for (boost::unordered_set<Element::SharedTextLabel>::iterator m = attachedTextLabels.begin(); m != attachedTextLabels.end(); ++m)
+	for (boost::unordered_set<Element::SharedTextLabel>::iterator t = attachedTextLabels.begin(); t != attachedTextLabels.end(); ++t)
 	{
-		boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find((*m)->textLabelID);
-		if (t != core->getData()->textLabels.end())
+		bool adjust = false;
+		if ((*t)->attach)
 		{
-			bool adjust = false;
-			if (t->second->attach)
+			if ((*t)->attach->player != INVALID_GENERIC_ID)
 			{
-				if (t->second->attach->player != INVALID_GENERIC_ID)
+				adjust = GetPlayerPos((*t)->attach->player, &(*t)->attach->position[0], &(*t)->attach->position[1], &(*t)->attach->position[2]);
+			}
+			else if ((*t)->attach->vehicle != INVALID_GENERIC_ID)
+			{
+				adjust = GetVehiclePos((*t)->attach->vehicle, &(*t)->attach->position[0], &(*t)->attach->position[1], &(*t)->attach->position[2]);
+			}
+			if (adjust)
+			{
+				if ((*t)->cell)
 				{
-					adjust = GetPlayerPos(t->second->attach->player, &t->second->attach->position[0], &t->second->attach->position[1], &t->second->attach->position[2]);
+					core->getGrid()->removeTextLabel(*t, true);
 				}
-				else if (t->second->attach->vehicle != INVALID_GENERIC_ID)
-				{
-					adjust = GetVehiclePos(t->second->attach->vehicle, &t->second->attach->position[0], &t->second->attach->position[1], &t->second->attach->position[2]);
-				}
-				if (adjust)
-				{
-					if (t->second->cell)
-					{
-						core->getGrid()->removeTextLabel(t->second, true);
-					}
-				}
-				else
-				{
-					t->second->attach->position.fill(std::numeric_limits<float>::infinity());
-				}
+			}
+			else
+			{
+				(*t)->attach->position.fill(std::numeric_limits<float>::infinity());
 			}
 		}
 	}
@@ -890,48 +882,44 @@ void Streamer::processMovingObjects()
 {
 	std::vector<int> objectCallbacks;
 	boost::chrono::steady_clock::time_point currentTime = boost::chrono::steady_clock::now();
-	boost::unordered_set<Element::SharedObject>::iterator m = movingObjects.begin();
-	while (m != movingObjects.end())
+	boost::unordered_set<Element::SharedObject>::iterator o = movingObjects.begin();
+	while (o != movingObjects.end())
 	{
 		bool objectFinishedMoving = false;
-		boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find((*m)->objectID);
-		if (o != core->getData()->objects.end())
+		if ((*o)->move)
 		{
-			if (o->second->move)
+			boost::chrono::duration<float, boost::milli> elapsedTime = currentTime - (*o)->move->time;
+			if (elapsedTime.count() < (*o)->move->duration)
 			{
-				boost::chrono::duration<float, boost::milli> elapsedTime = currentTime - o->second->move->time;
-				if (elapsedTime.count() < o->second->move->duration)
+				(*o)->position = (*o)->move->position.get<1>() + ((*o)->move->position.get<2>() * elapsedTime.count());
+				if ((*o)->move->rotation.get<0>().maxCoeff() > -1000.0f)
 				{
-					o->second->position = o->second->move->position.get<1>() + (o->second->move->position.get<2>() * elapsedTime.count());
-					if (o->second->move->rotation.get<0>().maxCoeff() > -1000.0f)
-					{
-						o->second->rotation = o->second->move->rotation.get<1>() + (o->second->move->rotation.get<2>() * elapsedTime.count());
-					}
+					(*o)->rotation = (*o)->move->rotation.get<1>() + ((*o)->move->rotation.get<2>() * elapsedTime.count());
 				}
-				else
+			}
+			else
+			{
+				(*o)->position = (*o)->move->position.get<0>();
+				if ((*o)->move->rotation.get<0>().maxCoeff() > -1000.0f)
 				{
-					o->second->position = o->second->move->position.get<0>();
-					if (o->second->move->rotation.get<0>().maxCoeff() > -1000.0f)
-					{
-						o->second->rotation = o->second->move->rotation.get<0>();
-					}
-					o->second->move.reset();
-					objectCallbacks.push_back(o->first);
-					objectFinishedMoving = true;
+					(*o)->rotation = (*o)->move->rotation.get<0>();
 				}
-				if (o->second->cell)
-				{
-					core->getGrid()->removeObject(o->second, true);
-				}
+				(*o)->move.reset();
+				objectCallbacks.push_back((*o)->objectID);
+				objectFinishedMoving = true;
+			}
+			if ((*o)->cell)
+			{
+				core->getGrid()->removeObject(*o, true);
 			}
 		}
 		if (objectFinishedMoving)
 		{
-			m = movingObjects.erase(m);
+			o = movingObjects.erase(o);
 		}
 		else
 		{
-			++m;
+			++o;
 		}
 	}
 	if (!objectCallbacks.empty())

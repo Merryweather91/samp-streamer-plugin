@@ -1840,6 +1840,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 								{
 									t->second->attach.reset();
 									core->getStreamer()->attachedTextLabels.erase(t->second);
+									core->getGrid()->removeTextLabel(t->second, true);
 								}
 							}
 						}
@@ -1863,6 +1864,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 								{
 									t->second->attach.reset();
 									core->getStreamer()->attachedTextLabels.erase(t->second);
+									core->getGrid()->removeTextLabel(t->second, true);
 								}
 							}
 						}
@@ -1942,6 +1944,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 								{
 									a->second->attach.reset();
 									core->getStreamer()->attachedAreas.erase(a->second);
+									core->getGrid()->removeArea(a->second, true);
 								}
 							}
 						}
@@ -1965,6 +1968,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 								{
 									a->second->attach.reset();
 									core->getStreamer()->attachedAreas.erase(a->second);
+									core->getGrid()->removeArea(a->second, true);
 								}
 							}
 						}
