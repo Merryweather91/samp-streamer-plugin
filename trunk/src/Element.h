@@ -149,6 +149,7 @@ namespace Element
 		int references;
 		float streamDistance;
 		int type;
+		int worldID;
 
 		boost::unordered_set<int> extras;
 		boost::unordered_set<int> interiors;
