@@ -989,7 +989,7 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					if (i != core->getStreamer()->internalPickups.end())
 					{
 						DestroyPickup(i->second);
-						i->second = CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], -1);
+						i->second = CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], p->second->worldID);
 					}
 				}
 				return (reassign || update);
@@ -1290,7 +1290,7 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						if (i != p->second.internalTextLabels.end())
 						{
 							DeletePlayer3DTextLabel(p->first, i->second);
-							i->second = CreatePlayer3DTextLabel(p->first, t->second->text.c_str(), t->second->color, t->second->position[0], t->second->position[1], t->second->position[2], t->second->drawDistance, (t->second->attach ? t->second->attach->player : INVALID_GENERIC_ID), (t->second->attach ? t->second->attach->vehicle : INVALID_GENERIC_ID), t->second->testLOS);
+							i->second = CreatePlayer3DTextLabel(p->first, t->second->text.c_str(), t->second->color, t->second->position[0], t->second->position[1], t->second->position[2], t->second->drawDistance, t->second->attach ? t->second->attach->player : INVALID_GENERIC_ID, t->second->attach ? t->second->attach->vehicle : INVALID_GENERIC_ID, t->second->testLOS);
 						}
 					}
 				}
@@ -1926,7 +1926,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					if (i != core->getStreamer()->internalPickups.end())
 					{
 						DestroyPickup(i->second);
-						i->second = CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], -1);
+						i->second = CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], p->second->worldID);
 					}
 					return 1;
 				}
@@ -2150,7 +2150,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						if (i != p->second.internalTextLabels.end())
 						{
 							DeletePlayer3DTextLabel(p->first, i->second);
-							i->second = CreatePlayer3DTextLabel(p->first, t->second->text.c_str(), t->second->color, t->second->position[0], t->second->position[1], t->second->position[2], t->second->drawDistance, (t->second->attach ? t->second->attach->player : INVALID_GENERIC_ID), (t->second->attach ? t->second->attach->vehicle : INVALID_GENERIC_ID), t->second->testLOS);
+							i->second = CreatePlayer3DTextLabel(p->first, t->second->text.c_str(), t->second->color, t->second->position[0], t->second->position[1], t->second->position[2], t->second->drawDistance, t->second->attach ? t->second->attach->player : INVALID_GENERIC_ID, t->second->attach ? t->second->attach->vehicle : INVALID_GENERIC_ID, t->second->testLOS);
 						}
 					}
 					return 1;

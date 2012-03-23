@@ -635,6 +635,11 @@ void Streamer::processPickups(Player &player, const std::vector<SharedCell> &pla
 				{
 					if (boost::geometry::comparable_distance(player.position, p->second->position) <= p->second->streamDistance)
 					{
+						boost::unordered_map<int, int>::iterator i = internalPickups.find(p->first);
+						if (i == internalPickups.end())
+						{
+							p->second->worldID = !p->second->worlds.empty() ? player.worldID : -1;
+						}
 						discoveredPickups.insert(*p);
 					}
 				}
@@ -664,7 +669,7 @@ void Streamer::processPickups(Player &player, const std::vector<SharedCell> &pla
 			{
 				break;
 			}
-			int internalID = CreatePickup(d->second->modelID, d->second->type, d->second->position[0], d->second->position[1], d->second->position[2], -1);
+			int internalID = CreatePickup(d->second->modelID, d->second->type, d->second->position[0], d->second->position[1], d->second->position[2], d->second->worldID);
 			if (internalID == INVALID_ALTERNATE_ID)
 			{
 				break;
@@ -799,7 +804,7 @@ void Streamer::processTextLabels(Player &player, const std::vector<SharedCell> &
 			player.visibleTextLabels = player.internalTextLabels.size();
 			break;
 		}
-		int internalID = CreatePlayer3DTextLabel(player.playerID, d->second->text.c_str(), d->second->color, d->second->position[0], d->second->position[1], d->second->position[2], d->second->drawDistance, (d->second->attach ? d->second->attach->player : INVALID_GENERIC_ID), (d->second->attach ? d->second->attach->vehicle : INVALID_GENERIC_ID), d->second->testLOS);
+		int internalID = CreatePlayer3DTextLabel(player.playerID, d->second->text.c_str(), d->second->color, d->second->position[0], d->second->position[1], d->second->position[2], d->second->drawDistance, d->second->attach ? d->second->attach->player : INVALID_GENERIC_ID, d->second->attach ? d->second->attach->vehicle : INVALID_GENERIC_ID, d->second->testLOS);
 		if (internalID == INVALID_GENERIC_ID)
 		{
 			player.visibleTextLabels = player.internalTextLabels.size();
