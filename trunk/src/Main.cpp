@@ -143,10 +143,7 @@ PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX *amx)
 {
 	core->getData()->interfaces.insert(amx);
 	int result = amx_Register(amx, natives, -1);
-	if (Utility::catchRuntimeErrorsInInterface(amx))
-	{
-		result = amx_Register(amx, natives, -1);
-	}
+	Utility::checkIncludeFileInInterface(amx);
 	return result;
 }
 

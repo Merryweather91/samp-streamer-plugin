@@ -23,7 +23,7 @@ namespace Utility
 {
 	cell AMX_NATIVE_CALL hookedNative(AMX *amx, cell *params);
 
-	bool catchRuntimeErrorsInInterface(AMX *amx);
+	void checkIncludeFileInInterface(AMX *amx);
 	void destroyAllItemsInInterface(AMX *amx);
 
 	boost::unordered_map<int, Element::SharedArea>::iterator destroyArea(boost::unordered_map<int, Element::SharedArea>::iterator a);
