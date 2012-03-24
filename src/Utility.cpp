@@ -26,8 +26,9 @@ cell AMX_NATIVE_CALL Utility::hookedNative(AMX *amx, cell *params)
 	return 1;
 }
 
-bool Utility::catchRuntimeErrorsInInterface(AMX *amx)
+void Utility::checkIncludeFileInInterface(AMX *amx)
 {
+	bool anyNativesFound = false;
 	bool anyNativesHooked = false;
 	AMX_HEADER *header = reinterpret_cast<AMX_HEADER*>(amx->base);
 	AMX_FUNCSTUBNT *natives = reinterpret_cast<AMX_FUNCSTUBNT*>(amx->base + header->natives);
@@ -35,21 +36,45 @@ bool Utility::catchRuntimeErrorsInInterface(AMX *amx)
 	amx_NumNatives(amx, &numberOfNatives);
 	for (int i = 0; i < numberOfNatives; ++i)
 	{
-		if (!natives[i].address)
+		char *name = reinterpret_cast<char*>(amx->base + natives[i].nameofs);
+		if (std::string(name).find("Streamer_") != std::string::npos)
 		{
-			char *name = reinterpret_cast<char*>(amx->base + natives[i].nameofs);
-			if (std::string(name).find("Streamer_") != std::string::npos)
+			anyNativesFound = true;
+			if (!natives[i].address)
 			{
-				natives[i].address = reinterpret_cast<cell>(hookedNative);
-				anyNativesHooked = true;
+				char *name = reinterpret_cast<char*>(amx->base + natives[i].nameofs);
+				if (std::string(name).find("Streamer_") != std::string::npos)
+				{
+					natives[i].address = reinterpret_cast<cell>(hookedNative);
+					anyNativesHooked = true;
+				}
 			}
+		}
+	}
+	if (anyNativesFound)
+	{
+		cell amx_addr = 0;
+		bool checkPassed = false;
+		if (!amx_FindPubVar(amx, "Streamer_IncludeFileVersion", &amx_addr))
+		{
+			cell *phys_addr = NULL;
+			if (!amx_GetAddr(amx, amx_addr, &phys_addr))
+			{
+				if (static_cast<int>(*phys_addr) == INCLUDE_VERSION)
+				{
+					checkPassed = true;
+				}
+			}
+		}
+		if (!checkPassed)
+		{
+			logprintf("*** Streamer Plugin: Include file version does not match plugin version (script needs to be recompiled with the latest include file)");
 		}
 	}
 	if (anyNativesHooked)
 	{
 		logprintf("*** Streamer Plugin: Obsolete or invalid native found (script needs to be recompiled with the latest include file)");
 	}
-	return anyNativesHooked;
 }
 
 void Utility::destroyAllItemsInInterface(AMX *amx)

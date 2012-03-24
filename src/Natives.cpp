@@ -1885,6 +1885,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_CallbackHook(AMX *amx, cell *params)
 	{
 		case STREAMER_OPC:
 		{
+			CHECK_PARAMS(2, "Streamer_CallbackHook");
 			cell *playerid = NULL;
 			amx_GetAddr(amx, params[2], &playerid);
 			return static_cast<cell>(core->getEvents()->OnPlayerConnect(static_cast<int>(*playerid)));
@@ -1892,6 +1893,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_CallbackHook(AMX *amx, cell *params)
 		break;
 		case STREAMER_OPDC:
 		{
+			CHECK_PARAMS(3, "Streamer_CallbackHook");
 			cell *playerid = NULL, *reason = NULL;
 			amx_GetAddr(amx, params[2], &playerid);
 			amx_GetAddr(amx, params[3], &reason);
@@ -1900,6 +1902,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_CallbackHook(AMX *amx, cell *params)
 		break;
 		case STREAMER_OPPP:
 		{
+			CHECK_PARAMS(3, "Streamer_CallbackHook");
 			cell *playerid = NULL, *pickupid = NULL;
 			amx_GetAddr(amx, params[2], &playerid);
 			amx_GetAddr(amx, params[3], &pickupid);
@@ -1908,6 +1911,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_CallbackHook(AMX *amx, cell *params)
 		break;
 		case STREAMER_OPEC:
 		{
+			CHECK_PARAMS(2, "Streamer_CallbackHook");
 			cell *playerid = NULL;
 			amx_GetAddr(amx, params[2], &playerid);
 			return static_cast<cell>(core->getEvents()->OnPlayerEnterCheckpoint(static_cast<int>(*playerid)));
@@ -1915,6 +1919,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_CallbackHook(AMX *amx, cell *params)
 		break;
 		case STREAMER_OPLC:
 		{
+			CHECK_PARAMS(2, "Streamer_CallbackHook");
 			cell *playerid = NULL;
 			amx_GetAddr(amx, params[2], &playerid);
 			return static_cast<cell>(core->getEvents()->OnPlayerLeaveCheckpoint(static_cast<int>(*playerid)));
@@ -1922,6 +1927,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_CallbackHook(AMX *amx, cell *params)
 		break;
 		case STREAMER_OPERC:
 		{
+			CHECK_PARAMS(2, "Streamer_CallbackHook");
 			cell *playerid = NULL;
 			amx_GetAddr(amx, params[2], &playerid);
 			return static_cast<cell>(core->getEvents()->OnPlayerEnterRaceCheckpoint(static_cast<int>(*playerid)));
@@ -1929,6 +1935,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_CallbackHook(AMX *amx, cell *params)
 		break;
 		case STREAMER_OPLRC:
 		{
+			CHECK_PARAMS(2, "Streamer_CallbackHook");
 			cell *playerid = NULL;
 			amx_GetAddr(amx, params[2], &playerid);
 			return static_cast<cell>(core->getEvents()->OnPlayerLeaveRaceCheckpoint(static_cast<int>(*playerid)));
