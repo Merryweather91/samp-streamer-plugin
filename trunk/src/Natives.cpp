@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -834,6 +834,11 @@ cell AMX_NATIVE_CALL Natives::MoveDynamicObject(AMX *amx, cell *params)
 	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
 	if (o != core->getData()->objects.end())
 	{
+		if (o->second->attach)
+		{
+			logprintf("MoveDynamicObject: Object is currently attached and cannot be moved");
+			return 0;
+		}
 		Eigen::Vector3f position(amx_ctof(params[2]), amx_ctof(params[3]), amx_ctof(params[4]));
 		Eigen::Vector3f rotation(amx_ctof(params[6]), amx_ctof(params[7]), amx_ctof(params[8]));
 		o->second->move = boost::intrusive_ptr<Element::Object::Move>(new Element::Object::Move);
@@ -902,6 +907,71 @@ cell AMX_NATIVE_CALL Natives::IsDynamicObjectMoving(AMX *amx, cell *params)
 	return 0;
 }
 
+cell AMX_NATIVE_CALL Natives::AttachCameraToDynamicObject(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(2, "AttachCameraToDynamicObject");
+	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
+	if (p != core->getData()->players.end())
+	{
+		boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(static_cast<int>(params[2]));
+		if (i != p->second.internalObjects.end())
+		{
+			AttachCameraToPlayerObject(p->first, i->second);
+			return 1;
+		}
+	}
+	return 0;
+}
+
+cell AMX_NATIVE_CALL Natives::AttachDynamicObjectToVehicle(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(8, "AttachDynamicObjectToVehicle");
+	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
+	if (o != core->getData()->objects.end())
+	{
+		o->second->attach = boost::intrusive_ptr<Element::Object::Attach>(new Element::Object::Attach);
+		o->second->attach->vehicle = static_cast<int>(params[2]);
+		o->second->attach->offset = Eigen::Vector3f(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+		o->second->attach->rotation = Eigen::Vector3f(amx_ctof(params[6]), amx_ctof(params[7]), amx_ctof(params[8]));
+		for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
+		{
+			boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
+			if (i != p->second.internalObjects.end())
+			{
+				AttachPlayerObjectToVehicle(p->first, i->second, o->second->attach->vehicle, o->second->attach->offset[0], o->second->attach->offset[1], o->second->attach->offset[2], o->second->attach->rotation[0], o->second->attach->rotation[1], o->second->attach->rotation[2]);
+			}
+		}
+		if (static_cast<int>(params[2]) != INVALID_GENERIC_ID)
+		{
+			core->getStreamer()->attachedObjects.insert(o->second);
+		}
+		else
+		{
+			o->second->attach.reset();
+			core->getStreamer()->attachedObjects.erase(o->second);
+			core->getGrid()->removeObject(o->second, true);
+		}
+		return 1;
+	}
+	return 0;
+}
+
+cell AMX_NATIVE_CALL Natives::EditDynamicObject(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(2, "EditDynamicObject");
+	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
+	if (p != core->getData()->players.end())
+	{
+		boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(static_cast<int>(params[2]));
+		if (i != p->second.internalObjects.end())
+		{
+			EditPlayerObject(p->first, i->second);
+			return 1;
+		}
+	}
+	return 0;
+}
+
 cell AMX_NATIVE_CALL Natives::DestroyAllDynamicObjects(AMX *amx, cell *params)
 {
 	Element::Object::identifier.reset();
@@ -914,6 +984,7 @@ cell AMX_NATIVE_CALL Natives::DestroyAllDynamicObjects(AMX *amx, cell *params)
 		p->second.internalObjects.clear();
 	}
 	core->getGrid()->eraseAllItems(STREAMER_TYPE_OBJECT);
+	core->getStreamer()->attachedObjects.clear();
 	core->getStreamer()->movingObjects.clear();
 	core->getData()->objects.clear();
 	return 1;
@@ -2147,6 +2218,37 @@ cell AMX_NATIVE_CALL Natives::Streamer_CallbackHook(AMX *amx, cell *params)
 			amx_GetAddr(amx, params[2], &playerid);
 			amx_GetAddr(amx, params[3], &reason);
 			return static_cast<cell>(core->getEvents()->OnPlayerDisconnect(static_cast<int>(*playerid), static_cast<int>(*reason)));
+		}
+		break;
+		case STREAMER_OPEO:
+		{
+			CHECK_PARAMS(11, "Streamer_CallbackHook");
+			cell *playerid = NULL, *playerobject = NULL, *objectid = NULL, *response = NULL, *x = NULL, *y = NULL, *z = NULL, *rx = NULL, *ry = NULL, *rz = NULL;
+			amx_GetAddr(amx, params[2], &playerid);
+			amx_GetAddr(amx, params[3], &playerobject);
+			amx_GetAddr(amx, params[4], &objectid);
+			amx_GetAddr(amx, params[5], &response);
+			amx_GetAddr(amx, params[6], &x);
+			amx_GetAddr(amx, params[7], &y);
+			amx_GetAddr(amx, params[8], &z);
+			amx_GetAddr(amx, params[9], &rx);
+			amx_GetAddr(amx, params[10], &ry);
+			amx_GetAddr(amx, params[11], &rz);
+			return static_cast<cell>(core->getEvents()->OnPlayerEditObject(static_cast<int>(*playerid), static_cast<int>(*playerobject), static_cast<int>(*objectid), static_cast<int>(*response), amx_ctof(*x), amx_ctof(*y), amx_ctof(*z), amx_ctof(*rx), amx_ctof(*ry), amx_ctof(*rz)));
+		}
+		break;
+		case STREAMER_OPSO:
+		{
+			CHECK_PARAMS(8, "Streamer_CallbackHook");
+			cell *playerid = NULL, *type = NULL, *objectid = NULL, *modelid = NULL, *x = NULL, *y = NULL, *z = NULL;
+			amx_GetAddr(amx, params[2], &playerid);
+			amx_GetAddr(amx, params[3], &type);
+			amx_GetAddr(amx, params[4], &objectid);
+			amx_GetAddr(amx, params[5], &modelid);
+			amx_GetAddr(amx, params[6], &x);
+			amx_GetAddr(amx, params[7], &y);
+			amx_GetAddr(amx, params[8], &z);
+			return static_cast<cell>(core->getEvents()->OnPlayerSelectObject(static_cast<int>(*playerid), static_cast<int>(*type), static_cast<int>(*objectid), static_cast<int>(*modelid), amx_ctof(*x), amx_ctof(*y), amx_ctof(*z)));
 		}
 		break;
 		case STREAMER_OPPP:
