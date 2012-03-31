@@ -20,6 +20,7 @@ namespace Manipulation
 {
 	enum
 	{
+		AttachedObject,
 		AttachedPlayer,
 		AttachedVehicle,
 		Color,

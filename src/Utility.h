@@ -34,6 +34,8 @@ namespace Utility
 	boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator destroyRaceCheckpoint(boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r);
 	boost::unordered_map<int, Element::SharedTextLabel>::iterator destroyTextLabel(boost::unordered_map<int, Element::SharedTextLabel>::iterator t);
 
+	bool isPointInArea(const Eigen::Vector3f &point, const Element::SharedArea &area);
+
 	inline bool addToContainer(boost::unordered_set<int> &container, int value)
 	{
 		if (value >= 0)

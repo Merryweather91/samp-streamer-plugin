@@ -429,55 +429,6 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 				amx_GetAddr(amx, params[4], &result);
 				switch (static_cast<int>(params[3]))
 				{
-					case X:
-					{
-						switch (a->second->type)
-						{
-							case STREAMER_AREA_TYPE_CIRCLE:
-							{
-								*result = amx_ftoc(boost::get<Eigen::Vector2f>(a->second->position)[0]);
-							}
-							break;
-							case STREAMER_AREA_TYPE_SPHERE:
-							{
-								*result = amx_ftoc(boost::get<Eigen::Vector3f>(a->second->position)[0]);
-							}
-							break;
-						}
-						return 1;
-					}
-					break;
-					case Y:
-					{
-						switch (a->second->type)
-						{
-							case STREAMER_AREA_TYPE_CIRCLE:
-							{
-								*result = amx_ftoc(boost::get<Eigen::Vector2f>(a->second->position)[1]);
-							}
-							break;
-							case STREAMER_AREA_TYPE_SPHERE:
-							{
-								*result = amx_ftoc(boost::get<Eigen::Vector3f>(a->second->position)[1]);
-							}
-							break;
-						}
-						return 1;
-					}
-					break;
-					case Z:
-					{
-						switch (a->second->type)
-						{
-							case STREAMER_AREA_TYPE_SPHERE:
-							{
-								*result = amx_ftoc(boost::get<Eigen::Vector3f>(a->second->position)[2]);
-							}
-							break;
-						}
-						return 1;
-					}
-					break;
 					case MaxX:
 					{
 						switch (a->second->type)
@@ -593,6 +544,55 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 						return 1;
 					}
 					break;
+										case X:
+					{
+						switch (a->second->type)
+						{
+							case STREAMER_AREA_TYPE_CIRCLE:
+							{
+								*result = amx_ftoc(boost::get<Eigen::Vector2f>(a->second->position)[0]);
+							}
+							break;
+							case STREAMER_AREA_TYPE_SPHERE:
+							{
+								*result = amx_ftoc(boost::get<Eigen::Vector3f>(a->second->position)[0]);
+							}
+							break;
+						}
+						return 1;
+					}
+					break;
+					case Y:
+					{
+						switch (a->second->type)
+						{
+							case STREAMER_AREA_TYPE_CIRCLE:
+							{
+								*result = amx_ftoc(boost::get<Eigen::Vector2f>(a->second->position)[1]);
+							}
+							break;
+							case STREAMER_AREA_TYPE_SPHERE:
+							{
+								*result = amx_ftoc(boost::get<Eigen::Vector3f>(a->second->position)[1]);
+							}
+							break;
+						}
+						return 1;
+					}
+					break;
+					case Z:
+					{
+						switch (a->second->type)
+						{
+							case STREAMER_AREA_TYPE_SPHERE:
+							{
+								*result = amx_ftoc(boost::get<Eigen::Vector3f>(a->second->position)[2]);
+							}
+							break;
+						}
+						return 1;
+					}
+					break;
 					default:
 					{
 						logprintf("*** Streamer_GetFloatData: Invalid data specified");
@@ -640,6 +640,7 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					case MoveZ:
 					{
 						logprintf("*** Streamer_SetFloatData: Use MoveDynamicObject to adjust moving object data");
+						return 0;
 					}
 					break;
 					case RX:
@@ -1107,57 +1108,6 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
-					case X:
-					{
-						switch (a->second->type)
-						{
-							case STREAMER_AREA_TYPE_CIRCLE:
-							{
-								boost::get<Eigen::Vector2f>(a->second->position)[0] = amx_ctof(params[4]);
-								reassign = true;
-							}
-							break;
-							case STREAMER_AREA_TYPE_SPHERE:
-							{
-								boost::get<Eigen::Vector3f>(a->second->position)[0] = amx_ctof(params[4]);
-								reassign = true;
-							}
-							break;
-						}
-					}
-					break;
-					case Y:
-					{
-						switch (a->second->type)
-						{
-							case STREAMER_AREA_TYPE_CIRCLE:
-							{
-								boost::get<Eigen::Vector2f>(a->second->position)[1] = amx_ctof(params[4]);
-								reassign = true;
-							}
-							break;
-							case STREAMER_AREA_TYPE_SPHERE:
-							{
-								boost::get<Eigen::Vector3f>(a->second->position)[1] = amx_ctof(params[4]);
-								reassign = true;
-							}
-							break;
-						}
-					}
-					break;
-					case Z:
-					{
-						switch (a->second->type)
-						{
-							case STREAMER_AREA_TYPE_SPHERE:
-							{
-								boost::get<Eigen::Vector3f>(a->second->position)[2] = amx_ctof(params[4]);
-							}
-							break;
-						}
-						return 1;
-					}
-					break;
 					case MaxX:
 					{
 						switch (a->second->type)
@@ -1282,6 +1232,57 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							}
 							break;
 						}
+					}
+					break;
+					case X:
+					{
+						switch (a->second->type)
+						{
+							case STREAMER_AREA_TYPE_CIRCLE:
+							{
+								boost::get<Eigen::Vector2f>(a->second->position)[0] = amx_ctof(params[4]);
+								reassign = true;
+							}
+							break;
+							case STREAMER_AREA_TYPE_SPHERE:
+							{
+								boost::get<Eigen::Vector3f>(a->second->position)[0] = amx_ctof(params[4]);
+								reassign = true;
+							}
+							break;
+						}
+					}
+					break;
+					case Y:
+					{
+						switch (a->second->type)
+						{
+							case STREAMER_AREA_TYPE_CIRCLE:
+							{
+								boost::get<Eigen::Vector2f>(a->second->position)[1] = amx_ctof(params[4]);
+								reassign = true;
+							}
+							break;
+							case STREAMER_AREA_TYPE_SPHERE:
+							{
+								boost::get<Eigen::Vector3f>(a->second->position)[1] = amx_ctof(params[4]);
+								reassign = true;
+							}
+							break;
+						}
+					}
+					break;
+					case Z:
+					{
+						switch (a->second->type)
+						{
+							case STREAMER_AREA_TYPE_SPHERE:
+							{
+								boost::get<Eigen::Vector3f>(a->second->position)[2] = amx_ctof(params[4]);
+							}
+							break;
+						}
+						return 1;
 					}
 					break;
 					default:
@@ -1542,6 +1543,18 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case AttachedObject:
+					{
+						if (a->second->attach)
+						{
+							return a->second->attach->object.get<0>();
+						}
+						else
+						{
+							return INVALID_GENERIC_ID;
+						}
+					}
+					break;
 					case AttachedPlayer:
 					{
 						if (a->second->attach)
@@ -1927,11 +1940,18 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case AttachedObject:
+					{
+						logprintf("*** Streamer_SetFloatData: Use AttachDynamicAreaToObject to adjust attached area data");
+						return 0;
+					}
+					break;
 					case AttachedPlayer:
 					{
 						if (static_cast<int>(params[4]) != INVALID_GENERIC_ID)
 						{
 							a->second->attach = boost::intrusive_ptr<Element::Area::Attach>(new Element::Area::Attach);
+							a->second->attach->object.get<0>() = INVALID_GENERIC_ID;
 							a->second->attach->player = static_cast<int>(params[4]);
 							a->second->attach->vehicle = INVALID_GENERIC_ID;
 							core->getStreamer()->attachedAreas.insert(a->second);
@@ -1956,6 +1976,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						if (static_cast<int>(params[4]) != INVALID_GENERIC_ID)
 						{
 							a->second->attach = boost::intrusive_ptr<Element::Area::Attach>(new Element::Area::Attach);
+							a->second->attach->object.get<0>() = INVALID_GENERIC_ID;
 							a->second->attach->player = INVALID_GENERIC_ID;
 							a->second->attach->vehicle = static_cast<int>(params[4]);
 							core->getStreamer()->attachedAreas.insert(a->second);

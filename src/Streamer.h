@@ -32,6 +32,7 @@ public:
 	std::size_t getVisibleItems(int type);
 	bool setVisibleItems(int type, std::size_t value);
 
+	void processActiveItems();
 	void startAutomaticUpdate();
 	void startManualUpdate(Player &player);
 
@@ -56,11 +57,9 @@ private:
 	void processRaceCheckpoints(Player &player, const std::vector<SharedCell> &playerCells);
 	void processTextLabels(Player &player, const std::vector<SharedCell> &playerCells);
 
-	void processActiveItems();
-
+	void processMovingObjects();
 	void processAttachedAreas();
 	void processAttachedTextLabels();
-	void processMovingObjects();
 
 	std::size_t tickCount;
 	std::size_t tickRate;
