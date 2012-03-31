@@ -1753,6 +1753,18 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case AttachedObject:
+					{
+						if (a->second->attach)
+						{
+							return a->second->attach->object.get<0>();
+						}
+						else
+						{
+							return INVALID_GENERIC_ID;
+						}
+					}
+					break;
 					case AttachedPlayer:
 					{
 						if (a->second->attach)
@@ -2167,11 +2179,18 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 			{
 				switch (static_cast<int>(params[3]))
 				{
+					case AttachedObject:
+					{
+						logprintf("*** Streamer_SetFloatData: Use AttachDynamicAreaToObject to adjust attached area data");
+						return 0;
+					}
+					break;
 					case AttachedPlayer:
 					{
 						if (static_cast<int>(params[4]) != INVALID_GENERIC_ID)
 						{
 							a->second->attach = boost::intrusive_ptr<Element::Area::Attach>(new Element::Area::Attach);
+							a->second->attach->object.get<0>() = INVALID_GENERIC_ID;
 							a->second->attach->player = static_cast<int>(params[4]);
 							a->second->attach->vehicle = INVALID_GENERIC_ID;
 							core->getStreamer()->attachedAreas.insert(a->second);
@@ -2196,6 +2215,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						if (static_cast<int>(params[4]) != INVALID_GENERIC_ID)
 						{
 							a->second->attach = boost::intrusive_ptr<Element::Area::Attach>(new Element::Area::Attach);
+							a->second->attach->object.get<0>() = INVALID_GENERIC_ID;
 							a->second->attach->player = INVALID_GENERIC_ID;
 							a->second->attach->vehicle = static_cast<int>(params[4]);
 							core->getStreamer()->attachedAreas.insert(a->second);

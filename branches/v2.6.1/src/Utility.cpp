@@ -279,6 +279,68 @@ boost::unordered_map<int, Element::SharedTextLabel>::iterator Utility::destroyTe
 	return core->getData()->textLabels.erase(t);
 }
 
+bool Utility::isPointInArea(const Eigen::Vector3f &point, const Element::SharedArea &area)
+{
+	switch (area->type)
+	{
+		case STREAMER_AREA_TYPE_CIRCLE:
+		{
+			if (area->attach)
+			{
+				if (boost::geometry::comparable_distance(Eigen::Vector2f(point[0], point[1]), Eigen::Vector2f(area->attach->position[0], area->attach->position[1])) <= area->size)
+				{
+					return true;
+				}
+			}
+			else
+			{
+				if (boost::geometry::comparable_distance(Eigen::Vector2f(point[0], point[1]), boost::get<Eigen::Vector2f>(area->position)) <= area->size)
+				{
+					return true;
+				}
+			}
+		}
+		break;
+		case STREAMER_AREA_TYPE_RECTANGLE:
+		{
+			return boost::geometry::within(Eigen::Vector2f(point[0], point[1]), boost::get<Element::Box2D>(area->position));
+		}
+		break;
+		case STREAMER_AREA_TYPE_SPHERE:
+		{
+			if (area->attach)
+			{
+				if (boost::geometry::comparable_distance(point, area->attach->position) <= area->size)
+				{
+					return true;
+				}
+			}
+			else
+			{
+				if (boost::geometry::comparable_distance(point, boost::get<Eigen::Vector3f>(area->position)) <= area->size)
+				{
+					return true;
+				}
+			}
+		}
+		break;
+		case STREAMER_AREA_TYPE_CUBE:
+		{
+			return boost::geometry::within(point, boost::get<Element::Box3D>(area->position));
+		}
+		break;
+		case STREAMER_AREA_TYPE_POLYGON:
+		{
+			if (point[2] >= boost::get<Element::Polygon2D>(area->position).get<1>()[0] && point[2] <= boost::get<Element::Polygon2D>(area->position).get<1>()[1])
+			{
+				return boost::geometry::within(Eigen::Vector2f(point[0], point[1]), boost::get<Element::Polygon2D>(area->position).get<0>());
+			}
+		}
+		break;
+	}
+	return false;
+}
+
 void Utility::convertArrayToPolygon(AMX *amx, cell input, cell size, Element::Polygon2D &polygon)
 {
 	cell *array = NULL;

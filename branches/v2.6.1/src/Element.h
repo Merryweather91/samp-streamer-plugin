@@ -39,6 +39,7 @@ namespace Element
 		{
 			Attach();
 
+			boost::tuple<int, int, int> object;
 			int player;
 			Eigen::Vector3f position;
 			int references;

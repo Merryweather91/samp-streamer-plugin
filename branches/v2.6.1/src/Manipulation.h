@@ -20,14 +20,15 @@ namespace Manipulation
 {
 	enum
 	{
+		AttachedObject,
+		AttachedPlayer,
+		AttachedVehicle,
 		AttachOffsetX,
 		AttachOffsetY,
 		AttachOffsetZ,
-		AttachedPlayer,
 		AttachRX,
 		AttachRY,
 		AttachRZ,
-		AttachedVehicle,
 		AttachX,
 		AttachY,
 		AttachZ,

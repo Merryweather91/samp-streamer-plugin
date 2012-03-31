@@ -69,7 +69,9 @@ void Grid::addArea(const Element::SharedArea &area)
 			break;
 			case STREAMER_AREA_TYPE_CUBE:
 			{
-				boost::geometry::centroid(Element::Box2D(Eigen::Vector2f(boost::get<Element::Box3D>(area->position).min_corner()[0], boost::get<Element::Box3D>(area->position).min_corner()[1]), Eigen::Vector2f(boost::get<Element::Box3D>(area->position).max_corner()[0], boost::get<Element::Box3D>(area->position).max_corner()[1])), position);
+				Eigen::Vector3f centroid = Eigen::Vector3f::Zero();
+				boost::geometry::centroid(boost::get<Element::Box3D>(area->position), centroid);
+				position = Eigen::Vector2f(centroid[0], centroid[1]);
 			}
 			break;
 			case STREAMER_AREA_TYPE_POLYGON:
