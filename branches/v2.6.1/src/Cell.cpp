@@ -23,7 +23,7 @@ Cell::Cell()
 	references = 0;
 }
 
-Cell::Cell(std::pair<int, int> assignedID)
+Cell::Cell(CellID assignedID)
 {
 	id = assignedID;
 	references = 0;

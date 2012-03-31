@@ -24,6 +24,7 @@ class Streamer;
 
 struct Player;
 
+typedef std::pair<int, int> CellID;
 typedef boost::intrusive_ptr<Cell> SharedCell;
 
 namespace Element

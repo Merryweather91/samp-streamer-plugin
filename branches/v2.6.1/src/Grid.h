@@ -48,14 +48,14 @@ public:
 private:
 	SharedCell globalCell;
 
-	boost::unordered_map<std::pair<int, int>, SharedCell> cells;
+	boost::unordered_map<CellID, SharedCell> cells;
 
 	Eigen::Matrix<float, 2, 9> translationMatrix;
 
 	void calculateTranslationMatrix();
-	void cleanVisibleCell(SharedCell &visibleCell, const boost::unordered_set<std::pair<int, int> > &discoveredCells);
+	void cleanVisibleCell(SharedCell &visibleCell, const boost::unordered_set<CellID> &discoveredCells);
 	void eraseCellIfEmpty(const SharedCell &cell);
-	std::pair<int, int> getCellID(const Eigen::Vector2f &position, bool insert = true);
+	CellID getCellID(const Eigen::Vector2f &position, bool insert = true);
 };
 
 #endif
