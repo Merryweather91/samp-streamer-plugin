@@ -17,6 +17,7 @@
 */
 
 #include "Main.h"
+#include "Utility.h"
 
 Streamer::Streamer()
 {
@@ -300,82 +301,22 @@ void Streamer::processAreas(Player &player, const std::vector<SharedCell> &playe
 	{
 		for (boost::unordered_map<int, Element::SharedArea>::const_iterator a = (*c)->areas.begin(); a != (*c)->areas.end(); ++a)
 		{
-			bool check = false, show = false;
+			bool in = false;
 			if (checkPlayer(a->second->players, player.playerID, a->second->interiors, player.interiorID, a->second->worlds, player.worldID))
 			{
 				boost::unordered_set<int>::iterator d = player.disabledAreas.find(a->first);
 				if (d == player.disabledAreas.end())
 				{
-					check = true;
-				}
-			}
-			if (check)
-			{
-				switch (a->second->type)
-				{
-					case STREAMER_AREA_TYPE_CIRCLE:
-					{
-						if (a->second->attach)
-						{
-							if (boost::geometry::comparable_distance(Eigen::Vector2f(player.position[0], player.position[1]), Eigen::Vector2f(a->second->attach->position[0], a->second->attach->position[1])) <= a->second->size)
-							{
-								show = true;
-							}
-						}
-						else
-						{
-							if (boost::geometry::comparable_distance(Eigen::Vector2f(player.position[0], player.position[1]), boost::get<Eigen::Vector2f>(a->second->position)) <= a->second->size)
-							{
-								show = true;
-							}
-						}
-					}
-					break;
-					case STREAMER_AREA_TYPE_RECTANGLE:
-					{
-						show = boost::geometry::within(Eigen::Vector2f(player.position[0], player.position[1]), boost::get<Element::Box2D>(a->second->position));
-					}
-					break;
-					case STREAMER_AREA_TYPE_SPHERE:
-					{
-						if (a->second->attach)
-						{
-							if (boost::geometry::comparable_distance(player.position, a->second->attach->position) <= a->second->size)
-							{
-								show = true;
-							}
-						}
-						else
-						{
-							if (boost::geometry::comparable_distance(player.position, boost::get<Eigen::Vector3f>(a->second->position)) <= a->second->size)
-							{
-								show = true;
-							}
-						}
-					}
-					break;
-					case STREAMER_AREA_TYPE_CUBE:
-					{
-						show = boost::geometry::within(player.position, boost::get<Element::Box3D>(a->second->position));
-					}
-					break;
-					case STREAMER_AREA_TYPE_POLYGON:
-					{
-						if (player.position[2] >= boost::get<Element::Polygon2D>(a->second->position).get<1>()[0] && player.position[2] <= boost::get<Element::Polygon2D>(a->second->position).get<1>()[1])
-						{
-							show = boost::geometry::within(Eigen::Vector2f(player.position[0], player.position[1]), boost::get<Element::Polygon2D>(a->second->position).get<0>());
-						}
-					}
-					break;
+					in = Utility::isPointInArea(player.position, a->second);
 				}
 			}
 			boost::unordered_set<int>::iterator i = player.internalAreas.find(a->first);
-			if (show)
+			if (in)
 			{
 				if (i == player.internalAreas.end())
 				{
 					player.internalAreas.insert(a->first);
-					areaCallbacks.insert(std::make_pair(show, boost::make_tuple(a->first, player.playerID)));
+					areaCallbacks.insert(std::make_pair(in, boost::make_tuple(a->first, player.playerID)));
 				}
 				if (a->second->cell)
 				{
@@ -387,7 +328,7 @@ void Streamer::processAreas(Player &player, const std::vector<SharedCell> &playe
 				if (i != player.internalAreas.end())
 				{
 					player.internalAreas.quick_erase(i);
-					areaCallbacks.insert(std::make_pair(show, boost::make_tuple(a->first, player.playerID)));
+					areaCallbacks.insert(std::make_pair(in, boost::make_tuple(a->first, player.playerID)));
 				}
 			}
 		}
@@ -809,6 +750,10 @@ void Streamer::processTextLabels(Player &player, const std::vector<SharedCell> &
 
 void Streamer::processActiveItems()
 {
+	if (!movingObjects.empty())
+	{
+		processMovingObjects();
+	}
 	if (!attachedAreas.empty())
 	{
 		processAttachedAreas();
@@ -816,70 +761,6 @@ void Streamer::processActiveItems()
 	if (!attachedTextLabels.empty())
 	{
 		processAttachedTextLabels();
-	}
-	if (!movingObjects.empty())
-	{
-		processMovingObjects();
-	}
-}
-
-void Streamer::processAttachedAreas()
-{
-	for (boost::unordered_set<Element::SharedArea>::iterator a = attachedAreas.begin(); a != attachedAreas.end(); ++a)
-	{
-		if ((*a)->attach)
-		{
-			bool adjust = false;
-			if ((*a)->attach->player != INVALID_GENERIC_ID)
-			{
-				adjust = GetPlayerPos((*a)->attach->player, &(*a)->attach->position[0], &(*a)->attach->position[1], &(*a)->attach->position[2]);
-			}
-			else if ((*a)->attach->vehicle != INVALID_GENERIC_ID)
-			{
-				adjust = GetVehiclePos((*a)->attach->vehicle, &(*a)->attach->position[0], &(*a)->attach->position[1], &(*a)->attach->position[2]);
-			}
-			if (adjust)
-			{
-				if ((*a)->cell)
-				{
-					core->getGrid()->removeArea(*a, true);
-				}
-			}
-			else
-			{
-				(*a)->attach->position.fill(std::numeric_limits<float>::infinity());
-			}
-		}
-	}
-}
-
-void Streamer::processAttachedTextLabels()
-{
-	for (boost::unordered_set<Element::SharedTextLabel>::iterator t = attachedTextLabels.begin(); t != attachedTextLabels.end(); ++t)
-	{
-		bool adjust = false;
-		if ((*t)->attach)
-		{
-			if ((*t)->attach->player != INVALID_GENERIC_ID)
-			{
-				adjust = GetPlayerPos((*t)->attach->player, &(*t)->attach->position[0], &(*t)->attach->position[1], &(*t)->attach->position[2]);
-			}
-			else if ((*t)->attach->vehicle != INVALID_GENERIC_ID)
-			{
-				adjust = GetVehiclePos((*t)->attach->vehicle, &(*t)->attach->position[0], &(*t)->attach->position[1], &(*t)->attach->position[2]);
-			}
-			if (adjust)
-			{
-				if ((*t)->cell)
-				{
-					core->getGrid()->removeTextLabel(*t, true);
-				}
-			}
-			else
-			{
-				(*t)->attach->position.fill(std::numeric_limits<float>::infinity());
-			}
-		}
 	}
 }
 
@@ -930,5 +811,91 @@ void Streamer::processMovingObjects()
 	if (!objectCallbacks.empty())
 	{
 		executeCallbacks(objectCallbacks);
+	}
+}
+
+void Streamer::processAttachedAreas()
+{
+	for (boost::unordered_set<Element::SharedArea>::iterator a = attachedAreas.begin(); a != attachedAreas.end(); ++a)
+	{
+		if ((*a)->attach)
+		{
+			bool adjust = false;
+			if ((*a)->attach->object.get<0>() != INVALID_GENERIC_ID)
+			{
+				switch ((*a)->attach->object.get<1>())
+				{
+					case STREAMER_OBJECT_TYPE_GLOBAL:
+					{
+						adjust = GetObjectPos((*a)->attach->object.get<0>(), &(*a)->attach->position[0], &(*a)->attach->position[1], &(*a)->attach->position[2]);
+					}
+					break;
+					case STREAMER_OBJECT_TYPE_PLAYER:
+					{
+						adjust = GetPlayerObjectPos((*a)->attach->object.get<2>(), (*a)->attach->object.get<0>(), &(*a)->attach->position[0], &(*a)->attach->position[1], &(*a)->attach->position[2]);
+					}
+					break;
+					case STREAMER_OBJECT_TYPE_DYNAMIC:
+					{
+						boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find((*a)->attach->object.get<0>());
+						if (o != core->getData()->objects.end())
+						{
+							(*a)->attach->position = o->second->position;
+							adjust = true;
+						}
+					}
+					break;
+				}
+			}
+			else if ((*a)->attach->player != INVALID_GENERIC_ID)
+			{
+				adjust = GetPlayerPos((*a)->attach->player, &(*a)->attach->position[0], &(*a)->attach->position[1], &(*a)->attach->position[2]);
+			}
+			else if ((*a)->attach->vehicle != INVALID_GENERIC_ID)
+			{
+				adjust = GetVehiclePos((*a)->attach->vehicle, &(*a)->attach->position[0], &(*a)->attach->position[1], &(*a)->attach->position[2]);
+			}
+			if (adjust)
+			{
+				if ((*a)->cell)
+				{
+					core->getGrid()->removeArea(*a, true);
+				}
+			}
+			else
+			{
+				(*a)->attach->position.fill(std::numeric_limits<float>::infinity());
+			}
+		}
+	}
+}
+
+void Streamer::processAttachedTextLabels()
+{
+	for (boost::unordered_set<Element::SharedTextLabel>::iterator t = attachedTextLabels.begin(); t != attachedTextLabels.end(); ++t)
+	{
+		bool adjust = false;
+		if ((*t)->attach)
+		{
+			if ((*t)->attach->player != INVALID_GENERIC_ID)
+			{
+				adjust = GetPlayerPos((*t)->attach->player, &(*t)->attach->position[0], &(*t)->attach->position[1], &(*t)->attach->position[2]);
+			}
+			else if ((*t)->attach->vehicle != INVALID_GENERIC_ID)
+			{
+				adjust = GetVehiclePos((*t)->attach->vehicle, &(*t)->attach->position[0], &(*t)->attach->position[1], &(*t)->attach->position[2]);
+			}
+			if (adjust)
+			{
+				if ((*t)->cell)
+				{
+					core->getGrid()->removeTextLabel(*t, true);
+				}
+			}
+			else
+			{
+				(*t)->attach->position.fill(std::numeric_limits<float>::infinity());
+			}
+		}
 	}
 }

@@ -72,6 +72,24 @@ cell AMX_NATIVE_CALL Natives::Streamer_CellSize(AMX *amx, cell *params)
 	return 1;
 }
 
+cell AMX_NATIVE_CALL Natives::Streamer_ProcessActiveItems(AMX *amx, cell *params)
+{
+	core->getStreamer()->processActiveItems();
+	return 1;
+}
+
+cell AMX_NATIVE_CALL Natives::Streamer_ToggleIdleUpdate(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(2, "Streamer_ToggleIdleUpdate");
+	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
+	if (p != core->getData()->players.end())
+	{
+		p->second.idleUpdate = static_cast<int>(params[2]) != 0;
+		return 1;
+	}
+	return 0;
+}
+
 cell AMX_NATIVE_CALL Natives::Streamer_Update(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(1, "Streamer_Update");
@@ -111,18 +129,6 @@ cell AMX_NATIVE_CALL Natives::Streamer_UpdateEx(AMX *amx, cell *params)
 			p->second.interiorID = GetPlayerInterior(p->first);
 		}
 		core->getStreamer()->startManualUpdate(p->second);
-		return 1;
-	}
-	return 0;
-}
-
-cell AMX_NATIVE_CALL Natives::Streamer_ToggleIdleUpdate(AMX *amx, cell *params)
-{
-	CHECK_PARAMS(2, "Streamer_ToggleIdleUpdate");
-	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
-	if (p != core->getData()->players.end())
-	{
-		p->second.idleUpdate = static_cast<int>(params[2]) != 0;
 		return 1;
 	}
 	return 0;
@@ -288,9 +294,179 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetUpperBound(AMX *amx, cell *params)
 	return 0;
 }
 
+cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(6, "Streamer_GetDistanceToItem");
+	cell *result = NULL;
+	amx_GetAddr(amx, params[6], &result);
+	switch (static_cast<int>(params[4]))
+	{
+		case STREAMER_TYPE_OBJECT:
+		{
+			boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[5]));
+			if (o != core->getData()->objects.end())
+			{
+				float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), o->second->position);
+				*result = amx_ftoc(distance);
+				return 1;
+			}
+		}
+		break;
+		case STREAMER_TYPE_PICKUP:
+		{
+			boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[5]));
+			if (p != core->getData()->pickups.end())
+			{
+				float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), p->second->position);
+				*result = amx_ftoc(distance);
+				return 1;
+			}
+		}
+		break;
+		case STREAMER_TYPE_CP:
+		{
+			boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[5]));
+			if (c != core->getData()->checkpoints.end())
+			{
+				float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), c->second->position);
+				*result = amx_ftoc(distance);
+				return 1;
+			}
+		}
+		break;
+		case STREAMER_TYPE_RACE_CP:
+		{
+			boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[5]));
+			if (r != core->getData()->raceCheckpoints.end())
+			{
+				float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), r->second->position);
+				*result = amx_ftoc(distance);
+				return 1;
+			}
+		}
+		break;
+		case STREAMER_TYPE_MAP_ICON:
+		{
+			boost::unordered_map<int, Element::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[5]));
+			if (m != core->getData()->mapIcons.end())
+			{
+				float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), m->second->position);
+				*result = amx_ftoc(distance);
+				return 1;
+			}
+		}
+		break;
+		case STREAMER_TYPE_3D_TEXT_LABEL:
+		{
+			boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[5]));
+			if (t != core->getData()->textLabels.end())
+			{
+				float distance = 0.0f;
+				if (t->second->attach)
+				{
+					distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), t->second->attach->position);
+				}
+				else
+				{
+					distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), t->second->position);
+				}
+				*result = amx_ftoc(distance);
+				return 1;
+			}
+		}
+		case STREAMER_TYPE_AREA:
+		{
+			boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[5]));
+			if (a != core->getData()->areas.end())
+			{
+				switch (a->second->type)
+				{
+					case STREAMER_AREA_TYPE_CIRCLE:
+					{
+						float distance = 0.0f;
+						if (a->second->attach)
+						{
+							distance = boost::geometry::distance(Eigen::Vector2f(amx_ctof(params[1]), amx_ctof(params[2])), Eigen::Vector2f(a->second->attach->position[0], a->second->attach->position[1]));
+						}
+						else
+						{
+							distance = boost::geometry::distance(Eigen::Vector2f(amx_ctof(params[1]), amx_ctof(params[2])), boost::get<Eigen::Vector2f>(a->second->position));
+						}
+						*result = amx_ftoc(distance);
+						return 1;
+					}
+					break;
+					case STREAMER_AREA_TYPE_RECTANGLE:
+					{
+						Eigen::Vector2f centroid = Eigen::Vector2f::Zero();
+						boost::geometry::centroid(boost::get<Element::Box2D>(a->second->position), centroid);
+						float distance = boost::geometry::distance(Eigen::Vector2f(amx_ctof(params[1]), amx_ctof(params[2])), centroid);
+						*result = amx_ftoc(distance);
+						return 1;
+					}
+					break;
+					case STREAMER_AREA_TYPE_SPHERE:
+					{
+						float distance = 0.0f;
+						if (a->second->attach)
+						{
+							float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), a->second->attach->position);
+						}
+						else
+						{
+							float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), boost::get<Eigen::Vector3f>(a->second->position));
+						}
+						*result = amx_ftoc(distance);
+						return 1;
+					}
+					break;
+					case STREAMER_AREA_TYPE_CUBE:
+					{
+						Eigen::Vector3f centroid = Eigen::Vector3f::Zero();
+						boost::geometry::centroid(boost::get<Element::Box3D>(a->second->position), centroid);
+						float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), centroid);
+						*result = amx_ftoc(distance);
+						return 1;
+					}
+					break;
+					case STREAMER_AREA_TYPE_POLYGON:
+					{
+						if (amx_ctof(params[3]) >= boost::get<Element::Polygon2D>(a->second->position).get<1>()[0] && amx_ctof(params[3]) <= boost::get<Element::Polygon2D>(a->second->position).get<1>()[1])
+						{
+							Eigen::Vector2f centroid = Eigen::Vector2f::Zero();
+							boost::geometry::centroid(boost::get<Element::Polygon2D>(a->second->position).get<0>(), centroid);
+							float distance = boost::geometry::distance(Eigen::Vector2f(amx_ctof(params[1]), amx_ctof(params[2])), centroid);
+							*result = amx_ftoc(distance);
+							return 1;
+						}
+					}
+					break;
+				}
+				return 1;
+			}
+		}
+		break;
+		default:
+		{
+			logprintf("*** Streamer_GetDistanceToItem: Invalid type specified");
+		}
+		break;
+	}
+	return 0;
+}
+
 cell AMX_NATIVE_CALL Natives::Streamer_IsItemVisible(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(3, "Streamer_IsItemVisible");
+	if (static_cast<int>(params[2]) == STREAMER_TYPE_PICKUP)
+	{
+		boost::unordered_map<int, int>::iterator i = core->getStreamer()->internalPickups.find(static_cast<int>(params[3]));
+		if (i != core->getStreamer()->internalPickups.end())
+		{
+			return 1;
+		}
+		return 0;
+	}
 	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
 	if (p != core->getData()->players.end())
 	{
@@ -300,15 +476,6 @@ cell AMX_NATIVE_CALL Natives::Streamer_IsItemVisible(AMX *amx, cell *params)
 			{
 				boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(static_cast<int>(params[3]));
 				if (i != p->second.internalObjects.end())
-				{
-					return 1;
-				}
-			}
-			break;
-			case STREAMER_TYPE_PICKUP:
-			{
-				boost::unordered_map<int, int>::iterator i = core->getStreamer()->internalPickups.find(static_cast<int>(params[3]));
-				if (i != core->getStreamer()->internalPickups.end())
 				{
 					return 1;
 				}
@@ -369,6 +536,15 @@ cell AMX_NATIVE_CALL Natives::Streamer_IsItemVisible(AMX *amx, cell *params)
 cell AMX_NATIVE_CALL Natives::Streamer_DestroyAllVisibleItems(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(2, "Streamer_DestroyAllVisibleItems");
+	if (static_cast<int>(params[2]) == STREAMER_TYPE_PICKUP)
+	{
+		for (boost::unordered_map<int, int>::iterator q = core->getStreamer()->internalPickups.begin(); q != core->getStreamer()->internalPickups.end(); ++q)
+		{
+			DestroyPickup(q->second);
+		}
+		core->getStreamer()->internalPickups.clear();
+		return 1;
+	}
 	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
 	if (p != core->getData()->players.end())
 	{
@@ -381,16 +557,6 @@ cell AMX_NATIVE_CALL Natives::Streamer_DestroyAllVisibleItems(AMX *amx, cell *pa
 					DestroyPlayerObject(p->first, o->second);
 				}
 				p->second.internalObjects.clear();
-				return 1;
-			}
-			break;
-			case STREAMER_TYPE_PICKUP:
-			{
-				for (boost::unordered_map<int, int>::iterator q = core->getStreamer()->internalPickups.begin(); q != core->getStreamer()->internalPickups.end(); ++q)
-				{
-					DestroyPickup(q->second);
-				}
-				core->getStreamer()->internalPickups.clear();
 				return 1;
 			}
 			break;
@@ -455,6 +621,10 @@ cell AMX_NATIVE_CALL Natives::Streamer_DestroyAllVisibleItems(AMX *amx, cell *pa
 cell AMX_NATIVE_CALL Natives::Streamer_CountVisibleItems(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(2, "Streamer_CountVisibleItems");
+	if (static_cast<int>(params[2]) == STREAMER_TYPE_PICKUP)
+	{
+		return static_cast<cell>(core->getStreamer()->internalPickups.size());
+	}
 	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
 	if (p != core->getData()->players.end())
 	{
@@ -463,11 +633,6 @@ cell AMX_NATIVE_CALL Natives::Streamer_CountVisibleItems(AMX *amx, cell *params)
 			case STREAMER_TYPE_OBJECT:
 			{
 				return static_cast<cell>(p->second.internalObjects.size());
-			}
-			break;
-			case STREAMER_TYPE_PICKUP:
-			{
-				return static_cast<cell>(core->getStreamer()->internalPickups.size());
 			}
 			break;
 			case STREAMER_TYPE_CP:
@@ -943,6 +1108,17 @@ cell AMX_NATIVE_CALL Natives::IsPlayerInDynamicCP(AMX *amx, cell *params)
 	return 0;
 }
 
+cell AMX_NATIVE_CALL Natives::GetPlayerVisibleDynamicCP(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(1, "GetPlayerVisibleDynamicCP");
+	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
+	if (p != core->getData()->players.end())
+	{
+		return p->second.visibleCheckpoint;
+	}
+	return 0;
+}
+
 cell AMX_NATIVE_CALL Natives::DestroyAllDynamicCPs(AMX *amx, cell *params)
 {
 	Element::Checkpoint::identifier.reset();
@@ -1082,6 +1258,17 @@ cell AMX_NATIVE_CALL Natives::IsPlayerInDynamicRaceCP(AMX *amx, cell *params)
 		{
 			return 1;
 		}
+	}
+	return 0;
+}
+
+cell AMX_NATIVE_CALL Natives::GetPlayerVisibleDynamicRaceCP(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(1, "GetPlayerVisibleDynamicRaceCP");
+	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
+	if (p != core->getData()->players.end())
+	{
+		return p->second.visibleRaceCheckpoint;
 	}
 	return 0;
 }
@@ -1506,13 +1693,73 @@ cell AMX_NATIVE_CALL Natives::IsPlayerInAnyDynamicArea(AMX *amx, cell *params)
 	return 0;
 }
 
+cell AMX_NATIVE_CALL Natives::IsPointInDynamicArea(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(4, "IsPointInDynamicArea");
+	boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[1]));
+	if (a != core->getData()->areas.end())
+	{
+		return Utility::isPointInArea(Eigen::Vector3f(amx_ctof(params[2]), amx_ctof(params[3]), amx_ctof(params[4])), a->second);
+	}
+	return 0;
+}
+
+cell AMX_NATIVE_CALL Natives::IsPointInAnyDynamicArea(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(3, "IsPointInAnyDynamicArea");
+	for (boost::unordered_map<int, Element::SharedArea>::const_iterator a = core->getData()->areas.begin(); a != core->getData()->areas.end(); ++a)
+	{
+		if (Utility::isPointInArea(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), a->second))
+		{
+			return 1;
+		}
+	}
+	return 0;
+}
+
+cell AMX_NATIVE_CALL Natives::AttachDynamicAreaToObject(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(4, "AttachDynamicAreaToObject");
+	boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[1]));
+	if (a != core->getData()->areas.end())
+	{
+		if (a->second->type != STREAMER_AREA_TYPE_CIRCLE && a->second->type != STREAMER_AREA_TYPE_SPHERE)
+		{
+			logprintf("*** AttachDynamicAreaToObject: Only circles and spheres may be attached to objects");
+			return 0;
+		}
+		if (static_cast<int>(params[2]) != INVALID_GENERIC_ID)
+		{
+			a->second->attach = boost::intrusive_ptr<Element::Area::Attach>(new Element::Area::Attach);
+			a->second->attach->object = boost::make_tuple(static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			a->second->attach->player = INVALID_GENERIC_ID;
+			a->second->attach->vehicle = INVALID_GENERIC_ID;
+			core->getStreamer()->attachedAreas.insert(a->second);
+		}
+		else
+		{
+			if (a->second->attach)
+			{
+				if (a->second->attach->object.get<0>() != INVALID_GENERIC_ID)
+				{
+					a->second->attach.reset();
+					core->getStreamer()->attachedAreas.erase(a->second);
+					core->getGrid()->removeArea(a->second, true);
+				}
+			}
+		}
+		return 1;
+	}
+	return 0;
+}
+
 cell AMX_NATIVE_CALL Natives::AttachDynamicAreaToPlayer(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(2, "AttachDynamicAreaToPlayer");
 	boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[1]));
 	if (a != core->getData()->areas.end())
 	{
-		if (a->second->type == 1 || a->second->type == 3)
+		if (a->second->type != STREAMER_AREA_TYPE_CIRCLE && a->second->type != STREAMER_AREA_TYPE_SPHERE)
 		{
 			logprintf("*** AttachDynamicAreaToPlayer: Only circles and spheres may be attached to players");
 			return 0;
@@ -1520,6 +1767,7 @@ cell AMX_NATIVE_CALL Natives::AttachDynamicAreaToPlayer(AMX *amx, cell *params)
 		if (static_cast<int>(params[2]) != INVALID_GENERIC_ID)
 		{
 			a->second->attach = boost::intrusive_ptr<Element::Area::Attach>(new Element::Area::Attach);
+			a->second->attach->object.get<0>() = INVALID_GENERIC_ID;
 			a->second->attach->player = static_cast<int>(params[2]);
 			a->second->attach->vehicle = INVALID_GENERIC_ID;
 			core->getStreamer()->attachedAreas.insert(a->second);
@@ -1547,7 +1795,7 @@ cell AMX_NATIVE_CALL Natives::AttachDynamicAreaToVehicle(AMX *amx, cell *params)
 	boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[1]));
 	if (a != core->getData()->areas.end())
 	{
-		if (a->second->type == 1 || a->second->type == 3)
+		if (a->second->type != STREAMER_AREA_TYPE_CIRCLE && a->second->type != STREAMER_AREA_TYPE_SPHERE)
 		{
 			logprintf("*** AttachDynamicAreaToVehicle: Only circles and spheres may be attached to vehicles");
 			return 0;
@@ -1555,6 +1803,7 @@ cell AMX_NATIVE_CALL Natives::AttachDynamicAreaToVehicle(AMX *amx, cell *params)
 		if (static_cast<int>(params[2]) != INVALID_GENERIC_ID)
 		{
 			a->second->attach = boost::intrusive_ptr<Element::Area::Attach>(new Element::Area::Attach);
+			a->second->attach->object.get<0>() = INVALID_GENERIC_ID;
 			a->second->attach->player = INVALID_GENERIC_ID;
 			a->second->attach->vehicle = static_cast<int>(params[2]);
 			core->getStreamer()->attachedAreas.insert(a->second);
