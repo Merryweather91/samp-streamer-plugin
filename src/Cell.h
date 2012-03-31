@@ -23,9 +23,9 @@ class Cell
 {
 public:
 	Cell();
-	Cell(std::pair<int, int> assignedID);
+	Cell(CellID assignedID);
 
-	std::pair<int, int> id;
+	CellID id;
 	int references;
 
 	boost::unordered_map<int, Element::SharedArea> areas;

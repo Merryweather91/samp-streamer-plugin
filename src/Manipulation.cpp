@@ -544,7 +544,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 						return 1;
 					}
 					break;
-										case X:
+					case X:
 					{
 						switch (a->second->type)
 						{
