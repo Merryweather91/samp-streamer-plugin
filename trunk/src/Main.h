@@ -63,12 +63,12 @@
 
 #include "../include/Eigen/Core"
 
+#include "../include/sampgdk/a_objects.h"
+#include "../include/sampgdk/a_players.h"
+#include "../include/sampgdk/a_samp.h"
+#include "../include/sampgdk/a_vehicles.h"
 #include "../include/sampgdk/core.h"
-#include "../include/sampgdk/objects.h"
-#include "../include/sampgdk/players.h"
 #include "../include/sampgdk/plugin.h"
-#include "../include/sampgdk/samp.h"
-#include "../include/sampgdk/vehicles.h"
 
 #include "Core.h"
 
