@@ -922,9 +922,13 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							{
 								AttachPlayerObjectToVehicle(p->first, i->second, o->second->attach->vehicle, o->second->attach->offset[0], o->second->attach->offset[1], o->second->attach->offset[2], o->second->attach->rotation[0], o->second->attach->rotation[1], o->second->attach->rotation[2]);		
 							}
-							if (o->second->move)
+							else if (o->second->move)
 							{
 								MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
+							}
+							if (o->second->material)
+							{
+								SetPlayerObjectMaterial(p->first, i->second, o->second->material->index, o->second->material->modelID, o->second->material->txdName.c_str(), o->second->material->textureName.c_str(), o->second->material->color);
 							}
 						}
 					}
@@ -1888,9 +1892,13 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 							{
 								AttachPlayerObjectToVehicle(p->first, i->second, o->second->attach->vehicle, o->second->attach->offset[0], o->second->attach->offset[1], o->second->attach->offset[2], o->second->attach->rotation[0], o->second->attach->rotation[1], o->second->attach->rotation[2]);
 							}
-							if (o->second->move)
+							else if (o->second->move)
 							{
 								MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
+							}
+							if (o->second->material)
+							{
+								SetPlayerObjectMaterial(p->first, i->second, o->second->material->index, o->second->material->modelID, o->second->material->txdName.c_str(), o->second->material->textureName.c_str(), o->second->material->color);
 							}
 						}
 					}

@@ -58,6 +58,11 @@ Object::Attach::Attach()
 	references = 0;
 }
 
+Object::Material::Material()
+{
+	references = 0;
+}
+
 Object::Move::Move()
 {
 	references = 0;

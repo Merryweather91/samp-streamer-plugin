@@ -972,6 +972,32 @@ cell AMX_NATIVE_CALL Natives::EditDynamicObject(AMX *amx, cell *params)
 	return 0;
 }
 
+cell AMX_NATIVE_CALL Natives::SetDynamicObjectMaterial(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(6, "SetDynamicObjectMaterial");
+	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
+	if (o != core->getData()->objects.end())
+	{
+		o->second->material = boost::intrusive_ptr<Element::Object::Material>(new Element::Object::Material);
+		o->second->material->index = static_cast<int>(params[2]);
+		o->second->material->modelID = static_cast<int>(params[3]);
+		o->second->material->txdName = Utility::getStringFromNative(amx, params[4]);
+		o->second->material->textureName = Utility::getStringFromNative(amx, params[5]);
+		o->second->material->color = static_cast<int>(params[6]);
+		for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
+		{
+			boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
+			if (i != p->second.internalObjects.end())
+			{
+				SetPlayerObjectMaterial(p->first, i->second, o->second->material->index, o->second->material->modelID, o->second->material->txdName.c_str(), o->second->material->textureName.c_str(), o->second->material->color);
+			}
+		}
+		return 1;
+	}
+	return 0;
+}
+
+
 cell AMX_NATIVE_CALL Natives::DestroyAllDynamicObjects(AMX *amx, cell *params)
 {
 	Element::Object::identifier.reset();

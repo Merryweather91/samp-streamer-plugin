@@ -553,9 +553,13 @@ void Streamer::processObjects(Player &player, const std::vector<SharedCell> &pla
 		{
 			AttachPlayerObjectToVehicle(player.playerID, internalID, d->second->attach->vehicle, d->second->attach->offset[0], d->second->attach->offset[1], d->second->attach->offset[2], d->second->attach->rotation[0], d->second->attach->rotation[1], d->second->attach->rotation[2]);
 		}
-		if (d->second->move)
+		else if (d->second->move)
 		{
 			MovePlayerObject(player.playerID, internalID, d->second->move->position.get<0>()[0], d->second->move->position.get<0>()[1], d->second->move->position.get<0>()[2], d->second->move->speed, d->second->move->rotation.get<0>()[0], d->second->move->rotation.get<0>()[1], d->second->move->rotation.get<0>()[2]);
+		}
+		if (d->second->material)
+		{
+			SetPlayerObjectMaterial(player.playerID, internalID, d->second->material->index, d->second->material->modelID, d->second->material->txdName.c_str(), d->second->material->textureName.c_str(), d->second->material->color);
 		}
 		player.internalObjects.insert(std::make_pair(d->second->objectID, internalID));
 		if (d->second->cell)
