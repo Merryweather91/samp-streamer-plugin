@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 Zeex
+/* Copyright (C) 2011-2012, Zeex
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-#ifndef SAMPGDK_PLAYERS_H
-#define SAMPGDK_PLAYERS_H
+#ifndef SAMPGDK_A_PLAYERS_H
+#define SAMPGDK_A_PLAYERS_H
 
 #include <sampgdk/config.h>
+#include <sampgdk/a_samp.h>
 #include <sampgdk/export.h>
-#include <sampgdk/samp.h>
 
 #include <stddef.h>
 
@@ -135,6 +135,30 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL RemoveBuildingForPlayer(int playerid, int model
 SAMPGDK_EXPORT bool SAMPGDK_CALL SetPlayerAttachedObject(int playerid, int index, int modelid, int bone, float fOffsetX, float fOffsetY, float fOffsetZ, float fRotX, float fRotY, float fRotZ, float fScaleX, float fScaleY, float fScaleZ);
 SAMPGDK_EXPORT bool SAMPGDK_CALL RemovePlayerAttachedObject(int playerid, int index);
 SAMPGDK_EXPORT bool SAMPGDK_CALL IsPlayerAttachedObjectSlotUsed(int playerid, int index);
+SAMPGDK_EXPORT bool SAMPGDK_CALL EditAttachedObject(int playerid, int index);
+
+SAMPGDK_EXPORT int SAMPGDK_CALL CreatePlayerTextDraw(int playerid, float x, float y, const char *text);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawDestroy(int playerid, int text);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawLetterSize(int playerid, int text, float x, float y);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawTextSize(int playerid, int text, float x, float y);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawAlignment(int playerid, int text, int alignment);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawColor(int playerid, int text, int color);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawUseBox(int playerid, int text, bool use);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawBoxColor(int playerid, int text, int color);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawSetShadow(int playerid, int text, int size);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawSetOutline(int playerid, int text, int size);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawBackgroundColor(int playerid, int text, int color);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawFont(int playerid, int text, int font);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawSetProportional(int playerid, int text, bool set);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawSetSelectable(int playerid, int text, bool set);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawShow(int playerid, int text);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawHide(int playerid, int text);
+SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawSetString(int playerid, int text, const char *string);
+
+#define PLAYER_VARTYPE_NONE   (0)
+#define PLAYER_VARTYPE_INT    (1)
+#define PLAYER_VARTYPE_STRING (2)
+#define PLAYER_VARTYPE_FLOAT  (3)
 
 SAMPGDK_EXPORT bool SAMPGDK_CALL SetPVarInt(int playerid, const char *varname, int value);
 SAMPGDK_EXPORT int SAMPGDK_CALL GetPVarInt(int playerid, const char *varname);
@@ -143,11 +167,6 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL GetPVarString(int playerid, const char *varname
 SAMPGDK_EXPORT bool SAMPGDK_CALL SetPVarFloat(int playerid, const char *varname, float value);
 SAMPGDK_EXPORT float SAMPGDK_CALL GetPVarFloat(int playerid, const char *varname);
 SAMPGDK_EXPORT bool SAMPGDK_CALL DeletePVar(int playerid, const char *varname);
-
-#define PLAYER_VARTYPE_NONE   (0)
-#define PLAYER_VARTYPE_INT    (1)
-#define PLAYER_VARTYPE_STRING (2)
-#define PLAYER_VARTYPE_FLOAT  (3)
 
 SAMPGDK_EXPORT int SAMPGDK_CALL GetPVarsUpperIndex(int playerid);
 SAMPGDK_EXPORT bool SAMPGDK_CALL GetPVarNameAtIndex(int playerid, int index, char *varname, size_t size);
@@ -228,4 +247,4 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerSpectateVehicle(int playerid, int targetv
 SAMPGDK_EXPORT bool SAMPGDK_CALL StartRecordingPlayerData(int playerid, int recordtype, const char *recordname);
 SAMPGDK_EXPORT bool SAMPGDK_CALL StopRecordingPlayerData(int playerid);
 
-#endif /* !SAMPGDK_PLAYERS_H */
+#endif /* !SAMPGDK_A_PLAYERS_H */
