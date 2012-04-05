@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 Zeex
+/* Copyright (C) 2011-2012, Zeex
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-#ifndef SAMPGDK_VEHICLES_H
-#define SAMPGDK_VEHICLES_H
+#ifndef SAMPGDK_A_VEHICLES_H
+#define SAMPGDK_A_VEHICLES_H
 
 #include <sampgdk/config.h>
+#include <sampgdk/a_samp.h>
 #include <sampgdk/export.h>
-#include <sampgdk/samp.h>
 
 #define CARMODTYPE_SPOILER      (0)
 #define CARMODTYPE_HOOD         (1)
@@ -77,4 +77,16 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL UpdateVehicleDamageStatus(int vehicleid, int pa
 SAMPGDK_EXPORT bool SAMPGDK_CALL SetVehicleVirtualWorld(int vehicleid, int worldid);
 SAMPGDK_EXPORT bool SAMPGDK_CALL GetVehicleVirtualWorld(int vehicleid);
 
-#endif /* !SAMPGDK_VEHICLES_H */
+#define VEHICLE_MODEL_INFO_SIZE				1
+#define VEHICLE_MODEL_INFO_FRONTSEAT		2
+#define VEHICLE_MODEL_INFO_REARSEAT			3
+#define VEHICLE_MODEL_INFO_PETROLCAP		4
+#define VEHICLE_MODEL_INFO_WHEELSFRONT		5
+#define VEHICLE_MODEL_INFO_WHEELSREAR		6
+#define VEHICLE_MODEL_INFO_WHEELSMID		7
+#define VEHICLE_MODEL_INFO_FRONT_BUMPER_Z	8
+#define VEHICLE_MODEL_INFO_REAR_BUMPER_Z	9
+
+SAMPGDK_EXPORT void SAMPGDK_CALL GetVehicleModelInfo(int model, int infotype, float *X, float *Y, float *Z);
+
+#endif /* !SAMPGDK_A_VEHICLES_H */

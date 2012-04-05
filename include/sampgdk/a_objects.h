@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 Zeex
+/* Copyright (C) 2011-2012, Zeex
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-#ifndef SAMPGDK_OBJECTS_H
-#define SAMPGDK_OBJECTS_H
+#ifndef SAMPGDK_A_OBJECTS_H
+#define SAMPGDK_A_OBJECTS_H
 
 #include <sampgdk/config.h>
+#include <sampgdk/a_samp.h>
 #include <sampgdk/export.h>
-#include <sampgdk/samp.h>
 
 SAMPGDK_EXPORT int SAMPGDK_CALL CreateObject(int modelid, float x, float y, float z, float rX, float rY, float rZ, float DrawDistance);
 SAMPGDK_EXPORT void SAMPGDK_CALL AttachObjectToVehicle(int objectid, int vehicleid, float fOffsetX, float fOffsetY, float fOffsetZ, float fRotX, float fRotY, float fRotZ);
@@ -34,10 +34,10 @@ SAMPGDK_EXPORT int SAMPGDK_CALL MoveObject(int objectid, float X, float Y, float
 SAMPGDK_EXPORT bool SAMPGDK_CALL StopObject(int objectid);
 SAMPGDK_EXPORT bool SAMPGDK_CALL IsObjectMoving(int objectid);
 SAMPGDK_EXPORT bool SAMPGDK_CALL EditObject(int playerid, int objectid);
-SAMPGDK_EXPORT bool SAMPGDK_CALL EditAttachedObject(int playerid, int index);
 SAMPGDK_EXPORT bool SAMPGDK_CALL EditPlayerObject(int playerid, int objectid);
 SAMPGDK_EXPORT void SAMPGDK_CALL SelectObject(int playerid);
 SAMPGDK_EXPORT void SAMPGDK_CALL CancelEdit(int playerid);
+SAMPGDK_EXPORT void SAMPGDK_CALL SetObjectMaterial(int objectid, int materialindex, int modelid, const char *txdname, const char *texturename, int materialcolor);
 SAMPGDK_EXPORT int SAMPGDK_CALL CreatePlayerObject(int playerid, int modelid, float x, float y, float z, float rX, float rY, float rZ, float DrawDistance);
 SAMPGDK_EXPORT void SAMPGDK_CALL AttachPlayerObjectToPlayer(int objectplayer, int objectid, int attachplayer, float OffsetX, float OffsetY, float OffsetZ, float rX, float rY, float rZ);
 SAMPGDK_EXPORT bool SAMPGDK_CALL AttachPlayerObjectToVehicle(int playerid, int objectid, int vehicleid, float fOffsetX, float fOffsetY, float fOffsetZ, float fRotX, float fRotY, float RotZ);
@@ -50,5 +50,6 @@ SAMPGDK_EXPORT void SAMPGDK_CALL DestroyPlayerObject(int playerid, int objectid)
 SAMPGDK_EXPORT int SAMPGDK_CALL MovePlayerObject(int playerid, int objectid, float x, float y, float z, float Speed, float RotX, float RotY, float RotZ);
 SAMPGDK_EXPORT bool SAMPGDK_CALL StopPlayerObject(int playerid, int objectid);
 SAMPGDK_EXPORT bool SAMPGDK_CALL IsPlayerObjectMoving(int playerid, int objectid);
+SAMPGDK_EXPORT void SAMPGDK_CALL SetPlayerObjectMaterial(int playerid, int objectid, int materialindex, int modelid, const char *txdname, const char *texturename, int materialcolor);
 
-#endif /* !SAMPGDK_OBJECTS_H */
+#endif /* !SAMPGDK_A_OBJECTS_H */

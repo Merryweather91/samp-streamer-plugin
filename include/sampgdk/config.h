@@ -1,4 +1,4 @@
-/* Copyright (c) 2011 Zeex
+/* Copyright (C) 2011-2012, Zeex
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,10 @@
 #ifndef SAMPGDK_CONFIG_H
 #define SAMPGDK_CONFIG_H
 
-#define STATIC_ASSERT(COND, MSG) typedef char static_assertion_##MSG[(COND) ? 1 : -1]
-
-STATIC_ASSERT(sizeof(int) >= 4, int_must_be_at_least_32_bits);
+/* Make sure architecture is x86 */
+#if !(defined _M_IX86 || defined __i386__)
+	#error Unsupported architecture
+#endif
 
 /* Windows */
 #if defined WIN32 || defined _WIN32 || defined __WIN32__
@@ -73,7 +74,5 @@ STATIC_ASSERT(sizeof(int) >= 4, int_must_be_at_least_32_bits);
 		#define false 0
 	#endif
 #endif
-
-#undef STATIC_ASSERT
 
 #endif /* !SAMPGDK_CONFIG_H */
