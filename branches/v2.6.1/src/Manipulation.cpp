@@ -926,9 +926,9 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							{
 								MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
 							}
-							if (o->second->material)
+							for (boost::unordered_map<int, Element::Object::Material>::iterator m = o->second->materials.begin(); m != o->second->materials.end(); ++m)
 							{
-								SetPlayerObjectMaterial(p->first, i->second, o->second->material->index, o->second->material->modelID, o->second->material->txdName.c_str(), o->second->material->textureName.c_str(), o->second->material->color);
+								SetPlayerObjectMaterial(p->first, i->second, m->first, m->second.modelID, m->second.txdName.c_str(), m->second.textureName.c_str(), m->second.color);
 							}
 						}
 					}
@@ -1896,9 +1896,9 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 							{
 								MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
 							}
-							if (o->second->material)
+							for (boost::unordered_map<int, Element::Object::Material>::iterator m = o->second->materials.begin(); m != o->second->materials.end(); ++m)
 							{
-								SetPlayerObjectMaterial(p->first, i->second, o->second->material->index, o->second->material->modelID, o->second->material->txdName.c_str(), o->second->material->textureName.c_str(), o->second->material->color);
+								SetPlayerObjectMaterial(p->first, i->second, m->first, m->second.modelID, m->second.txdName.c_str(), m->second.textureName.c_str(), m->second.color);
 							}
 						}
 					}

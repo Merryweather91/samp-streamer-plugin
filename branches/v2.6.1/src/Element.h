@@ -130,17 +130,13 @@ namespace Element
 
 		struct Material
 		{
-			Material();
-
 			int color;
-			int index;
 			int modelID;
-			int references;
 			std::string textureName;
 			std::string txdName;
 		};
 
-		boost::intrusive_ptr<Material> material;
+		boost::unordered_map<int, Material> materials;
 
 		struct Move
 		{
@@ -324,19 +320,6 @@ namespace boost
 		if (!(--attach->references))
 		{
 			delete attach;
-		}
-	}
-
-	inline void intrusive_ptr_add_ref(Element::Object::Material *material)
-	{
-		++material->references;
-	}
-
-	inline void intrusive_ptr_release(Element::Object::Material *material)
-	{
-		if (!(--material->references))
-		{
-			delete material;
 		}
 	}
 

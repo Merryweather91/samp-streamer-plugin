@@ -557,9 +557,9 @@ void Streamer::processObjects(Player &player, const std::vector<SharedCell> &pla
 		{
 			MovePlayerObject(player.playerID, internalID, d->second->move->position.get<0>()[0], d->second->move->position.get<0>()[1], d->second->move->position.get<0>()[2], d->second->move->speed, d->second->move->rotation.get<0>()[0], d->second->move->rotation.get<0>()[1], d->second->move->rotation.get<0>()[2]);
 		}
-		if (d->second->material)
+		for (boost::unordered_map<int, Element::Object::Material>::iterator m = d->second->materials.begin(); m != d->second->materials.end(); ++m)
 		{
-			SetPlayerObjectMaterial(player.playerID, internalID, d->second->material->index, d->second->material->modelID, d->second->material->txdName.c_str(), d->second->material->textureName.c_str(), d->second->material->color);
+			SetPlayerObjectMaterial(player.playerID, internalID, m->first, m->second.modelID, m->second.txdName.c_str(), m->second.textureName.c_str(), m->second.color);
 		}
 		player.internalObjects.insert(std::make_pair(d->second->objectID, internalID));
 		if (d->second->cell)
