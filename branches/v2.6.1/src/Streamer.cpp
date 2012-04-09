@@ -205,16 +205,16 @@ void Streamer::performPlayerUpdate(Player &player, bool automatic)
 			core->getGrid()->findMinimalCells(player, playerCells);
 		}
 	}
-	if (!playerCells.empty())
+	if (automatic)
 	{
-		if (automatic)
+		if (!core->getData()->pickups.empty())
 		{
-			if (!core->getData()->pickups.empty())
-			{
-				processPickups(player, playerCells);
-			}
+			processPickups(player, playerCells);
 		}
-		if (!playerIsIdle)
+	}
+	if (!playerIsIdle)
+	{
+		if (!playerCells.empty())
 		{
 			if (!core->getData()->objects.empty())
 			{
