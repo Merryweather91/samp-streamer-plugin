@@ -54,21 +54,18 @@ void Utility::checkIncludeFileInInterface(AMX *amx)
 	if (anyNativesFound)
 	{
 		cell amx_addr = 0;
-		bool checkPassed = false;
+		int includeFileVersion = 0;
 		if (!amx_FindPubVar(amx, "Streamer_IncludeFileVersion", &amx_addr))
 		{
 			cell *phys_addr = NULL;
 			if (!amx_GetAddr(amx, amx_addr, &phys_addr))
 			{
-				if (static_cast<int>(*phys_addr) == INCLUDE_VERSION)
-				{
-					checkPassed = true;
-				}
+				includeFileVersion = static_cast<int>(*phys_addr);
 			}
 		}
-		if (!checkPassed)
+		if (includeFileVersion != INCLUDE_FILE_VERSION)
 		{
-			logprintf("*** Streamer Plugin: Include file version does not match plugin version (script needs to be recompiled with the latest include file)");
+			logprintf("*** Streamer Plugin: Include file version (%#x) does not match plugin version (%#x) (script needs to be recompiled with the latest include file)", includeFileVersion, INCLUDE_FILE_VERSION);
 		}
 	}
 	if (anyNativesHooked)
