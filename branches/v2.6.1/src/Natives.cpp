@@ -929,6 +929,11 @@ cell AMX_NATIVE_CALL Natives::AttachDynamicObjectToVehicle(AMX *amx, cell *param
 	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
 	if (o != core->getData()->objects.end())
 	{
+		if (o->second->move)
+		{
+			logprintf("AttachDynamicObjectToVehicle: Object is currently moving and cannot be attached");
+			return 0;
+		}
 		o->second->attach = boost::intrusive_ptr<Element::Object::Attach>(new Element::Object::Attach);
 		o->second->attach->vehicle = static_cast<int>(params[2]);
 		o->second->attach->offset = Eigen::Vector3f(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
