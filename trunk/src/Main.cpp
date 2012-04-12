@@ -110,6 +110,7 @@ AMX_NATIVE_INFO natives[] =
 	{ "CreateDynamic3DTextLabel", Natives::CreateDynamic3DTextLabel },
 	{ "DestroyDynamic3DTextLabel", Natives::DestroyDynamic3DTextLabel },
 	{ "IsValidDynamic3DTextLabel", Natives::IsValidDynamic3DTextLabel },
+	{ "GetDynamic3DTextLabelText", Natives::GetDynamic3DTextLabelText },
 	{ "UpdateDynamic3DTextLabelText", Natives::UpdateDynamic3DTextLabelText },
 	{ "DestroyAllDynamic3DTextLabels", Natives::DestroyAllDynamic3DTextLabels },
 	{ "CountDynamic3DTextLabels", Natives::CountDynamic3DTextLabels },

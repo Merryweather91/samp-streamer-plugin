@@ -1426,6 +1426,20 @@ cell AMX_NATIVE_CALL Natives::IsValidDynamic3DTextLabel(AMX *amx, cell *params)
 	return 0;
 }
 
+cell AMX_NATIVE_CALL Natives::GetDynamic3DTextLabelText(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(3, "GetDynamic3DTextLabelText");
+	boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[1]));
+	if (t != core->getData()->textLabels.end())
+	{
+		cell *text = NULL;
+		amx_GetAddr(amx, params[2], &text);
+		amx_SetString(text, t->second->text.c_str(), 0, 0, static_cast<size_t>(params[3]));
+		return 1;
+	}
+	return 0;
+}
+
 cell AMX_NATIVE_CALL Natives::UpdateDynamic3DTextLabelText(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(3, "UpdateDynamic3DTextLabelText");

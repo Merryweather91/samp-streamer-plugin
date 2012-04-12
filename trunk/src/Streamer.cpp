@@ -151,17 +151,9 @@ void Streamer::startManualUpdate(Player &player)
 
 void Streamer::performPlayerUpdate(Player &player, bool automatic)
 {
-	int state = 0;
-	if (automatic)
-	{
-		state = GetPlayerState(player.playerID);
-		if (state == PLAYER_STATE_NONE || state == PLAYER_STATE_WASTED)
-		{
-			return;
-		}
-	}
-	bool playerIsIdle = false;
+	bool idle = false;
 	Eigen::Vector3f position = player.position;
+	int state = GetPlayerState(player.playerID);
 	if (automatic)
 	{
 		player.interiorID = GetPlayerInterior(player.playerID);
@@ -175,7 +167,7 @@ void Streamer::performPlayerUpdate(Player &player, bool automatic)
 			{
 				GetPlayerVelocity(player.playerID, &velocity[0], &velocity[1], &velocity[2]);
 			}
-			else
+			else if (state == PLAYER_STATE_DRIVER || state == PLAYER_STATE_PASSENGER)
 			{
 				GetVehicleVelocity(GetPlayerVehicleID(player.playerID), &velocity[0], &velocity[1], &velocity[2]);
 			}
@@ -189,61 +181,52 @@ void Streamer::performPlayerUpdate(Player &player, bool automatic)
 		{
 			if (!player.idleUpdate)
 			{
-				playerIsIdle = true;
+				idle = true;
 			}
 		}
 	}
-	std::vector<SharedCell> playerCells;
-	if (!playerIsIdle)
+	std::vector<SharedCell> cells;
+	if (!idle)
 	{
-		core->getGrid()->findAllCells(player, playerCells);
-	}
-	else
-	{
-		if (!core->getData()->pickups.empty())
-		{
-			core->getGrid()->findMinimalCells(player, playerCells);
-		}
-	}
-	if (automatic)
-	{
-		if (!core->getData()->pickups.empty())
-		{
-			processPickups(player, playerCells);
-		}
-	}
-	if (!playerIsIdle)
-	{
-		if (!playerCells.empty())
+		core->getGrid()->findAllCells(player, cells);
+		if (!cells.empty())
 		{
 			if (!core->getData()->objects.empty())
 			{
-				processObjects(player, playerCells);
+				processObjects(player, cells);
 			}
 			if (!core->getData()->checkpoints.empty())
 			{
-				processCheckpoints(player, playerCells);
+				processCheckpoints(player, cells);
 			}
 			if (!core->getData()->raceCheckpoints.empty())
 			{
-				processRaceCheckpoints(player, playerCells);
+				processRaceCheckpoints(player, cells);
 			}
 			if (!core->getData()->mapIcons.empty())
 			{
-				processMapIcons(player, playerCells);
+				processMapIcons(player, cells);
 			}
 			if (!core->getData()->textLabels.empty())
 			{
-				processTextLabels(player, playerCells);
+				processTextLabels(player, cells);
 			}
 			if (!core->getData()->areas.empty())
 			{
-				processAreas(player, playerCells);
+				processAreas(player, cells);
 			}
 		}
 	}
 	if (automatic)
 	{
+		if (!core->getData()->pickups.empty())
+		{
+			if (idle)
+			{
+				core->getGrid()->findMinimalCells(player, cells);
+			}
+			processPickups(player, cells);
+		}
 		player.position = position;
 	}
 }
@@ -297,10 +280,10 @@ void Streamer::executeCallbacks(const std::vector<int> &objectCallbacks)
 	}
 }
 
-void Streamer::processAreas(Player &player, const std::vector<SharedCell> &playerCells)
+void Streamer::processAreas(Player &player, const std::vector<SharedCell> &cells)
 {
 	std::multimap<bool, boost::tuple<int, int> > areaCallbacks;
-	for (std::vector<SharedCell>::const_iterator c = playerCells.begin(); c != playerCells.end(); ++c)
+	for (std::vector<SharedCell>::const_iterator c = cells.begin(); c != cells.end(); ++c)
 	{
 		for (boost::unordered_map<int, Element::SharedArea>::const_iterator a = (*c)->areas.begin(); a != (*c)->areas.end(); ++a)
 		{
@@ -342,10 +325,10 @@ void Streamer::processAreas(Player &player, const std::vector<SharedCell> &playe
 	}
 }
 
-void Streamer::processCheckpoints(Player &player, const std::vector<SharedCell> &playerCells)
+void Streamer::processCheckpoints(Player &player, const std::vector<SharedCell> &cells)
 {
 	std::multimap<float, Element::SharedCheckpoint> discoveredCheckpoints;
-	for (std::vector<SharedCell>::const_iterator c = playerCells.begin(); c != playerCells.end(); ++c)
+	for (std::vector<SharedCell>::const_iterator c = cells.begin(); c != cells.end(); ++c)
 	{
 		for (boost::unordered_map<int, Element::SharedCheckpoint>::const_iterator d = (*c)->checkpoints.begin(); d != (*c)->checkpoints.end(); ++d)
 		{
@@ -393,10 +376,10 @@ void Streamer::processCheckpoints(Player &player, const std::vector<SharedCell> 
 	}
 }
 
-void Streamer::processMapIcons(Player &player, const std::vector<SharedCell> &playerCells)
+void Streamer::processMapIcons(Player &player, const std::vector<SharedCell> &cells)
 {
 	std::multimap<float, Element::SharedMapIcon> discoveredMapIcons, existingMapIcons;
-	for (std::vector<SharedCell>::const_iterator c = playerCells.begin(); c != playerCells.end(); ++c)
+	for (std::vector<SharedCell>::const_iterator c = cells.begin(); c != cells.end(); ++c)
 	{
 		for (boost::unordered_map<int, Element::SharedMapIcon>::const_iterator m = (*c)->mapIcons.begin(); m != (*c)->mapIcons.end(); ++m)
 		{
@@ -470,10 +453,10 @@ void Streamer::processMapIcons(Player &player, const std::vector<SharedCell> &pl
 	}
 }
 
-void Streamer::processObjects(Player &player, const std::vector<SharedCell> &playerCells)
+void Streamer::processObjects(Player &player, const std::vector<SharedCell> &cells)
 {
 	std::multimap<float, Element::SharedObject> discoveredObjects, existingObjects;
-	for (std::vector<SharedCell>::const_iterator c = playerCells.begin(); c != playerCells.end(); ++c)
+	for (std::vector<SharedCell>::const_iterator c = cells.begin(); c != cells.end(); ++c)
 	{
 		for (boost::unordered_map<int, Element::SharedObject>::const_iterator o = (*c)->objects.begin(); o != (*c)->objects.end(); ++o)
 		{
@@ -554,10 +537,10 @@ void Streamer::processObjects(Player &player, const std::vector<SharedCell> &pla
 	}
 }
 
-void Streamer::processPickups(Player &player, const std::vector<SharedCell> &playerCells)
+void Streamer::processPickups(Player &player, const std::vector<SharedCell> &cells)
 {
 	static boost::unordered_map<int, Element::SharedPickup> discoveredPickups;
-	for (std::vector<SharedCell>::const_iterator c = playerCells.begin(); c != playerCells.end(); ++c)
+	for (std::vector<SharedCell>::const_iterator c = cells.begin(); c != cells.end(); ++c)
 	{
 		for (boost::unordered_map<int, Element::SharedPickup>::const_iterator p = (*c)->pickups.begin(); p != (*c)->pickups.end(); ++p)
 		{
@@ -613,10 +596,10 @@ void Streamer::processPickups(Player &player, const std::vector<SharedCell> &pla
 	}
 }
 
-void Streamer::processRaceCheckpoints(Player &player, const std::vector<SharedCell> &playerCells)
+void Streamer::processRaceCheckpoints(Player &player, const std::vector<SharedCell> &cells)
 {
 	std::multimap<float, Element::SharedRaceCheckpoint> discoveredRaceCheckpoints;
-	for (std::vector<SharedCell>::const_iterator c = playerCells.begin(); c != playerCells.end(); ++c)
+	for (std::vector<SharedCell>::const_iterator c = cells.begin(); c != cells.end(); ++c)
 	{
 		for (boost::unordered_map<int, Element::SharedRaceCheckpoint>::const_iterator r = (*c)->raceCheckpoints.begin(); r != (*c)->raceCheckpoints.end(); ++r)
 		{
@@ -664,10 +647,10 @@ void Streamer::processRaceCheckpoints(Player &player, const std::vector<SharedCe
 	}
 }
 
-void Streamer::processTextLabels(Player &player, const std::vector<SharedCell> &playerCells)
+void Streamer::processTextLabels(Player &player, const std::vector<SharedCell> &cells)
 {
 	std::multimap<float, Element::SharedTextLabel> discoveredTextLabels, existingTextLabels;
-	for (std::vector<SharedCell>::const_iterator c = playerCells.begin(); c != playerCells.end(); ++c)
+	for (std::vector<SharedCell>::const_iterator c = cells.begin(); c != cells.end(); ++c)
 	{
 		for (boost::unordered_map<int, Element::SharedTextLabel>::const_iterator t = (*c)->textLabels.begin(); t != (*c)->textLabels.end(); ++t)
 		{
