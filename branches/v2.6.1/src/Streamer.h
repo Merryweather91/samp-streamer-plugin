@@ -51,12 +51,12 @@ private:
 	void executeCallbacks(const std::vector<int> &objectCallbacks);
 
 	void processAreas(Player &player, const std::vector<SharedCell> &cells);
-	void processCheckpoints(Player &player, const std::vector<SharedCell> &playerCells);
-	void processMapIcons(Player &player, const std::vector<SharedCell> &playerCells);
-	void processObjects(Player &player, const std::vector<SharedCell> &playerCells);
-	void processPickups(Player &player, const std::vector<SharedCell> &playerCells);
-	void processRaceCheckpoints(Player &player, const std::vector<SharedCell> &playerCells);
-	void processTextLabels(Player &player, const std::vector<SharedCell> &playerCells);
+	void processCheckpoints(Player &player, const std::vector<SharedCell> &cells);
+	void processMapIcons(Player &player, const std::vector<SharedCell> &cells);
+	void processObjects(Player &player, const std::vector<SharedCell> &cells);
+	void processPickups(Player &player, const std::vector<SharedCell> &cells);
+	void processRaceCheckpoints(Player &player, const std::vector<SharedCell> &cells);
+	void processTextLabels(Player &player, const std::vector<SharedCell> &cells);
 
 	void processMovingObjects();
 	void processAttachedAreas();

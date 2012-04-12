@@ -19,7 +19,7 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define INCLUDE_VERSION (0x26102)
+#define INCLUDE_FILE_VERSION (0x26103)
 #define PLUGIN_VERSION "2.6.1"
 
 #define STREAMER_TYPE_OBJECT (0)

@@ -71,6 +71,7 @@ namespace Natives
 	cell AMX_NATIVE_CALL AttachCameraToDynamicObject(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL AttachDynamicObjectToVehicle(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL EditDynamicObject(AMX *amx, cell *params);
+	cell AMX_NATIVE_CALL GetDynamicObjectMaterial(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL SetDynamicObjectMaterial(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL DestroyAllDynamicObjects(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL CountDynamicObjects(AMX *amx, cell *params);
@@ -105,6 +106,7 @@ namespace Natives
 	cell AMX_NATIVE_CALL CreateDynamic3DTextLabel(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL DestroyDynamic3DTextLabel(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL IsValidDynamic3DTextLabel(AMX *amx, cell *params);
+	cell AMX_NATIVE_CALL GetDynamic3DTextLabelText(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL UpdateDynamic3DTextLabelText(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL DestroyAllDynamic3DTextLabels(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL CountDynamic3DTextLabels(AMX *amx, cell *params);

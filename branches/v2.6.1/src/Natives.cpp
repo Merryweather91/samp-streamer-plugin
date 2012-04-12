@@ -972,6 +972,30 @@ cell AMX_NATIVE_CALL Natives::EditDynamicObject(AMX *amx, cell *params)
 	return 0;
 }
 
+cell AMX_NATIVE_CALL Natives::GetDynamicObjectMaterial(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(8, "GetDynamicObjectMaterial");
+	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
+	if (o != core->getData()->objects.end())
+	{
+		boost::unordered_map<int, Element::Object::Material>::iterator m = o->second->materials.find(static_cast<int>(params[2]));
+		if (m != o->second->materials.end())
+		{
+			cell *modelID = NULL, *txdName = NULL, *textureName = NULL, *color = NULL;
+			amx_GetAddr(amx, params[3], &modelID);
+			*modelID = m->second.modelID;
+			amx_GetAddr(amx, params[4], &txdName);
+			amx_SetString(txdName, m->second.txdName.c_str(), 0, 0, static_cast<size_t>(params[7]));
+			amx_GetAddr(amx, params[5], &textureName);
+			amx_SetString(textureName, m->second.textureName.c_str(), 0, 0, static_cast<size_t>(params[8]));
+			amx_GetAddr(amx, params[6], &color);
+			*color = m->second.color;
+			return 1;
+		}
+	}
+	return 0;
+}
+
 cell AMX_NATIVE_CALL Natives::SetDynamicObjectMaterial(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(6, "SetDynamicObjectMaterial");
@@ -997,7 +1021,6 @@ cell AMX_NATIVE_CALL Natives::SetDynamicObjectMaterial(AMX *amx, cell *params)
 	}
 	return 0;
 }
-
 
 cell AMX_NATIVE_CALL Natives::DestroyAllDynamicObjects(AMX *amx, cell *params)
 {
@@ -1519,6 +1542,20 @@ cell AMX_NATIVE_CALL Natives::IsValidDynamic3DTextLabel(AMX *amx, cell *params)
 	boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[1]));
 	if (t != core->getData()->textLabels.end())
 	{
+		return 1;
+	}
+	return 0;
+}
+
+cell AMX_NATIVE_CALL Natives::GetDynamic3DTextLabelText(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(3, "GetDynamic3DTextLabelText");
+	boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[1]));
+	if (t != core->getData()->textLabels.end())
+	{
+		cell *text = NULL;
+		amx_GetAddr(amx, params[2], &text);
+		amx_SetString(text, t->second->text.c_str(), 0, 0, static_cast<size_t>(params[3]));
 		return 1;
 	}
 	return 0;
