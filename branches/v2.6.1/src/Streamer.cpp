@@ -159,30 +159,34 @@ void Streamer::performPlayerUpdate(Player &player, bool automatic)
 		player.interiorID = GetPlayerInterior(player.playerID);
 		player.worldID = GetPlayerVirtualWorld(player.playerID);
 		GetPlayerPos(player.playerID, &player.position[0], &player.position[1], &player.position[2]);
-		if (player.position != position)
+		if (state != PLAYER_STATE_NONE && state != PLAYER_STATE_WASTED && state != PLAYER_STATE_SPECTATING)
 		{
-			position = player.position;
-			Eigen::Vector3f velocity = Eigen::Vector3f::Zero();
-			if (state == PLAYER_STATE_ONFOOT)
+			if (player.position != position)
 			{
-				GetPlayerVelocity(player.playerID, &velocity[0], &velocity[1], &velocity[2]);
+				position = player.position;
+				Eigen::Vector3f velocity = Eigen::Vector3f::Zero();
+				if (state == PLAYER_STATE_ONFOOT)
+				{
+					GetPlayerVelocity(player.playerID, &velocity[0], &velocity[1], &velocity[2]);
+				}
+				else if (state == PLAYER_STATE_DRIVER || state == PLAYER_STATE_PASSENGER)
+				{
+					GetVehicleVelocity(GetPlayerVehicleID(player.playerID), &velocity[0], &velocity[1], &velocity[2]);
+				}
+				float velocityNorm = velocity.squaredNorm();
+				if (velocityNorm >= velocityBoundaries.get<0>() && velocityNorm <= velocityBoundaries.get<1>())
+				{
+					player.position += velocity * averageUpdateTime;
+				}
 			}
-			else if (state == PLAYER_STATE_DRIVER || state == PLAYER_STATE_PASSENGER)
+			else
 			{
-				GetVehicleVelocity(GetPlayerVehicleID(player.playerID), &velocity[0], &velocity[1], &velocity[2]);
-			}
-			float velocityNorm = velocity.squaredNorm();
-			if (velocityNorm >= velocityBoundaries.get<0>() && velocityNorm <= velocityBoundaries.get<1>())
-			{
-				player.position += velocity * averageUpdateTime;
+				idle = !player.idleUpdate;
 			}
 		}
 		else
 		{
-			if (!player.idleUpdate)
-			{
-				idle = true;
-			}
+			idle = true;
 		}
 	}
 	std::vector<SharedCell> cells;

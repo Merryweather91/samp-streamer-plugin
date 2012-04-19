@@ -1021,7 +1021,7 @@ cell AMX_NATIVE_CALL Natives::SetDynamicObjectMaterial(AMX *amx, cell *params)
 				SetPlayerObjectMaterial(p->first, i->second, index, material.modelID, material.txdName.c_str(), material.textureName.c_str(), material.color);
 			}
 		}
-		o->second->materials.insert(std::make_pair(index, material));
+		o->second->materials[index] = material;
 		return 1;
 	}
 	return 0;
