@@ -159,7 +159,7 @@ void Streamer::performPlayerUpdate(Player &player, bool automatic)
 		player.interiorID = GetPlayerInterior(player.playerID);
 		player.worldID = GetPlayerVirtualWorld(player.playerID);
 		GetPlayerPos(player.playerID, &player.position[0], &player.position[1], &player.position[2]);
-		if (state != PLAYER_STATE_NONE && state != PLAYER_STATE_WASTED && state != PLAYER_STATE_SPECTATING)
+		if (state != PLAYER_STATE_NONE && state != PLAYER_STATE_WASTED)
 		{
 			if (player.position != position)
 			{
