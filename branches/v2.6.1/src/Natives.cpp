@@ -768,9 +768,9 @@ cell AMX_NATIVE_CALL Natives::GetDynamicObjectPos(AMX *amx, cell *params)
 	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
 	if (o != core->getData()->objects.end())
 	{
-		Utility::storeFloatInNative(amx, params[0], o->second->position[0]);
-		Utility::storeFloatInNative(amx, params[1], o->second->position[1]);
-		Utility::storeFloatInNative(amx, params[2], o->second->position[2]);
+		Utility::storeFloatInNative(amx, params[2], o->second->position[0]);
+		Utility::storeFloatInNative(amx, params[3], o->second->position[1]);
+		Utility::storeFloatInNative(amx, params[4], o->second->position[2]);
 		return 1;
 	}
 	return 0;
@@ -806,9 +806,9 @@ cell AMX_NATIVE_CALL Natives::GetDynamicObjectRot(AMX *amx, cell *params)
 	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
 	if (o != core->getData()->objects.end())
 	{
-		Utility::storeFloatInNative(amx, params[0], o->second->rotation[0]);
-		Utility::storeFloatInNative(amx, params[1], o->second->rotation[1]);
-		Utility::storeFloatInNative(amx, params[2], o->second->rotation[2]);
+		Utility::storeFloatInNative(amx, params[2], o->second->rotation[0]);
+		Utility::storeFloatInNative(amx, params[3], o->second->rotation[1]);
+		Utility::storeFloatInNative(amx, params[4], o->second->rotation[2]);
 		return 1;
 	}
 	return 0;
