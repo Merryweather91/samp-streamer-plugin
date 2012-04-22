@@ -907,13 +907,13 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							}
 							for (boost::unordered_map<int, Element::Object::Material>::iterator m = o->second->materials.begin(); m != o->second->materials.end(); ++m)
 							{
-								if (m->second.texture)
+								if (m->second.main)
 								{
-									SetPlayerObjectMaterial(p->first, i->second, m->first, m->second.texture->modelID, m->second.texture->txdFileName.c_str(), m->second.texture->textureName.c_str(), m->second.texture->materialColor);
+									SetPlayerObjectMaterial(p->first, i->second, m->first, m->second.main->modelID, m->second.main->txdFileName.c_str(), m->second.main->textureName.c_str(), m->second.main->materialColor);
 								}
 								else if (m->second.text)
 								{
-									SetPlayerObjectMaterialText(p->first, i->second, m->second.text->text.c_str(), m->first, m->second.text->materialSize, m->second.text->fontFace.c_str(), m->second.text->fontSize, m->second.text->bold, m->second.text->fontColor, m->second.text->backColor, m->second.text->textAlignment);
+									SetPlayerObjectMaterialText(p->first, i->second, m->second.text->materialText.c_str(), m->first, m->second.text->materialSize, m->second.text->fontFace.c_str(), m->second.text->fontSize, m->second.text->bold, m->second.text->fontColor, m->second.text->backColor, m->second.text->textAlignment);
 								}
 							}
 						}
@@ -1884,13 +1884,13 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 							}
 							for (boost::unordered_map<int, Element::Object::Material>::iterator m = o->second->materials.begin(); m != o->second->materials.end(); ++m)
 							{
-								if (m->second.texture)
+								if (m->second.main)
 								{
-									SetPlayerObjectMaterial(p->first, i->second, m->first, m->second.texture->modelID, m->second.texture->txdFileName.c_str(), m->second.texture->textureName.c_str(), m->second.texture->materialColor);
+									SetPlayerObjectMaterial(p->first, i->second, m->first, m->second.main->modelID, m->second.main->txdFileName.c_str(), m->second.main->textureName.c_str(), m->second.main->materialColor);
 								}
 								else if (m->second.text)
 								{
-									SetPlayerObjectMaterialText(p->first, i->second, m->second.text->text.c_str(), m->first, m->second.text->materialSize, m->second.text->fontFace.c_str(), m->second.text->fontSize, m->second.text->bold, m->second.text->fontColor, m->second.text->backColor, m->second.text->textAlignment);
+									SetPlayerObjectMaterialText(p->first, i->second, m->second.text->materialText.c_str(), m->first, m->second.text->materialSize, m->second.text->fontFace.c_str(), m->second.text->fontSize, m->second.text->bold, m->second.text->fontColor, m->second.text->backColor, m->second.text->textAlignment);
 								}
 							}
 						}

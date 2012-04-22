@@ -546,13 +546,13 @@ void Streamer::processObjects(Player &player, const std::vector<SharedCell> &cel
 		}
 		for (boost::unordered_map<int, Element::Object::Material>::iterator m = d->second->materials.begin(); m != d->second->materials.end(); ++m)
 		{
-			if (m->second.texture)
+			if (m->second.main)
 			{
-				SetPlayerObjectMaterial(player.playerID, internalID, m->first, m->second.texture->modelID, m->second.texture->txdFileName.c_str(), m->second.texture->textureName.c_str(), m->second.texture->materialColor);
+				SetPlayerObjectMaterial(player.playerID, internalID, m->first, m->second.main->modelID, m->second.main->txdFileName.c_str(), m->second.main->textureName.c_str(), m->second.main->materialColor);
 			}
 			else if (m->second.text)
 			{
-				SetPlayerObjectMaterialText(player.playerID, internalID, m->second.text->text.c_str(), m->first, m->second.text->materialSize, m->second.text->fontFace.c_str(), m->second.text->fontSize, m->second.text->bold, m->second.text->fontColor, m->second.text->backColor, m->second.text->textAlignment);
+				SetPlayerObjectMaterialText(player.playerID, internalID, m->second.text->materialText.c_str(), m->first, m->second.text->materialSize, m->second.text->fontFace.c_str(), m->second.text->fontSize, m->second.text->bold, m->second.text->fontColor, m->second.text->backColor, m->second.text->textAlignment);
 			}
 		}
 		player.internalObjects.insert(std::make_pair(d->second->objectID, internalID));

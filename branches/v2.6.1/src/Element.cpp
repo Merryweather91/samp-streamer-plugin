@@ -58,12 +58,12 @@ Object::Attach::Attach()
 	references = 0;
 }
 
-Object::Material::Text::Text()
+Object::Material::Main::Main()
 {
 	references = 0;
 }
 
-Object::Material::Texture::Texture()
+Object::Material::Text::Text()
 {
 	references = 0;
 }

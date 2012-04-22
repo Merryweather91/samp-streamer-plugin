@@ -130,6 +130,19 @@ namespace Element
 
 		struct Material
 		{
+			struct Main
+			{
+				Main();
+
+				int materialColor;
+				int modelID;
+				int references;
+				std::string textureName;
+				std::string txdFileName;
+			};
+
+			boost::intrusive_ptr<Main> main;
+
 			struct Text
 			{
 				Text();
@@ -141,24 +154,11 @@ namespace Element
 				int fontSize;
 				int references;
 				int materialSize;
-				std::string text;
+				std::string materialText;
 				int textAlignment;
 			};
 
 			boost::intrusive_ptr<Text> text;
-
-			struct Texture
-			{
-				Texture();
-
-				int materialColor;
-				int modelID;
-				int references;
-				std::string textureName;
-				std::string txdFileName;
-			};
-
-			boost::intrusive_ptr<Texture> texture;
 		};
 
 		boost::unordered_map<int, Material> materials;
@@ -348,6 +348,19 @@ namespace boost
 		}
 	}
 
+	inline void intrusive_ptr_add_ref(Element::Object::Material::Main *material)
+	{
+		++material->references;
+	}
+
+	inline void intrusive_ptr_release(Element::Object::Material::Main *material)
+	{
+		if (!(--material->references))
+		{
+			delete material;
+		}
+	}
+
 	inline void intrusive_ptr_add_ref(Element::Object::Material::Text *materialText)
 	{
 		++materialText->references;
@@ -358,19 +371,6 @@ namespace boost
 		if (!(--materialText->references))
 		{
 			delete materialText;
-		}
-	}
-
-	inline void intrusive_ptr_add_ref(Element::Object::Material::Texture *materialTexture)
-	{
-		++materialTexture->references;
-	}
-
-	inline void intrusive_ptr_release(Element::Object::Material::Texture *materialTexture)
-	{
-		if (!(--materialTexture->references))
-		{
-			delete materialTexture;
 		}
 	}
 

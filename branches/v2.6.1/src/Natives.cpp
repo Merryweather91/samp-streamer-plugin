@@ -976,12 +976,12 @@ cell AMX_NATIVE_CALL Natives::GetDynamicObjectMaterial(AMX *amx, cell *params)
 		boost::unordered_map<int, Element::Object::Material>::iterator m = o->second->materials.find(static_cast<int>(params[2]));
 		if (m != o->second->materials.end())
 		{
-			if (m->second.texture)
+			if (m->second.main)
 			{
-				Utility::storeIntegerInNative(amx, params[3], m->second.texture->modelID);
-				Utility::convertStringToNativeString(amx, params[4], params[7], m->second.texture->txdFileName);
-				Utility::convertStringToNativeString(amx, params[5], params[8], m->second.texture->textureName);
-				Utility::storeIntegerInNative(amx, params[6], m->second.texture->materialColor);
+				Utility::storeIntegerInNative(amx, params[3], m->second.main->modelID);
+				Utility::convertStringToNativeString(amx, params[4], params[7], m->second.main->txdFileName);
+				Utility::convertStringToNativeString(amx, params[5], params[8], m->second.main->textureName);
+				Utility::storeIntegerInNative(amx, params[6], m->second.main->materialColor);
 				return 1;
 			}
 		}
@@ -996,17 +996,17 @@ cell AMX_NATIVE_CALL Natives::SetDynamicObjectMaterial(AMX *amx, cell *params)
 	if (o != core->getData()->objects.end())
 	{
 		int index = static_cast<int>(params[2]);
-		o->second->materials[index].texture = boost::intrusive_ptr<Element::Object::Material::Texture>(new Element::Object::Material::Texture);
-		o->second->materials[index].texture->modelID = static_cast<int>(params[3]);
-		o->second->materials[index].texture->txdFileName = Utility::convertNativeStringToString(amx, params[4]);
-		o->second->materials[index].texture->textureName = Utility::convertNativeStringToString(amx, params[5]);
-		o->second->materials[index].texture->materialColor = static_cast<int>(params[6]);
+		o->second->materials[index].main = boost::intrusive_ptr<Element::Object::Material::Main>(new Element::Object::Material::Main);
+		o->second->materials[index].main->modelID = static_cast<int>(params[3]);
+		o->second->materials[index].main->txdFileName = Utility::convertNativeStringToString(amx, params[4]);
+		o->second->materials[index].main->textureName = Utility::convertNativeStringToString(amx, params[5]);
+		o->second->materials[index].main->materialColor = static_cast<int>(params[6]);
 		for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
 		{
 			boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
 			if (i != p->second.internalObjects.end())
 			{
-				SetPlayerObjectMaterial(p->first, i->second, index, o->second->materials[index].texture->modelID, o->second->materials[index].texture->txdFileName.c_str(), o->second->materials[index].texture->textureName.c_str(), o->second->materials[index].texture->materialColor);
+				SetPlayerObjectMaterial(p->first, i->second, index, o->second->materials[index].main->modelID, o->second->materials[index].main->txdFileName.c_str(), o->second->materials[index].main->textureName.c_str(), o->second->materials[index].main->materialColor);
 			}
 		}
 		o->second->materials[index].text.reset();
@@ -1026,7 +1026,7 @@ cell AMX_NATIVE_CALL Natives::GetDynamicObjectMaterialText(AMX *amx, cell *param
 		{
 			if (m->second.text)
 			{
-				Utility::convertStringToNativeString(amx, params[3], params[11], m->second.text->text);
+				Utility::convertStringToNativeString(amx, params[3], params[11], m->second.text->materialText);
 				Utility::storeIntegerInNative(amx, params[4], m->second.text->materialSize);
 				Utility::convertStringToNativeString(amx, params[5], params[12], m->second.text->fontFace);
 				Utility::storeIntegerInNative(amx, params[6], m->second.text->fontSize);
@@ -1049,7 +1049,7 @@ cell AMX_NATIVE_CALL Natives::SetDynamicObjectMaterialText(AMX *amx, cell *param
 	{
 		int index = static_cast<int>(params[2]);
 		o->second->materials[index].text = boost::intrusive_ptr<Element::Object::Material::Text>(new Element::Object::Material::Text);
-		o->second->materials[index].text->text = Utility::convertNativeStringToString(amx, params[3]);
+		o->second->materials[index].text->materialText = Utility::convertNativeStringToString(amx, params[3]);
 		o->second->materials[index].text->materialSize = static_cast<int>(params[4]);
 		o->second->materials[index].text->fontFace = Utility::convertNativeStringToString(amx, params[5]);
 		o->second->materials[index].text->fontSize = static_cast<int>(params[6]);
@@ -1062,10 +1062,10 @@ cell AMX_NATIVE_CALL Natives::SetDynamicObjectMaterialText(AMX *amx, cell *param
 			boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
 			if (i != p->second.internalObjects.end())
 			{
-				SetPlayerObjectMaterialText(p->first, i->second, o->second->materials[index].text->text.c_str(), index, o->second->materials[index].text->materialSize, o->second->materials[index].text->fontFace.c_str(), o->second->materials[index].text->fontSize, o->second->materials[index].text->bold, o->second->materials[index].text->fontColor, o->second->materials[index].text->backColor, o->second->materials[index].text->textAlignment);
+				SetPlayerObjectMaterialText(p->first, i->second, o->second->materials[index].text->materialText.c_str(), index, o->second->materials[index].text->materialSize, o->second->materials[index].text->fontFace.c_str(), o->second->materials[index].text->fontSize, o->second->materials[index].text->bold, o->second->materials[index].text->fontColor, o->second->materials[index].text->backColor, o->second->materials[index].text->textAlignment);
 			}
 		}
-		o->second->materials[index].texture.reset();
+		o->second->materials[index].main.reset();
 		return 1;
 	}
 	return 0;
