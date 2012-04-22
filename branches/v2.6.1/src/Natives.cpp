@@ -297,8 +297,6 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetUpperBound(AMX *amx, cell *params)
 cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(6, "Streamer_GetDistanceToItem");
-	cell *result = NULL;
-	amx_GetAddr(amx, params[6], &result);
 	switch (static_cast<int>(params[4]))
 	{
 		case STREAMER_TYPE_OBJECT:
@@ -307,7 +305,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 			if (o != core->getData()->objects.end())
 			{
 				float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), o->second->position);
-				*result = amx_ftoc(distance);
+				Utility::storeFloatInNative(amx, params[6], distance);
 				return 1;
 			}
 		}
@@ -318,7 +316,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 			if (p != core->getData()->pickups.end())
 			{
 				float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), p->second->position);
-				*result = amx_ftoc(distance);
+				Utility::storeFloatInNative(amx, params[6], distance);
 				return 1;
 			}
 		}
@@ -329,7 +327,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 			if (c != core->getData()->checkpoints.end())
 			{
 				float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), c->second->position);
-				*result = amx_ftoc(distance);
+				Utility::storeFloatInNative(amx, params[6], distance);
 				return 1;
 			}
 		}
@@ -340,7 +338,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 			if (r != core->getData()->raceCheckpoints.end())
 			{
 				float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), r->second->position);
-				*result = amx_ftoc(distance);
+				Utility::storeFloatInNative(amx, params[6], distance);
 				return 1;
 			}
 		}
@@ -351,7 +349,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 			if (m != core->getData()->mapIcons.end())
 			{
 				float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), m->second->position);
-				*result = amx_ftoc(distance);
+				Utility::storeFloatInNative(amx, params[6], distance);
 				return 1;
 			}
 		}
@@ -370,7 +368,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 				{
 					distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), t->second->position);
 				}
-				*result = amx_ftoc(distance);
+				Utility::storeFloatInNative(amx, params[6], distance);
 				return 1;
 			}
 		}
@@ -392,7 +390,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 						{
 							distance = boost::geometry::distance(Eigen::Vector2f(amx_ctof(params[1]), amx_ctof(params[2])), boost::get<Eigen::Vector2f>(a->second->position));
 						}
-						*result = amx_ftoc(distance);
+						Utility::storeFloatInNative(amx, params[6], distance);
 						return 1;
 					}
 					break;
@@ -401,7 +399,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 						Eigen::Vector2f centroid = Eigen::Vector2f::Zero();
 						boost::geometry::centroid(boost::get<Element::Box2D>(a->second->position), centroid);
 						float distance = boost::geometry::distance(Eigen::Vector2f(amx_ctof(params[1]), amx_ctof(params[2])), centroid);
-						*result = amx_ftoc(distance);
+						Utility::storeFloatInNative(amx, params[6], distance);
 						return 1;
 					}
 					break;
@@ -416,7 +414,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 						{
 							distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), boost::get<Eigen::Vector3f>(a->second->position));
 						}
-						*result = amx_ftoc(distance);
+						Utility::storeFloatInNative(amx, params[6], distance);
 						return 1;
 					}
 					break;
@@ -425,7 +423,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 						Eigen::Vector3f centroid = Eigen::Vector3f::Zero();
 						boost::geometry::centroid(boost::get<Element::Box3D>(a->second->position), centroid);
 						float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), centroid);
-						*result = amx_ftoc(distance);
+						Utility::storeFloatInNative(amx, params[6], distance);
 						return 1;
 					}
 					break;
@@ -436,7 +434,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 							Eigen::Vector2f centroid = Eigen::Vector2f::Zero();
 							boost::geometry::centroid(boost::get<Element::Polygon2D>(a->second->position).get<0>(), centroid);
 							float distance = boost::geometry::distance(Eigen::Vector2f(amx_ctof(params[1]), amx_ctof(params[2])), centroid);
-							*result = amx_ftoc(distance);
+							Utility::storeFloatInNative(amx, params[6], distance);
 							return 1;
 						}
 					}
@@ -770,13 +768,9 @@ cell AMX_NATIVE_CALL Natives::GetDynamicObjectPos(AMX *amx, cell *params)
 	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
 	if (o != core->getData()->objects.end())
 	{
-		cell *x = NULL, *y = NULL, *z = NULL;
-		amx_GetAddr(amx, params[2], &x);
-		amx_GetAddr(amx, params[3], &y);
-		amx_GetAddr(amx, params[4], &z);
-		*x = amx_ftoc(o->second->position[0]);
-		*y = amx_ftoc(o->second->position[1]);
-		*z = amx_ftoc(o->second->position[2]);
+		Utility::storeFloatInNative(amx, params[0], o->second->position[0]);
+		Utility::storeFloatInNative(amx, params[1], o->second->position[1]);
+		Utility::storeFloatInNative(amx, params[2], o->second->position[2]);
 		return 1;
 	}
 	return 0;
@@ -812,13 +806,9 @@ cell AMX_NATIVE_CALL Natives::GetDynamicObjectRot(AMX *amx, cell *params)
 	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
 	if (o != core->getData()->objects.end())
 	{
-		cell *rX = NULL, *rY = NULL, *rZ = NULL;
-		amx_GetAddr(amx, params[2], &rX);
-		amx_GetAddr(amx, params[3], &rY);
-		amx_GetAddr(amx, params[4], &rZ);
-		*rX = amx_ftoc(o->second->rotation[0]);
-		*rY = amx_ftoc(o->second->rotation[1]);
-		*rZ = amx_ftoc(o->second->rotation[2]);
+		Utility::storeFloatInNative(amx, params[0], o->second->rotation[0]);
+		Utility::storeFloatInNative(amx, params[1], o->second->rotation[1]);
+		Utility::storeFloatInNative(amx, params[2], o->second->rotation[2]);
 		return 1;
 	}
 	return 0;
@@ -986,16 +976,14 @@ cell AMX_NATIVE_CALL Natives::GetDynamicObjectMaterial(AMX *amx, cell *params)
 		boost::unordered_map<int, Element::Object::Material>::iterator m = o->second->materials.find(static_cast<int>(params[2]));
 		if (m != o->second->materials.end())
 		{
-			cell *modelID = NULL, *txdName = NULL, *textureName = NULL, *color = NULL;
-			amx_GetAddr(amx, params[3], &modelID);
-			*modelID = m->second.modelID;
-			amx_GetAddr(amx, params[4], &txdName);
-			amx_SetString(txdName, m->second.txdName.c_str(), 0, 0, static_cast<size_t>(params[7]));
-			amx_GetAddr(amx, params[5], &textureName);
-			amx_SetString(textureName, m->second.textureName.c_str(), 0, 0, static_cast<size_t>(params[8]));
-			amx_GetAddr(amx, params[6], &color);
-			*color = m->second.color;
-			return 1;
+			if (m->second.texture)
+			{
+				Utility::storeIntegerInNative(amx, params[3], m->second.texture->modelID);
+				Utility::convertStringToNativeString(amx, params[4], params[7], m->second.texture->txdFileName);
+				Utility::convertStringToNativeString(amx, params[5], params[8], m->second.texture->textureName);
+				Utility::storeIntegerInNative(amx, params[6], m->second.texture->materialColor);
+				return 1;
+			}
 		}
 	}
 	return 0;
@@ -1008,20 +996,76 @@ cell AMX_NATIVE_CALL Natives::SetDynamicObjectMaterial(AMX *amx, cell *params)
 	if (o != core->getData()->objects.end())
 	{
 		int index = static_cast<int>(params[2]);
-		Element::Object::Material material;
-		material.modelID = static_cast<int>(params[3]);
-		material.txdName = Utility::getStringFromNative(amx, params[4]);
-		material.textureName = Utility::getStringFromNative(amx, params[5]);
-		material.color = static_cast<int>(params[6]);
+		o->second->materials[index].texture = boost::intrusive_ptr<Element::Object::Material::Texture>(new Element::Object::Material::Texture);
+		o->second->materials[index].texture->modelID = static_cast<int>(params[3]);
+		o->second->materials[index].texture->txdFileName = Utility::convertNativeStringToString(amx, params[4]);
+		o->second->materials[index].texture->textureName = Utility::convertNativeStringToString(amx, params[5]);
+		o->second->materials[index].texture->materialColor = static_cast<int>(params[6]);
 		for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
 		{
 			boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
 			if (i != p->second.internalObjects.end())
 			{
-				SetPlayerObjectMaterial(p->first, i->second, index, material.modelID, material.txdName.c_str(), material.textureName.c_str(), material.color);
+				SetPlayerObjectMaterial(p->first, i->second, index, o->second->materials[index].texture->modelID, o->second->materials[index].texture->txdFileName.c_str(), o->second->materials[index].texture->textureName.c_str(), o->second->materials[index].texture->materialColor);
 			}
 		}
-		o->second->materials[index] = material;
+		o->second->materials[index].text.reset();
+		return 1;
+	}
+	return 0;
+}
+
+cell AMX_NATIVE_CALL Natives::GetDynamicObjectMaterialText(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(12, "GetDynamicObjectMaterialText");
+	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
+	if (o != core->getData()->objects.end())
+	{
+		boost::unordered_map<int, Element::Object::Material>::iterator m = o->second->materials.find(static_cast<int>(params[2]));
+		if (m != o->second->materials.end())
+		{
+			if (m->second.text)
+			{
+				Utility::convertStringToNativeString(amx, params[3], params[11], m->second.text->text);
+				Utility::storeIntegerInNative(amx, params[4], m->second.text->materialSize);
+				Utility::convertStringToNativeString(amx, params[5], params[12], m->second.text->fontFace);
+				Utility::storeIntegerInNative(amx, params[6], m->second.text->fontSize);
+				Utility::storeIntegerInNative(amx, params[7], m->second.text->bold != 0);
+				Utility::storeIntegerInNative(amx, params[8], m->second.text->fontColor);
+				Utility::storeIntegerInNative(amx, params[9], m->second.text->backColor);
+				Utility::storeIntegerInNative(amx, params[10], m->second.text->textAlignment);
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+cell AMX_NATIVE_CALL Natives::SetDynamicObjectMaterialText(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(10, "SetDynamicObjectMaterialText");
+	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
+	if (o != core->getData()->objects.end())
+	{
+		int index = static_cast<int>(params[2]);
+		o->second->materials[index].text = boost::intrusive_ptr<Element::Object::Material::Text>(new Element::Object::Material::Text);
+		o->second->materials[index].text->text = Utility::convertNativeStringToString(amx, params[3]);
+		o->second->materials[index].text->materialSize = static_cast<int>(params[4]);
+		o->second->materials[index].text->fontFace = Utility::convertNativeStringToString(amx, params[5]);
+		o->second->materials[index].text->fontSize = static_cast<int>(params[6]);
+		o->second->materials[index].text->bold = static_cast<int>(params[7]) != 0;
+		o->second->materials[index].text->fontColor = static_cast<int>(params[8]);
+		o->second->materials[index].text->backColor = static_cast<int>(params[9]);
+		o->second->materials[index].text->textAlignment = static_cast<int>(params[10]);
+		for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
+		{
+			boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
+			if (i != p->second.internalObjects.end())
+			{
+				SetPlayerObjectMaterialText(p->first, i->second, o->second->materials[index].text->text.c_str(), index, o->second->materials[index].text->materialSize, o->second->materials[index].text->fontFace.c_str(), o->second->materials[index].text->fontSize, o->second->materials[index].text->bold, o->second->materials[index].text->fontColor, o->second->materials[index].text->backColor, o->second->materials[index].text->textAlignment);
+			}
+		}
+		o->second->materials[index].texture.reset();
 		return 1;
 	}
 	return 0;
@@ -1504,7 +1548,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamic3DTextLabel(AMX *amx, cell *params)
 	textLabel->amx = amx;
 	textLabel->extraID = 0;
 	textLabel->textLabelID = textLabelID;
-	textLabel->text = Utility::getStringFromNative(amx, params[1]);
+	textLabel->text = Utility::convertNativeStringToString(amx, params[1]);
 	textLabel->color = static_cast<int>(params[2]);
 	textLabel->position = Eigen::Vector3f(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
 	textLabel->drawDistance = amx_ctof(params[6]);
@@ -1573,7 +1617,7 @@ cell AMX_NATIVE_CALL Natives::UpdateDynamic3DTextLabelText(AMX *amx, cell *param
 	if (t != core->getData()->textLabels.end())
 	{
 		t->second->color = static_cast<int>(params[2]);
-		t->second->text = Utility::getStringFromNative(amx, params[3]);
+		t->second->text = Utility::convertNativeStringToString(amx, params[3]);
 		for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
 		{
 			boost::unordered_map<int, int>::iterator i = p->second.internalTextLabels.find(t->first);
@@ -2119,7 +2163,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamic3DTextLabelEx(AMX *amx, cell *params)
 	textLabel->amx = amx;
 	textLabel->extraID = 0;
 	textLabel->textLabelID = textLabelID;
-	textLabel->text = Utility::getStringFromNative(amx, params[1]);
+	textLabel->text = Utility::convertNativeStringToString(amx, params[1]);
 	textLabel->color = static_cast<int>(params[2]);
 	textLabel->position = Eigen::Vector3f(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
 	textLabel->drawDistance = amx_ctof(params[6]);

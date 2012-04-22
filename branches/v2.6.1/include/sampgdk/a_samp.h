@@ -15,6 +15,7 @@
 
 #ifndef SAMPGDK_A_SAMP_H
 #define SAMPGDK_A_SAMP_H
+#pragma once
 
 #include <sampgdk/config.h>
 #include <sampgdk/export.h>
@@ -41,7 +42,7 @@
 #define INVALID_3DTEXT_ID   (0xFFFF)
 
 SAMPGDK_EXPORT bool SAMPGDK_CALL SendClientMessage(int playerid, int color, const char *message);
-SAMPGDK_EXPORT void SAMPGDK_CALL SendClientMessageToAll(int color, const char *message);
+SAMPGDK_EXPORT bool SAMPGDK_CALL SendClientMessageToAll(int color, const char *message);
 SAMPGDK_EXPORT bool SAMPGDK_CALL SendPlayerMessageToPlayer(int playerid, int senderid, const char *message);
 SAMPGDK_EXPORT bool SAMPGDK_CALL SendPlayerMessageToAll(int senderid, const char *message);
 SAMPGDK_EXPORT bool SAMPGDK_CALL SendDeathMessage(int killer, int killee, int weapon);
@@ -50,8 +51,8 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL GameTextForPlayer(int playerid, const char *tex
 SAMPGDK_EXPORT int SAMPGDK_CALL GetServerTickCount();
 SAMPGDK_EXPORT int SAMPGDK_CALL GetMaxPlayers();
 
-SAMPGDK_EXPORT void SAMPGDK_CALL SetGameModeText(const char *text);
-SAMPGDK_EXPORT void SAMPGDK_CALL SetTeamCount(int count);
+SAMPGDK_EXPORT bool SAMPGDK_CALL SetGameModeText(const char *text);
+SAMPGDK_EXPORT bool SAMPGDK_CALL SetTeamCount(int count);
 SAMPGDK_EXPORT int SAMPGDK_CALL AddPlayerClass(int modelid, float spawn_x, float spawn_y, float spawn_z, float z_angle, int weapon1, int weapon1_ammo, int weapon2, int weapon2_ammo, int weapon3, int weapon3_ammo);
 SAMPGDK_EXPORT int SAMPGDK_CALL AddPlayerClassEx(int teamid, int modelid, float spawn_x, float spawn_y, float spawn_z, float z_angle, int weapon1, int weapon1_ammo, int weapon2, int weapon2_ammo, int weapon3, int weapon3_ammo);
 SAMPGDK_EXPORT int SAMPGDK_CALL AddStaticVehicle(int modelid, float spawn_x, float spawn_y, float spawn_z, float z_angle, int color1, int color2);
@@ -59,25 +60,25 @@ SAMPGDK_EXPORT int SAMPGDK_CALL AddStaticVehicleEx(int modelid, float spawn_x, f
 SAMPGDK_EXPORT int SAMPGDK_CALL AddStaticPickup(int model, int type, float x, float y, float z, int virtualworld);
 SAMPGDK_EXPORT int SAMPGDK_CALL CreatePickup(int model, int type, float x, float y, float z, int virtualworld);
 SAMPGDK_EXPORT bool SAMPGDK_CALL DestroyPickup(int pickup);
-SAMPGDK_EXPORT void SAMPGDK_CALL ShowNameTags(bool show);
-SAMPGDK_EXPORT void SAMPGDK_CALL ShowPlayerMarkers(bool mode);
-SAMPGDK_EXPORT void SAMPGDK_CALL GameModeExit();
-SAMPGDK_EXPORT bool SAMPGDK_CALL SetWorldTime(short hour);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetWeaponName(int weaponid, char *name, size_t size);
-SAMPGDK_EXPORT void SAMPGDK_CALL EnableTirePopping(bool enable);
-SAMPGDK_EXPORT void SAMPGDK_CALL AllowInteriorWeapons(bool allow);
-SAMPGDK_EXPORT void SAMPGDK_CALL SetWeather(int weatherid);
-SAMPGDK_EXPORT void SAMPGDK_CALL SetGravity(float gravity);
-SAMPGDK_EXPORT void SAMPGDK_CALL AllowAdminTeleport(bool allow);
-SAMPGDK_EXPORT void SAMPGDK_CALL SetDeathDropAmount(int amount);
-SAMPGDK_EXPORT void SAMPGDK_CALL CreateExplosion(float x, float y, float z, short type, float radius);
-SAMPGDK_EXPORT void SAMPGDK_CALL EnableZoneNames(bool enable);
-SAMPGDK_EXPORT void SAMPGDK_CALL UsePlayerPedAnims();
-SAMPGDK_EXPORT void SAMPGDK_CALL DisableInteriorEnterExits();
-SAMPGDK_EXPORT void SAMPGDK_CALL SetNameTagDrawDistance(float distance);
-SAMPGDK_EXPORT void SAMPGDK_CALL DisableNameTagLOS();
-SAMPGDK_EXPORT void SAMPGDK_CALL LimitGlobalChatRadius(float chat_radius);
-SAMPGDK_EXPORT void SAMPGDK_CALL LimitPlayerMarkerRadius(float marker_radius);
+SAMPGDK_EXPORT bool SAMPGDK_CALL ShowNameTags(bool show);
+SAMPGDK_EXPORT bool SAMPGDK_CALL ShowPlayerMarkers(bool mode);
+SAMPGDK_EXPORT bool SAMPGDK_CALL GameModeExit();
+SAMPGDK_EXPORT bool SAMPGDK_CALL SetWorldTime(int hour);
+SAMPGDK_EXPORT bool SAMPGDK_CALL GetWeaponName(int weaponid, char *name, int size);
+SAMPGDK_EXPORT bool SAMPGDK_CALL EnableTirePopping(bool enable);
+SAMPGDK_EXPORT bool SAMPGDK_CALL AllowInteriorWeapons(bool allow);
+SAMPGDK_EXPORT bool SAMPGDK_CALL SetWeather(int weatherid);
+SAMPGDK_EXPORT bool SAMPGDK_CALL SetGravity(float gravity);
+SAMPGDK_EXPORT bool SAMPGDK_CALL AllowAdminTeleport(bool allow);
+SAMPGDK_EXPORT bool SAMPGDK_CALL SetDeathDropAmount(int amount);
+SAMPGDK_EXPORT bool SAMPGDK_CALL CreateExplosion(float x, float y, float z, int type, float radius);
+SAMPGDK_EXPORT bool SAMPGDK_CALL EnableZoneNames(bool enable);
+SAMPGDK_EXPORT bool SAMPGDK_CALL UsePlayerPedAnims();
+SAMPGDK_EXPORT bool SAMPGDK_CALL DisableInteriorEnterExits();
+SAMPGDK_EXPORT bool SAMPGDK_CALL SetNameTagDrawDistance(float distance);
+SAMPGDK_EXPORT bool SAMPGDK_CALL DisableNameTagLOS();
+SAMPGDK_EXPORT bool SAMPGDK_CALL LimitGlobalChatRadius(float chat_radius);
+SAMPGDK_EXPORT bool SAMPGDK_CALL LimitPlayerMarkerRadius(float marker_radius);
 
 SAMPGDK_EXPORT bool SAMPGDK_CALL ConnectNPC(const char *name, const char *script);
 SAMPGDK_EXPORT bool SAMPGDK_CALL IsPlayerNPC(int playerid);
@@ -86,13 +87,13 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL IsPlayerAdmin(int playerid);
 SAMPGDK_EXPORT bool SAMPGDK_CALL Kick(int playerid);
 SAMPGDK_EXPORT bool SAMPGDK_CALL Ban(int playerid);
 SAMPGDK_EXPORT bool SAMPGDK_CALL BanEx(int playerid, const char *reason);
-SAMPGDK_EXPORT void SAMPGDK_CALL SendRconCommand(const char *command);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetServerVarAsString(const char *varname, char *value, size_t size);
+SAMPGDK_EXPORT bool SAMPGDK_CALL SendRconCommand(const char *command);
+SAMPGDK_EXPORT bool SAMPGDK_CALL GetServerVarAsString(const char *varname, char *value, int size);
 SAMPGDK_EXPORT int SAMPGDK_CALL GetServerVarAsInt(const char *varname);
 SAMPGDK_EXPORT bool SAMPGDK_CALL GetServerVarAsBool(const char *varname);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetPlayerNetworkStats(int playerid, char *retstr, size_t size);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetNetworkStats(char *retstr, size_t size);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetPlayerVersion(int playerid, char *version, size_t len);
+SAMPGDK_EXPORT bool SAMPGDK_CALL GetPlayerNetworkStats(int playerid, char *retstr, int size);
+SAMPGDK_EXPORT bool SAMPGDK_CALL GetNetworkStats(char *retstr, int size);
+SAMPGDK_EXPORT bool SAMPGDK_CALL GetPlayerVersion(int playerid, char *version, int len);
 
 SAMPGDK_EXPORT int SAMPGDK_CALL MenuCreate(const char *title, int columns, float x, float y, float col1width, float col2width);
 SAMPGDK_EXPORT bool SAMPGDK_CALL MenuDestroy(int menuid);
@@ -104,6 +105,15 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL IsValidMenu(int menuid);
 SAMPGDK_EXPORT bool SAMPGDK_CALL MenuDisable(int menuid);
 SAMPGDK_EXPORT bool SAMPGDK_CALL MenuDisableRow(int menuid, int row);
 SAMPGDK_EXPORT int SAMPGDK_CALL GetPlayerMenu(int playerid);
+
+#define CreateMenu MenuCreate
+#define DestroyMenu MenuDestroy
+#define AddMenuItem MenuAddItem
+#define SetMenuColumnHeader MenuSetColumnHeader
+#define ShowMenuForPlayer MenuShowForPlayer
+#define HideMenuForPlayer MenuHideForPlayer
+#define DisableMenu MenuDisable
+#define DisableMenuRow MenuDisableRow
 
 SAMPGDK_EXPORT int SAMPGDK_CALL TextDrawCreate(float x, float y, const char *text);
 SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawDestroy(int text);
@@ -124,8 +134,8 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawHideForPlayer(int playerid, int text);
 SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawShowForAll(int text);
 SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawHideForAll(int text);
 SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawSetString(int text, const char *string);
-SAMPGDK_EXPORT void SAMPGDK_CALL SelectTextDraw(int playerid, int hovercolor);
-SAMPGDK_EXPORT void SAMPGDK_CALL CancelSelectTextDraw(int playerid);
+SAMPGDK_EXPORT bool SAMPGDK_CALL SelectTextDraw(int playerid, int hovercolor);
+SAMPGDK_EXPORT bool SAMPGDK_CALL CancelSelectTextDraw(int playerid);
 
 SAMPGDK_EXPORT int SAMPGDK_CALL GangZoneCreate(float minx, float miny, float maxx, float maxy);
 SAMPGDK_EXPORT bool SAMPGDK_CALL GangZoneDestroy(int zone);
@@ -155,8 +165,12 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL UpdatePlayer3DTextLabelText(int playerid, int i
 SAMPGDK_EXPORT bool SAMPGDK_CALL ShowPlayerDialog(int playerid, int dialogid, int style, const char *caption, const char *info, const char *button1, const char *button2);
 
 typedef void (SAMPGDK_CALL *TimerHandler)(int timerid, void *param);
+
 SAMPGDK_EXPORT int SAMPGDK_CALL CreateTimer(int interval, bool repeat, TimerHandler hander, void *param);
 SAMPGDK_EXPORT bool SAMPGDK_CALL DestroyTimer(int timerid);
+
+#define SetTimer CreateTimer
+#define KillTimer DestroyTimer
 
 #define PLAYER_STATE_NONE                    (0)
 #define PLAYER_STATE_ONFOOT                  (1)
@@ -244,6 +258,6 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL DestroyTimer(int timerid);
 
 #define CLICK_SOURCE_SCOREBOARD   (0)
 
-SAMPGDK_EXPORT bool SAMPGDK_CALL gpci(int playerid, char *buffer, size_t size);
+SAMPGDK_EXPORT bool SAMPGDK_CALL gpci(int playerid, char *buffer, int size);
 
 #endif /* !SAMPGDK_A_SAMP_H */

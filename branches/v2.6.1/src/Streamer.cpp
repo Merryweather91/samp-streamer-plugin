@@ -159,7 +159,7 @@ void Streamer::performPlayerUpdate(Player &player, bool automatic)
 		player.interiorID = GetPlayerInterior(player.playerID);
 		player.worldID = GetPlayerVirtualWorld(player.playerID);
 		GetPlayerPos(player.playerID, &player.position[0], &player.position[1], &player.position[2]);
-		if (state != PLAYER_STATE_NONE && state != PLAYER_STATE_WASTED && state != PLAYER_STATE_SPECTATING)
+		if (state != PLAYER_STATE_NONE && state != PLAYER_STATE_WASTED)
 		{
 			if (player.position != position)
 			{
@@ -546,7 +546,14 @@ void Streamer::processObjects(Player &player, const std::vector<SharedCell> &cel
 		}
 		for (boost::unordered_map<int, Element::Object::Material>::iterator m = d->second->materials.begin(); m != d->second->materials.end(); ++m)
 		{
-			SetPlayerObjectMaterial(player.playerID, internalID, m->first, m->second.modelID, m->second.txdName.c_str(), m->second.textureName.c_str(), m->second.color);
+			if (m->second.texture)
+			{
+				SetPlayerObjectMaterial(player.playerID, internalID, m->first, m->second.texture->modelID, m->second.texture->txdFileName.c_str(), m->second.texture->textureName.c_str(), m->second.texture->materialColor);
+			}
+			else if (m->second.text)
+			{
+				SetPlayerObjectMaterialText(player.playerID, internalID, m->second.text->text.c_str(), m->first, m->second.text->materialSize, m->second.text->fontFace.c_str(), m->second.text->fontSize, m->second.text->bold, m->second.text->fontColor, m->second.text->backColor, m->second.text->textAlignment);
+			}
 		}
 		player.internalObjects.insert(std::make_pair(d->second->objectID, internalID));
 		if (d->second->cell)

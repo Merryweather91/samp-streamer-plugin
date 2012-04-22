@@ -351,9 +351,30 @@ void Utility::convertArrayToPolygon(AMX *amx, cell input, cell size, Element::Po
 	boost::geometry::correct(polygon.get<0>());
 }
 
-std::string Utility::getStringFromNative(AMX *amx, cell input)
+std::string Utility::convertNativeStringToString(AMX *amx, cell input)
 {
 	char *string = NULL;
 	amx_StrParam(amx, input, string);
 	return string ? string : "";
+}
+
+void Utility::convertStringToNativeString(AMX *amx, cell output, cell size, std::string string)
+{
+	cell *address = NULL;
+	amx_GetAddr(amx, output, &address);
+	amx_SetString(address, string.c_str(), 0, 0, static_cast<size_t>(size));
+}
+
+void Utility::storeFloatInNative(AMX *amx, cell output, float number)
+{
+	cell *address;
+	amx_GetAddr(amx, output, &address);
+	*address = amx_ftoc(number);
+}
+
+void Utility::storeIntegerInNative(AMX *amx, cell output, int number)
+{
+	cell *address;
+	amx_GetAddr(amx, output, &address);
+	*address = number;
 }

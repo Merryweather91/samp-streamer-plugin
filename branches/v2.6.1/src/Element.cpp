@@ -58,6 +58,16 @@ Object::Attach::Attach()
 	references = 0;
 }
 
+Object::Material::Text::Text()
+{
+	references = 0;
+}
+
+Object::Material::Texture::Texture()
+{
+	references = 0;
+}
+
 Object::Move::Move()
 {
 	references = 0;

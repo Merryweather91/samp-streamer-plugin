@@ -130,10 +130,35 @@ namespace Element
 
 		struct Material
 		{
-			int color;
-			int modelID;
-			std::string textureName;
-			std::string txdName;
+			struct Text
+			{
+				Text();
+
+				int backColor;
+				bool bold;
+				int fontColor;
+				std::string fontFace;
+				int fontSize;
+				int references;
+				int materialSize;
+				std::string text;
+				int textAlignment;
+			};
+
+			boost::intrusive_ptr<Text> text;
+
+			struct Texture
+			{
+				Texture();
+
+				int materialColor;
+				int modelID;
+				int references;
+				std::string textureName;
+				std::string txdFileName;
+			};
+
+			boost::intrusive_ptr<Texture> texture;
 		};
 
 		boost::unordered_map<int, Material> materials;
@@ -320,6 +345,32 @@ namespace boost
 		if (!(--attach->references))
 		{
 			delete attach;
+		}
+	}
+
+	inline void intrusive_ptr_add_ref(Element::Object::Material::Text *materialText)
+	{
+		++materialText->references;
+	}
+
+	inline void intrusive_ptr_release(Element::Object::Material::Text *materialText)
+	{
+		if (!(--materialText->references))
+		{
+			delete materialText;
+		}
+	}
+
+	inline void intrusive_ptr_add_ref(Element::Object::Material::Texture *materialTexture)
+	{
+		++materialTexture->references;
+	}
+
+	inline void intrusive_ptr_release(Element::Object::Material::Texture *materialTexture)
+	{
+		if (!(--materialTexture->references))
+		{
+			delete materialTexture;
 		}
 	}
 

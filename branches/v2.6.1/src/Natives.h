@@ -73,6 +73,8 @@ namespace Natives
 	cell AMX_NATIVE_CALL EditDynamicObject(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL GetDynamicObjectMaterial(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL SetDynamicObjectMaterial(AMX *amx, cell *params);
+	cell AMX_NATIVE_CALL GetDynamicObjectMaterialText(AMX *amx, cell *params);
+	cell AMX_NATIVE_CALL SetDynamicObjectMaterialText(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL DestroyAllDynamicObjects(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL CountDynamicObjects(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL CreateDynamicPickup(AMX *amx, cell *params);

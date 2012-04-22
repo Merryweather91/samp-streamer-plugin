@@ -31,15 +31,13 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 			boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
 			if (o != core->getData()->objects.end())
 			{
-				cell *result = NULL;
-				amx_GetAddr(amx, params[4], &result);
 				switch (static_cast<int>(params[3]))
 				{
 					case AttachOffsetX:
 					{
 						if (o->second->attach)
 						{
-							*result = amx_ftoc(o->second->attach->offset[0]);
+							Utility::storeFloatInNative(amx, params[4], o->second->attach->offset[0]);
 							return 1;
 						}
 					}
@@ -48,7 +46,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (o->second->attach)
 						{
-							*result = amx_ftoc(o->second->attach->offset[1]);
+							Utility::storeFloatInNative(amx, params[4], o->second->attach->offset[1]);
 							return 1;
 						}
 					}
@@ -57,7 +55,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (o->second->attach)
 						{
-							*result = amx_ftoc(o->second->attach->offset[2]);
+							Utility::storeFloatInNative(amx, params[4], o->second->attach->offset[2]);
 							return 1;
 						}
 					}
@@ -66,7 +64,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (o->second->attach)
 						{
-							*result = amx_ftoc(o->second->attach->rotation[0]);
+							Utility::storeFloatInNative(amx, params[4], o->second->attach->rotation[0]);
 							return 1;
 						}
 					}
@@ -75,7 +73,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (o->second->attach)
 						{
-							*result = amx_ftoc(o->second->attach->rotation[1]);
+							Utility::storeFloatInNative(amx, params[4], o->second->attach->rotation[1]);
 							return 1;
 						}
 					}
@@ -84,7 +82,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (o->second->attach)
 						{
-							*result = amx_ftoc(o->second->attach->rotation[2]);
+							Utility::storeFloatInNative(amx, params[4], o->second->attach->rotation[2]);
 							return 1;
 						}
 					}
@@ -93,7 +91,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (o->second->attach)
 						{
-							*result = amx_ftoc(o->second->attach->position[0]);
+							Utility::storeFloatInNative(amx, params[4], o->second->attach->position[0]);
 							return 1;
 						}
 					}
@@ -102,7 +100,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (o->second->attach)
 						{
-							*result = amx_ftoc(o->second->attach->position[1]);
+							Utility::storeFloatInNative(amx, params[4], o->second->attach->position[1]);
 							return 1;
 						}
 					}
@@ -111,14 +109,14 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (o->second->attach)
 						{
-							*result = amx_ftoc(o->second->attach->position[2]);
+							Utility::storeFloatInNative(amx, params[4], o->second->attach->position[2]);
 							return 1;
 						}
 					}
 					break;
 					case DrawDistance:
 					{
-						*result = amx_ftoc(o->second->drawDistance);
+						Utility::storeFloatInNative(amx, params[4], o->second->drawDistance);
 						return 1;
 					}
 					break;
@@ -126,7 +124,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (o->second->move)
 						{
-							*result = amx_ftoc(o->second->move->speed);
+							Utility::storeFloatInNative(amx, params[4], o->second->move->speed);
 							return 1;
 						}
 					}
@@ -135,7 +133,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (o->second->move)
 						{
-							*result = amx_ftoc(o->second->move->rotation.get<0>()[0]);
+							Utility::storeFloatInNative(amx, params[4], o->second->move->rotation.get<0>()[0]);
 							return 1;
 						}
 					}
@@ -144,7 +142,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (o->second->move)
 						{
-							*result = amx_ftoc(o->second->move->rotation.get<0>()[1]);
+							Utility::storeFloatInNative(amx, params[4], o->second->move->rotation.get<0>()[1]);
 							return 1;
 						}
 					}
@@ -153,7 +151,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (o->second->move)
 						{
-							*result = amx_ftoc(o->second->move->rotation.get<0>()[2]);
+							Utility::storeFloatInNative(amx, params[4], o->second->move->rotation.get<0>()[2]);
 							return 1;
 						}
 					}
@@ -162,7 +160,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (o->second->move)
 						{
-							*result = amx_ftoc(o->second->move->position.get<0>()[0]);
+							Utility::storeFloatInNative(amx, params[4], o->second->move->position.get<0>()[0]);
 							return 1;
 						}
 					}
@@ -171,7 +169,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (o->second->move)
 						{
-							*result = amx_ftoc(o->second->move->position.get<0>()[1]);
+							Utility::storeFloatInNative(amx, params[4], o->second->move->position.get<0>()[1]);
 							return 1;
 						}
 					}
@@ -180,51 +178,50 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (o->second->move)
 						{
-							*result = amx_ftoc(o->second->move->position.get<0>()[2]);
+							Utility::storeFloatInNative(amx, params[4], o->second->move->position.get<0>()[2]);
 							return 1;
 						}
 					}
 					break;
 					case RX:
 					{
-						*result = amx_ftoc(o->second->rotation[0]);
+						Utility::storeFloatInNative(amx, params[4], o->second->rotation[0]);
 						return 1;
 					}
 					break;
 					case RY:
 					{
-						*result = amx_ftoc(o->second->rotation[1]);
+						Utility::storeFloatInNative(amx, params[4], o->second->rotation[1]);
 						return 1;
 					}
 					break;
 					case RZ:
 					{
-						*result = amx_ftoc(o->second->rotation[2]);
+						Utility::storeFloatInNative(amx, params[4], o->second->rotation[2]);
 						return 1;
 					}
 					break;
 					case StreamDistance:
 					{
-						float streamDistance = sqrt(o->second->streamDistance);
-						*result = amx_ftoc(streamDistance);
+						Utility::storeFloatInNative(amx, params[4], sqrt(o->second->streamDistance));
 						return 1;
 					}
 					break;
 					case X:
 					{
-						*result = amx_ftoc(o->second->position[0]);
+						Utility::storeFloatInNative(amx, params[4], o->second->position[0]);
 						return 1;
 					}
 					break;
 					case Y:
 					{
-						*result = amx_ftoc(o->second->position[1]);
+						Utility::storeFloatInNative(amx, params[4], o->second->position[1]);
 						return 1;
 					}
 					break;
 					case Z:
 					{
-						*result = amx_ftoc(o->second->position[2]);
+						Utility::storeFloatInNative(amx, params[4], o->second->position[2]);
 						return 1;
 					}
 					break;
@@ -244,32 +241,29 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 			boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
 			if (p != core->getData()->pickups.end())
 			{
-				cell *result = NULL;
-				amx_GetAddr(amx, params[4], &result);
 				switch (static_cast<int>(params[3]))
 				{
 					case StreamDistance:
 					{
-						float streamDistance = sqrt(p->second->streamDistance);
-						*result = amx_ftoc(streamDistance);
+						Utility::storeFloatInNative(amx, params[4], sqrt(p->second->streamDistance));
 						return 1;
 					}
 					break;
 					case X:
 					{
-						*result = amx_ftoc(p->second->position[0]);
+						Utility::storeFloatInNative(amx, params[4], p->second->position[0]);
 						return 1;
 					}
 					break;
 					case Y:
 					{
-						*result = amx_ftoc(p->second->position[1]);
+						Utility::storeFloatInNative(amx, params[4], p->second->position[1]);
 						return 1;
 					}
 					break;
 					case Z:
 					{
-						*result = amx_ftoc(p->second->position[2]);
+						Utility::storeFloatInNative(amx, params[4], p->second->position[2]);
 						return 1;
 					}
 					break;
@@ -289,38 +283,35 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 			boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
 			if (c != core->getData()->checkpoints.end())
 			{
-				cell *result = NULL;
-				amx_GetAddr(amx, params[4], &result);
 				switch (static_cast<int>(params[3]))
 				{
 					case Size:
 					{
-						*result = amx_ftoc(c->second->size);
+						Utility::storeFloatInNative(amx, params[4], c->second->size);
 						return 1;
 					}
 					break;
 					case StreamDistance:
 					{
-						float streamDistance = sqrt(c->second->streamDistance);
-						*result = amx_ftoc(streamDistance);
+						Utility::storeFloatInNative(amx, params[4], sqrt(c->second->streamDistance));
 						return 1;
 					}
 					break;
 					case X:
 					{
-						*result = amx_ftoc(c->second->position[0]);
+						Utility::storeFloatInNative(amx, params[4], c->second->position[0]);
 						return 1;
 					}
 					break;
 					case Y:
 					{
-						*result = amx_ftoc(c->second->position[1]);
+						Utility::storeFloatInNative(amx, params[4], c->second->position[1]);
 						return 1;
 					}
 					break;
 					case Z:
 					{
-						*result = amx_ftoc(c->second->position[2]);
+						Utility::storeFloatInNative(amx, params[4], c->second->position[2]);
 						return 1;
 					}
 					break;
@@ -340,57 +331,54 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 			boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
 			if (r != core->getData()->raceCheckpoints.end())
 			{
-				cell *result = NULL;
-				amx_GetAddr(amx, params[4], &result);
 				switch (static_cast<int>(params[3]))
 				{
 					case NextX:
 					{
-						*result = amx_ftoc(r->second->next[0]);
+						Utility::storeFloatInNative(amx, params[4], r->second->next[0]);
 						return 1;
 					}
 					break;
 					case NextY:
 					{
-						*result = amx_ftoc(r->second->next[1]);
+						Utility::storeFloatInNative(amx, params[4], r->second->next[1]);
 						return 1;
 					}
 					break;
 					case NextZ:
 					{
-						*result = amx_ftoc(r->second->next[2]);
+						Utility::storeFloatInNative(amx, params[4], r->second->next[2]);
 						return 1;
 					}
 					break;
 					break;
 					case Size:
 					{
-						*result = amx_ftoc(r->second->size);
+						Utility::storeFloatInNative(amx, params[4], r->second->size);
 						return 1;
 					}
 					break;
 					case StreamDistance:
 					{
-						float streamDistance = sqrt(r->second->streamDistance);
-						*result = amx_ftoc(streamDistance);
+						Utility::storeFloatInNative(amx, params[4], sqrt(r->second->streamDistance));
 						return 1;
 					}
 					break;
 					case X:
 					{
-						*result = amx_ftoc(r->second->position[0]);
+						Utility::storeFloatInNative(amx, params[4], r->second->position[0]);
 						return 1;
 					}
 					break;
 					case Y:
 					{
-						*result = amx_ftoc(r->second->position[1]);
+						Utility::storeFloatInNative(amx, params[4], r->second->position[1]);
 						return 1;
 					}
 					break;
 					case Z:
 					{
-						*result = amx_ftoc(r->second->position[2]);
+						Utility::storeFloatInNative(amx, params[4], r->second->position[2]);
 						return 1;
 					}
 					break;
@@ -410,32 +398,29 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 			boost::unordered_map<int, Element::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
 			if (m != core->getData()->mapIcons.end())
 			{
-				cell *result = NULL;
-				amx_GetAddr(amx, params[4], &result);
 				switch (static_cast<int>(params[3]))
 				{
 					case StreamDistance:
 					{
-						float streamDistance = sqrt(m->second->streamDistance);
-						*result = amx_ftoc(streamDistance);
+						Utility::storeFloatInNative(amx, params[4], sqrt(m->second->streamDistance));
 						return 1;
 					}
 					break;
 					case X:
 					{
-						*result = amx_ftoc(m->second->position[0]);
+						Utility::storeFloatInNative(amx, params[4], m->second->position[0]);
 						return 1;
 					}
 					break;
 					case Y:
 					{
-						*result = amx_ftoc(m->second->position[1]);
+						Utility::storeFloatInNative(amx, params[4], m->second->position[1]);
 						return 1;
 					}
 					break;
 					case Z:
 					{
-						*result = amx_ftoc(m->second->position[2]);
+						Utility::storeFloatInNative(amx, params[4], m->second->position[2]);
 						return 1;
 					}
 					break;
@@ -455,15 +440,13 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 			boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
 			if (t != core->getData()->textLabels.end())
 			{
-				cell *result = NULL;
-				amx_GetAddr(amx, params[4], &result);
 				switch (static_cast<int>(params[3]))
 				{
 					case AttachX:
 					{
 						if (t->second->attach)
 						{
-							*result = amx_ftoc(t->second->attach->position[0]);
+							Utility::storeFloatInNative(amx, params[4], t->second->attach->position[0]);
 							return 1;
 						}
 					}
@@ -472,7 +455,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (t->second->attach)
 						{
-							*result = amx_ftoc(t->second->attach->position[1]);
+							Utility::storeFloatInNative(amx, params[4], t->second->attach->position[1]);
 							return 1;
 						}
 					}
@@ -481,42 +464,41 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (t->second->attach)
 						{
-							*result = amx_ftoc(t->second->attach->position[2]);
+							Utility::storeFloatInNative(amx, params[4], t->second->attach->position[2]);
 							return 1;
 						}
 					}
 					break;
 					case DrawDistance:
 					{
-						*result = amx_ftoc(t->second->drawDistance);
+						Utility::storeFloatInNative(amx, params[4], t->second->drawDistance);
 						return 1;
 					}
 					break;
 					case StreamDistance:
 					{
-						float streamDistance = sqrt(t->second->streamDistance);
-						*result = amx_ftoc(streamDistance);
+						Utility::storeFloatInNative(amx, params[4], sqrt(t->second->streamDistance));
 						return 1;
 					}
 					break;
 					case AttachOffsetX:
 					case X:
 					{
-						*result = amx_ftoc(t->second->position[0]);
+						Utility::storeFloatInNative(amx, params[4], t->second->position[0]);
 						return 1;
 					}
 					break;
 					case AttachOffsetY:
 					case Y:
 					{
-						*result = amx_ftoc(t->second->position[1]);
+						Utility::storeFloatInNative(amx, params[4], t->second->position[1]);
 						return 1;
 					}
 					break;
 					case AttachOffsetZ:
 					case Z:
 					{
-						*result = amx_ftoc(t->second->position[2]);
+						Utility::storeFloatInNative(amx, params[4], t->second->position[2]);
 						return 1;
 					}
 					break;
@@ -536,15 +518,13 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 			boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
 			if (a != core->getData()->areas.end())
 			{
-				cell *result = NULL;
-				amx_GetAddr(amx, params[4], &result);
 				switch (static_cast<int>(params[3]))
 				{
 					case AttachX:
 					{
 						if (a->second->attach)
 						{
-							*result = amx_ftoc(a->second->attach->position[0]);
+							Utility::storeFloatInNative(amx, params[4], a->second->attach->position[0]);
 							return 1;
 						}
 					}
@@ -553,7 +533,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (a->second->attach)
 						{
-							*result = amx_ftoc(a->second->attach->position[1]);
+							Utility::storeFloatInNative(amx, params[4], a->second->attach->position[1]);
 							return 1;
 						}
 					}
@@ -562,7 +542,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					{
 						if (a->second->attach)
 						{
-							*result = amx_ftoc(a->second->attach->position[2]);
+							Utility::storeFloatInNative(amx, params[4], a->second->attach->position[2]);
 							return 1;
 						}
 					}
@@ -573,12 +553,12 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 						{
 							case STREAMER_AREA_TYPE_RECTANGLE:
 							{
-								*result = amx_ftoc(boost::get<Element::Box2D>(a->second->position).max_corner()[0]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box2D>(a->second->position).max_corner()[0]);
 							}
 							break;
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								*result = amx_ftoc(boost::get<Element::Box3D>(a->second->position).max_corner()[0]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box3D>(a->second->position).max_corner()[0]);
 							}
 							break;
 						}
@@ -591,12 +571,12 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 						{
 							case STREAMER_AREA_TYPE_RECTANGLE:
 							{
-								*result = amx_ftoc(boost::get<Element::Box2D>(a->second->position).max_corner()[1]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box2D>(a->second->position).max_corner()[1]);
 							}
 							break;
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								*result = amx_ftoc(boost::get<Element::Box3D>(a->second->position).max_corner()[1]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box3D>(a->second->position).max_corner()[1]);
 							}
 							break;
 						}
@@ -609,12 +589,12 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 						{
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								*result = amx_ftoc(boost::get<Element::Box3D>(a->second->position).max_corner()[2]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box3D>(a->second->position).max_corner()[2]);
 							}
 							break;
 							case STREAMER_AREA_TYPE_POLYGON:
 							{
-								*result = amx_ftoc(boost::get<Element::Polygon2D>(a->second->position).get<1>()[1]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Polygon2D>(a->second->position).get<1>()[1]);
 							}
 							break;
 						}
@@ -627,12 +607,12 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 						{
 							case STREAMER_AREA_TYPE_RECTANGLE:
 							{
-								*result = amx_ftoc(boost::get<Element::Box2D>(a->second->position).min_corner()[0]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box2D>(a->second->position).min_corner()[0]);
 							}
 							break;
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								*result = amx_ftoc(boost::get<Element::Box3D>(a->second->position).min_corner()[0]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box3D>(a->second->position).min_corner()[0]);
 							}
 							break;
 						}
@@ -645,12 +625,12 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 						{
 							case STREAMER_AREA_TYPE_RECTANGLE:
 							{
-								*result = amx_ftoc(boost::get<Element::Box2D>(a->second->position).min_corner()[1]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box2D>(a->second->position).min_corner()[1]);
 							}
 							break;
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								*result = amx_ftoc(boost::get<Element::Box3D>(a->second->position).min_corner()[0]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box3D>(a->second->position).min_corner()[0]);
 							}
 							break;
 						}
@@ -663,12 +643,12 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 						{
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								*result = amx_ftoc(boost::get<Element::Box3D>(a->second->position).min_corner()[2]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box3D>(a->second->position).min_corner()[2]);
 							}
 							break;
 							case STREAMER_AREA_TYPE_POLYGON:
 							{
-								*result = amx_ftoc(boost::get<Element::Polygon2D>(a->second->position).get<1>()[0]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Polygon2D>(a->second->position).get<1>()[0]);
 							}
 							break;
 						}
@@ -677,8 +657,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					break;
 					case Size:
 					{
-						float size = sqrt(a->second->size);
-						*result = amx_ftoc(size);
+						Utility::storeFloatInNative(amx, params[4], sqrt(a->second->size));
 						return 1;
 					}
 					break;
@@ -688,12 +667,12 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 						{
 							case STREAMER_AREA_TYPE_CIRCLE:
 							{
-								*result = amx_ftoc(boost::get<Eigen::Vector2f>(a->second->position)[0]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Eigen::Vector2f>(a->second->position)[0]);
 							}
 							break;
 							case STREAMER_AREA_TYPE_SPHERE:
 							{
-								*result = amx_ftoc(boost::get<Eigen::Vector3f>(a->second->position)[0]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Eigen::Vector3f>(a->second->position)[0]);
 							}
 							break;
 						}
@@ -706,12 +685,12 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 						{
 							case STREAMER_AREA_TYPE_CIRCLE:
 							{
-								*result = amx_ftoc(boost::get<Eigen::Vector2f>(a->second->position)[1]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Eigen::Vector2f>(a->second->position)[1]);
 							}
 							break;
 							case STREAMER_AREA_TYPE_SPHERE:
 							{
-								*result = amx_ftoc(boost::get<Eigen::Vector3f>(a->second->position)[1]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Eigen::Vector3f>(a->second->position)[1]);
 							}
 							break;
 						}
@@ -724,7 +703,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 						{
 							case STREAMER_AREA_TYPE_SPHERE:
 							{
-								*result = amx_ftoc(boost::get<Eigen::Vector3f>(a->second->position)[2]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Eigen::Vector3f>(a->second->position)[2]);
 							}
 							break;
 						}
@@ -928,7 +907,14 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							}
 							for (boost::unordered_map<int, Element::Object::Material>::iterator m = o->second->materials.begin(); m != o->second->materials.end(); ++m)
 							{
-								SetPlayerObjectMaterial(p->first, i->second, m->first, m->second.modelID, m->second.txdName.c_str(), m->second.textureName.c_str(), m->second.color);
+								if (m->second.texture)
+								{
+									SetPlayerObjectMaterial(p->first, i->second, m->first, m->second.texture->modelID, m->second.texture->txdFileName.c_str(), m->second.texture->textureName.c_str(), m->second.texture->materialColor);
+								}
+								else if (m->second.text)
+								{
+									SetPlayerObjectMaterialText(p->first, i->second, m->second.text->text.c_str(), m->first, m->second.text->materialSize, m->second.text->fontFace.c_str(), m->second.text->fontSize, m->second.text->bold, m->second.text->fontColor, m->second.text->backColor, m->second.text->textAlignment);
+								}
 							}
 						}
 					}
@@ -1898,7 +1884,14 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 							}
 							for (boost::unordered_map<int, Element::Object::Material>::iterator m = o->second->materials.begin(); m != o->second->materials.end(); ++m)
 							{
-								SetPlayerObjectMaterial(p->first, i->second, m->first, m->second.modelID, m->second.txdName.c_str(), m->second.textureName.c_str(), m->second.color);
+								if (m->second.texture)
+								{
+									SetPlayerObjectMaterial(p->first, i->second, m->first, m->second.texture->modelID, m->second.texture->txdFileName.c_str(), m->second.texture->textureName.c_str(), m->second.texture->materialColor);
+								}
+								else if (m->second.text)
+								{
+									SetPlayerObjectMaterialText(p->first, i->second, m->second.text->text.c_str(), m->first, m->second.text->materialSize, m->second.text->fontFace.c_str(), m->second.text->fontSize, m->second.text->bold, m->second.text->fontColor, m->second.text->backColor, m->second.text->textAlignment);
+								}
 							}
 						}
 					}
