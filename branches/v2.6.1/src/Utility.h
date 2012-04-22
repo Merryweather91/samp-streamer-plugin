@@ -187,7 +187,7 @@ namespace Utility
 
 	void convertArrayToPolygon(AMX *amx, cell input, cell size, Element::Polygon2D &polygon);
 	std::string convertNativeStringToString(AMX *amx, cell input);
-	void convertStringToNativeString(AMX *amx, cell input, cell size, std::string string);
+	void convertStringToNativeString(AMX *amx, cell output, cell size, std::string string);
 	void storeFloatInNative(AMX *amx, cell output, float number);
 	void storeIntegerInNative(AMX *amx, cell output, int number);
 }
