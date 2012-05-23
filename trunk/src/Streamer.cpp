@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -467,7 +467,14 @@ void Streamer::processObjects(Player &player, const std::vector<SharedCell> &cel
 			float distance = std::numeric_limits<float>::infinity();
 			if (checkPlayer(o->second->players, player.playerID, o->second->interiors, player.interiorID, o->second->worlds, player.worldID))
 			{
-				distance = boost::geometry::comparable_distance(player.position, o->second->position);
+				if (o->second->attach)
+				{
+					distance = boost::geometry::comparable_distance(player.position, o->second->attach->position);
+				}
+				else
+				{
+					distance = boost::geometry::comparable_distance(player.position, o->second->position);
+				}
 			}
 			boost::unordered_map<int, int>::iterator i = player.internalObjects.find(o->first);
 			if (distance <= o->second->streamDistance)
@@ -529,9 +536,24 @@ void Streamer::processObjects(Player &player, const std::vector<SharedCell> &cel
 			player.visibleObjects = player.internalObjects.size();
 			break;
 		}
-		if (d->second->move)
+		if (d->second->attach)
+		{
+			AttachPlayerObjectToVehicle(player.playerID, internalID, d->second->attach->vehicle, d->second->attach->offset[0], d->second->attach->offset[1], d->second->attach->offset[2], d->second->attach->rotation[0], d->second->attach->rotation[1], d->second->attach->rotation[2]);
+		}
+		else if (d->second->move)
 		{
 			MovePlayerObject(player.playerID, internalID, d->second->move->position.get<0>()[0], d->second->move->position.get<0>()[1], d->second->move->position.get<0>()[2], d->second->move->speed, d->second->move->rotation.get<0>()[0], d->second->move->rotation.get<0>()[1], d->second->move->rotation.get<0>()[2]);
+		}
+		for (boost::unordered_map<int, Element::Object::Material>::iterator m = d->second->materials.begin(); m != d->second->materials.end(); ++m)
+		{
+			if (m->second.main)
+			{
+				SetPlayerObjectMaterial(player.playerID, internalID, m->first, m->second.main->modelID, m->second.main->txdFileName.c_str(), m->second.main->textureName.c_str(), m->second.main->materialColor);
+			}
+			else if (m->second.text)
+			{
+				SetPlayerObjectMaterialText(player.playerID, internalID, m->second.text->materialText.c_str(), m->first, m->second.text->materialSize, m->second.text->fontFace.c_str(), m->second.text->fontSize, m->second.text->bold, m->second.text->fontColor, m->second.text->backColor, m->second.text->textAlignment);
+			}
 		}
 		player.internalObjects.insert(std::make_pair(d->second->objectID, internalID));
 		if (d->second->cell)
@@ -579,7 +601,7 @@ void Streamer::processPickups(Player &player, const std::vector<SharedCell> &cel
 			}
 			else
 			{
-				discoveredPickups.quick_erase(d);
+				discoveredPickups.erase(d);
 				++i;
 			}
 		}
@@ -748,6 +770,10 @@ void Streamer::processActiveItems()
 	{
 		processAttachedAreas();
 	}
+	if (!attachedObjects.empty())
+	{
+		processAttachedObjects();
+	}
 	if (!attachedTextLabels.empty())
 	{
 		processAttachedTextLabels();
@@ -855,6 +881,32 @@ void Streamer::processAttachedAreas()
 			else
 			{
 				(*a)->attach->position.fill(std::numeric_limits<float>::infinity());
+			}
+		}
+	}
+}
+
+void Streamer::processAttachedObjects()
+{
+	for (boost::unordered_set<Element::SharedObject>::iterator o = attachedObjects.begin(); o != attachedObjects.end(); ++o)
+	{
+		if ((*o)->attach)
+		{
+			bool adjust = false;
+			if ((*o)->attach->vehicle != INVALID_GENERIC_ID)
+			{
+				adjust = GetVehiclePos((*o)->attach->vehicle, &(*o)->attach->position[0], &(*o)->attach->position[1], &(*o)->attach->position[2]);
+			}
+			if (adjust)
+			{
+				if ((*o)->cell)
+				{
+					core->getGrid()->removeObject(*o, true);
+				}
+			}
+			else
+			{
+				(*o)->attach->position.fill(std::numeric_limits<float>::infinity());
 			}
 		}
 	}

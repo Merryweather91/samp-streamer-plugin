@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -49,6 +49,21 @@ MapIcon::MapIcon()
 }
 
 Object::Object()
+{
+	references = 0;
+}
+
+Object::Attach::Attach()
+{
+	references = 0;
+}
+
+Object::Material::Main::Main()
+{
+	references = 0;
+}
+
+Object::Material::Text::Text()
 {
 	references = 0;
 }

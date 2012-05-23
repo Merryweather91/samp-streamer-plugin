@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -149,11 +149,11 @@ namespace Utility
 		return true;
 	}
 
-	inline bool convertContainerToArray(AMX *amx, cell input, cell size, boost::unordered_set<int> &container)
+	inline bool convertContainerToArray(AMX *amx, cell output, cell size, boost::unordered_set<int> &container)
 	{
 		cell *array = NULL;
 		boost::unordered_set<int>::iterator c = container.begin();
-		amx_GetAddr(amx, input, &array);
+		amx_GetAddr(amx, output, &array);
 		for (std::size_t i = 0; i < static_cast<std::size_t>(size); ++i)
 		{
 			if (c == container.end())
@@ -166,11 +166,11 @@ namespace Utility
 	}
 
 	template<std::size_t N>
-	inline bool convertContainerToArray(AMX *amx, cell input, cell size, std::bitset<N> &container)
+	inline bool convertContainerToArray(AMX *amx, cell output, cell size, std::bitset<N> &container)
 	{
 		cell *array = NULL;
 		std::size_t i = 0;
-		amx_GetAddr(amx, input, &array);
+		amx_GetAddr(amx, output, &array);
 		for (std::size_t c = 0; c < N; ++c)
 		{
 			if (i == static_cast<std::size_t>(size))
@@ -186,7 +186,10 @@ namespace Utility
 	}
 
 	void convertArrayToPolygon(AMX *amx, cell input, cell size, Element::Polygon2D &polygon);
-	std::string getStringFromNative(AMX *amx, cell input);
+	std::string convertNativeStringToString(AMX *amx, cell input);
+	void convertStringToNativeString(AMX *amx, cell output, cell size, std::string string);
+	void storeFloatInNative(AMX *amx, cell output, float number);
+	void storeIntegerInNative(AMX *amx, cell output, int number);
 }
 
 #endif

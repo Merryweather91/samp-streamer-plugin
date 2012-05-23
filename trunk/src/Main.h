@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -19,8 +19,8 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define INCLUDE_FILE_VERSION (0x26002)
-#define PLUGIN_VERSION "2.6"
+#define INCLUDE_FILE_VERSION (0x26104)
+#define PLUGIN_VERSION "2.6.1"
 
 #define STREAMER_TYPE_OBJECT (0)
 #define STREAMER_TYPE_PICKUP (1)

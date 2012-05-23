@@ -15,6 +15,7 @@
 
 #ifndef SAMPGDK_A_PLAYERS_H
 #define SAMPGDK_A_PLAYERS_H
+#pragma once
 
 #include <sampgdk/config.h>
 #include <sampgdk/a_samp.h>
@@ -105,11 +106,11 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL ResetPlayerMoney(int playerid);
 SAMPGDK_EXPORT int SAMPGDK_CALL SetPlayerName(int playerid, const char *name);
 SAMPGDK_EXPORT int SAMPGDK_CALL GetPlayerMoney(int playerid);
 SAMPGDK_EXPORT int SAMPGDK_CALL GetPlayerState(int playerid);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetPlayerIp(int playerid, char *ip, size_t size);
+SAMPGDK_EXPORT bool SAMPGDK_CALL GetPlayerIp(int playerid, char *ip, int size);
 SAMPGDK_EXPORT int SAMPGDK_CALL GetPlayerPing(int playerid);
 SAMPGDK_EXPORT int SAMPGDK_CALL GetPlayerWeapon(int playerid);
 SAMPGDK_EXPORT bool SAMPGDK_CALL GetPlayerKeys(int playerid, int *keys, int *updown, int *leftright);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetPlayerName(int playerid, char *name, size_t size);
+SAMPGDK_EXPORT bool SAMPGDK_CALL GetPlayerName(int playerid, char *name, int size);
 SAMPGDK_EXPORT bool SAMPGDK_CALL SetPlayerTime(int playerid, int hour, int minute);
 SAMPGDK_EXPORT bool SAMPGDK_CALL GetPlayerTime(int playerid, int *hour, int *minute);
 SAMPGDK_EXPORT bool SAMPGDK_CALL TogglePlayerClock(int playerid, bool toggle);
@@ -132,7 +133,7 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL RemoveBuildingForPlayer(int playerid, int model
 
 #define MAX_PLAYER_ATTACHED_OBJECTS (10)
 
-SAMPGDK_EXPORT bool SAMPGDK_CALL SetPlayerAttachedObject(int playerid, int index, int modelid, int bone, float fOffsetX, float fOffsetY, float fOffsetZ, float fRotX, float fRotY, float fRotZ, float fScaleX, float fScaleY, float fScaleZ);
+SAMPGDK_EXPORT bool SAMPGDK_CALL SetPlayerAttachedObject(int playerid, int index, int modelid, int bone, float fOffsetX, float fOffsetY, float fOffsetZ, float fRotX, float fRotY, float fRotZ, float fScaleX, float fScaleY, float fScaleZ, int materialcolor1, int materialcolor2);
 SAMPGDK_EXPORT bool SAMPGDK_CALL RemovePlayerAttachedObject(int playerid, int index);
 SAMPGDK_EXPORT bool SAMPGDK_CALL IsPlayerAttachedObjectSlotUsed(int playerid, int index);
 SAMPGDK_EXPORT bool SAMPGDK_CALL EditAttachedObject(int playerid, int index);
@@ -163,13 +164,13 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerTextDrawSetString(int playerid, int text,
 SAMPGDK_EXPORT bool SAMPGDK_CALL SetPVarInt(int playerid, const char *varname, int value);
 SAMPGDK_EXPORT int SAMPGDK_CALL GetPVarInt(int playerid, const char *varname);
 SAMPGDK_EXPORT bool SAMPGDK_CALL SetPVarString(int playerid, const char *varname, const char *value);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetPVarString(int playerid, const char *varname, char *value, size_t size);
+SAMPGDK_EXPORT bool SAMPGDK_CALL GetPVarString(int playerid, const char *varname, char *value, int size);
 SAMPGDK_EXPORT bool SAMPGDK_CALL SetPVarFloat(int playerid, const char *varname, float value);
 SAMPGDK_EXPORT float SAMPGDK_CALL GetPVarFloat(int playerid, const char *varname);
 SAMPGDK_EXPORT bool SAMPGDK_CALL DeletePVar(int playerid, const char *varname);
 
 SAMPGDK_EXPORT int SAMPGDK_CALL GetPVarsUpperIndex(int playerid);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetPVarNameAtIndex(int playerid, int index, char *varname, size_t size);
+SAMPGDK_EXPORT bool SAMPGDK_CALL GetPVarNameAtIndex(int playerid, int index, char *varname, int size);
 SAMPGDK_EXPORT int SAMPGDK_CALL GetPVarType(int playerid, const char *varname);
 
 #define MAX_CHATBUBBLE_LENGTH (144)
@@ -184,7 +185,7 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL PlayerPlaySound(int playerid, int soundid, floa
 SAMPGDK_EXPORT bool SAMPGDK_CALL ApplyAnimation(int playerid, const char *animlib, const char *animname, float fDelta, bool loop, bool lockx, bool locky, bool freeze, int time, bool forcesync);
 SAMPGDK_EXPORT bool SAMPGDK_CALL ClearAnimations(int playerid, bool forcesync);
 SAMPGDK_EXPORT int SAMPGDK_CALL GetPlayerAnimationIndex(int playerid);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetAnimationName(int index, char *animlib, size_t animlib_size, char *animname, size_t animname_size);
+SAMPGDK_EXPORT bool SAMPGDK_CALL GetAnimationName(int index, char *animlib, int animlib_size, char *animname, int animname_size);
 SAMPGDK_EXPORT int SAMPGDK_CALL GetPlayerSpecialAction(int playerid);
 SAMPGDK_EXPORT bool SAMPGDK_CALL SetPlayerSpecialAction(int playerid, int actionid);
 
@@ -230,7 +231,7 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL SetPlayerVirtualWorld(int playerid, int worldid
 SAMPGDK_EXPORT int SAMPGDK_CALL GetPlayerVirtualWorld(int playerid);
 
 SAMPGDK_EXPORT bool SAMPGDK_CALL EnableStuntBonusForPlayer(int playerid, bool enable);
-SAMPGDK_EXPORT void SAMPGDK_CALL EnableStuntBonusForAll(bool enable);
+SAMPGDK_EXPORT bool SAMPGDK_CALL EnableStuntBonusForAll(bool enable);
 
 #define SPECTATE_MODE_NORMAL  (1)
 #define SPECTATE_MODE_FIXED   (2)

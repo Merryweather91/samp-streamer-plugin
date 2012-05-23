@@ -15,6 +15,7 @@
 
 #ifndef SAMPGDK_A_VEHICLES_H
 #define SAMPGDK_A_VEHICLES_H
+#pragma once
 
 #include <sampgdk/config.h>
 #include <sampgdk/a_samp.h>
@@ -49,7 +50,7 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL GetVehicleZAngle(int vehicleid, float *z_angle)
 SAMPGDK_EXPORT bool SAMPGDK_CALL GetVehicleRotationQuat(int vehicleid, float *w, float *x, float *y, float *z);
 SAMPGDK_EXPORT bool SAMPGDK_CALL SetVehicleZAngle(int vehicleid, float z_angle);
 SAMPGDK_EXPORT bool SAMPGDK_CALL SetVehicleParamsForPlayer(int vehicleid, int playerid, bool objective, bool doorslocked);
-SAMPGDK_EXPORT void SAMPGDK_CALL ManualVehicleEngineAndLights();
+SAMPGDK_EXPORT bool SAMPGDK_CALL ManualVehicleEngineAndLights();
 SAMPGDK_EXPORT bool SAMPGDK_CALL SetVehicleParamsEx(int vehicleid, int engine, int lights, int alarm, int doors, int bonnet, int boot, int objective);
 SAMPGDK_EXPORT bool SAMPGDK_CALL GetVehicleParamsEx(int vehicleid, int *engine, int *lights, int *alarm, int *doors, int *bonnet, int *boot, int *objective);
 SAMPGDK_EXPORT bool SAMPGDK_CALL SetVehicleToRespawn(int vehicleid);
@@ -60,8 +61,8 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL ChangeVehicleColor(int vehicleid, int color1, i
 SAMPGDK_EXPORT bool SAMPGDK_CALL ChangeVehiclePaintjob(int vehicleid, int paintjobid);
 SAMPGDK_EXPORT bool SAMPGDK_CALL SetVehicleHealth(int vehicleid, float health);
 SAMPGDK_EXPORT bool SAMPGDK_CALL GetVehicleHealth(int vehicleid, float *health);
-SAMPGDK_EXPORT void SAMPGDK_CALL AttachTrailerToVehicle(int trailerid, int vehicleid);
-SAMPGDK_EXPORT void SAMPGDK_CALL DetachTrailerFromVehicle(int vehicleid);
+SAMPGDK_EXPORT bool SAMPGDK_CALL AttachTrailerToVehicle(int trailerid, int vehicleid);
+SAMPGDK_EXPORT bool SAMPGDK_CALL DetachTrailerFromVehicle(int vehicleid);
 SAMPGDK_EXPORT bool SAMPGDK_CALL IsTrailerAttachedToVehicle(int vehicleid);
 SAMPGDK_EXPORT int SAMPGDK_CALL GetVehicleTrailer(int vehicleid);
 SAMPGDK_EXPORT bool SAMPGDK_CALL SetVehicleNumberPlate(int vehicleid, const char *numberplate);
@@ -87,6 +88,6 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL GetVehicleVirtualWorld(int vehicleid);
 #define VEHICLE_MODEL_INFO_FRONT_BUMPER_Z	8
 #define VEHICLE_MODEL_INFO_REAR_BUMPER_Z	9
 
-SAMPGDK_EXPORT void SAMPGDK_CALL GetVehicleModelInfo(int model, int infotype, float *X, float *Y, float *Z);
+SAMPGDK_EXPORT bool SAMPGDK_CALL GetVehicleModelInfo(int model, int infotype, float *X, float *Y, float *Z);
 
 #endif /* !SAMPGDK_A_VEHICLES_H */
