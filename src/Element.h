@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -114,6 +114,54 @@ namespace Element
 		int references;
 		Eigen::Vector3f rotation;
 		float streamDistance;
+
+		struct Attach
+		{
+			Attach();
+
+			Eigen::Vector3f position;
+			Eigen::Vector3f offset;
+			int references;
+			Eigen::Vector3f rotation;
+			int vehicle;
+		};
+
+		boost::intrusive_ptr<Attach> attach;
+
+		struct Material
+		{
+			struct Main
+			{
+				Main();
+
+				int materialColor;
+				int modelID;
+				int references;
+				std::string textureName;
+				std::string txdFileName;
+			};
+
+			boost::intrusive_ptr<Main> main;
+
+			struct Text
+			{
+				Text();
+
+				int backColor;
+				bool bold;
+				int fontColor;
+				std::string fontFace;
+				int fontSize;
+				int references;
+				int materialSize;
+				std::string materialText;
+				int textAlignment;
+			};
+
+			boost::intrusive_ptr<Text> text;
+		};
+
+		boost::unordered_map<int, Material> materials;
 
 		struct Move
 		{
@@ -284,6 +332,45 @@ namespace boost
 		if (!(--object->references))
 		{
 			delete object;
+		}
+	}
+
+	inline void intrusive_ptr_add_ref(Element::Object::Attach *attach)
+	{
+		++attach->references;
+	}
+
+	inline void intrusive_ptr_release(Element::Object::Attach *attach)
+	{
+		if (!(--attach->references))
+		{
+			delete attach;
+		}
+	}
+
+	inline void intrusive_ptr_add_ref(Element::Object::Material::Main *material)
+	{
+		++material->references;
+	}
+
+	inline void intrusive_ptr_release(Element::Object::Material::Main *material)
+	{
+		if (!(--material->references))
+		{
+			delete material;
+		}
+	}
+
+	inline void intrusive_ptr_add_ref(Element::Object::Material::Text *materialText)
+	{
+		++materialText->references;
+	}
+
+	inline void intrusive_ptr_release(Element::Object::Material::Text *materialText)
+	{
+		if (!(--materialText->references))
+		{
+			delete materialText;
 		}
 	}
 

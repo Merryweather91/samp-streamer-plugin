@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -297,8 +297,6 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetUpperBound(AMX *amx, cell *params)
 cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 {
 	CHECK_PARAMS(6, "Streamer_GetDistanceToItem");
-	cell *result = NULL;
-	amx_GetAddr(amx, params[6], &result);
 	switch (static_cast<int>(params[4]))
 	{
 		case STREAMER_TYPE_OBJECT:
@@ -307,7 +305,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 			if (o != core->getData()->objects.end())
 			{
 				float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), o->second->position);
-				*result = amx_ftoc(distance);
+				Utility::storeFloatInNative(amx, params[6], distance);
 				return 1;
 			}
 		}
@@ -318,7 +316,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 			if (p != core->getData()->pickups.end())
 			{
 				float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), p->second->position);
-				*result = amx_ftoc(distance);
+				Utility::storeFloatInNative(amx, params[6], distance);
 				return 1;
 			}
 		}
@@ -329,7 +327,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 			if (c != core->getData()->checkpoints.end())
 			{
 				float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), c->second->position);
-				*result = amx_ftoc(distance);
+				Utility::storeFloatInNative(amx, params[6], distance);
 				return 1;
 			}
 		}
@@ -340,7 +338,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 			if (r != core->getData()->raceCheckpoints.end())
 			{
 				float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), r->second->position);
-				*result = amx_ftoc(distance);
+				Utility::storeFloatInNative(amx, params[6], distance);
 				return 1;
 			}
 		}
@@ -351,7 +349,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 			if (m != core->getData()->mapIcons.end())
 			{
 				float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), m->second->position);
-				*result = amx_ftoc(distance);
+				Utility::storeFloatInNative(amx, params[6], distance);
 				return 1;
 			}
 		}
@@ -370,7 +368,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 				{
 					distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), t->second->position);
 				}
-				*result = amx_ftoc(distance);
+				Utility::storeFloatInNative(amx, params[6], distance);
 				return 1;
 			}
 		}
@@ -392,7 +390,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 						{
 							distance = boost::geometry::distance(Eigen::Vector2f(amx_ctof(params[1]), amx_ctof(params[2])), boost::get<Eigen::Vector2f>(a->second->position));
 						}
-						*result = amx_ftoc(distance);
+						Utility::storeFloatInNative(amx, params[6], distance);
 						return 1;
 					}
 					break;
@@ -401,7 +399,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 						Eigen::Vector2f centroid = Eigen::Vector2f::Zero();
 						boost::geometry::centroid(boost::get<Element::Box2D>(a->second->position), centroid);
 						float distance = boost::geometry::distance(Eigen::Vector2f(amx_ctof(params[1]), amx_ctof(params[2])), centroid);
-						*result = amx_ftoc(distance);
+						Utility::storeFloatInNative(amx, params[6], distance);
 						return 1;
 					}
 					break;
@@ -416,7 +414,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 						{
 							distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), boost::get<Eigen::Vector3f>(a->second->position));
 						}
-						*result = amx_ftoc(distance);
+						Utility::storeFloatInNative(amx, params[6], distance);
 						return 1;
 					}
 					break;
@@ -425,7 +423,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 						Eigen::Vector3f centroid = Eigen::Vector3f::Zero();
 						boost::geometry::centroid(boost::get<Element::Box3D>(a->second->position), centroid);
 						float distance = boost::geometry::distance(Eigen::Vector3f(amx_ctof(params[1]), amx_ctof(params[2]), amx_ctof(params[3])), centroid);
-						*result = amx_ftoc(distance);
+						Utility::storeFloatInNative(amx, params[6], distance);
 						return 1;
 					}
 					break;
@@ -436,7 +434,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_GetDistanceToItem(AMX *amx, cell *params)
 							Eigen::Vector2f centroid = Eigen::Vector2f::Zero();
 							boost::geometry::centroid(boost::get<Element::Polygon2D>(a->second->position).get<0>(), centroid);
 							float distance = boost::geometry::distance(Eigen::Vector2f(amx_ctof(params[1]), amx_ctof(params[2])), centroid);
-							*result = amx_ftoc(distance);
+							Utility::storeFloatInNative(amx, params[6], distance);
 							return 1;
 						}
 					}
@@ -770,13 +768,9 @@ cell AMX_NATIVE_CALL Natives::GetDynamicObjectPos(AMX *amx, cell *params)
 	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
 	if (o != core->getData()->objects.end())
 	{
-		cell *x = NULL, *y = NULL, *z = NULL;
-		amx_GetAddr(amx, params[2], &x);
-		amx_GetAddr(amx, params[3], &y);
-		amx_GetAddr(amx, params[4], &z);
-		*x = amx_ftoc(o->second->position[0]);
-		*y = amx_ftoc(o->second->position[1]);
-		*z = amx_ftoc(o->second->position[2]);
+		Utility::storeFloatInNative(amx, params[2], o->second->position[0]);
+		Utility::storeFloatInNative(amx, params[3], o->second->position[1]);
+		Utility::storeFloatInNative(amx, params[4], o->second->position[2]);
 		return 1;
 	}
 	return 0;
@@ -812,13 +806,9 @@ cell AMX_NATIVE_CALL Natives::GetDynamicObjectRot(AMX *amx, cell *params)
 	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
 	if (o != core->getData()->objects.end())
 	{
-		cell *rX = NULL, *rY = NULL, *rZ = NULL;
-		amx_GetAddr(amx, params[2], &rX);
-		amx_GetAddr(amx, params[3], &rY);
-		amx_GetAddr(amx, params[4], &rZ);
-		*rX = amx_ftoc(o->second->rotation[0]);
-		*rY = amx_ftoc(o->second->rotation[1]);
-		*rZ = amx_ftoc(o->second->rotation[2]);
+		Utility::storeFloatInNative(amx, params[2], o->second->rotation[0]);
+		Utility::storeFloatInNative(amx, params[3], o->second->rotation[1]);
+		Utility::storeFloatInNative(amx, params[4], o->second->rotation[2]);
 		return 1;
 	}
 	return 0;
@@ -834,6 +824,11 @@ cell AMX_NATIVE_CALL Natives::MoveDynamicObject(AMX *amx, cell *params)
 	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
 	if (o != core->getData()->objects.end())
 	{
+		if (o->second->attach)
+		{
+			logprintf("MoveDynamicObject: Object is currently attached and cannot be moved");
+			return 0;
+		}
 		Eigen::Vector3f position(amx_ctof(params[2]), amx_ctof(params[3]), amx_ctof(params[4]));
 		Eigen::Vector3f rotation(amx_ctof(params[6]), amx_ctof(params[7]), amx_ctof(params[8]));
 		o->second->move = boost::intrusive_ptr<Element::Object::Move>(new Element::Object::Move);
@@ -902,6 +897,180 @@ cell AMX_NATIVE_CALL Natives::IsDynamicObjectMoving(AMX *amx, cell *params)
 	return 0;
 }
 
+cell AMX_NATIVE_CALL Natives::AttachCameraToDynamicObject(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(2, "AttachCameraToDynamicObject");
+	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
+	if (p != core->getData()->players.end())
+	{
+		boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(static_cast<int>(params[2]));
+		if (i != p->second.internalObjects.end())
+		{
+			AttachCameraToPlayerObject(p->first, i->second);
+			return 1;
+		}
+	}
+	return 0;
+}
+
+cell AMX_NATIVE_CALL Natives::AttachDynamicObjectToVehicle(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(8, "AttachDynamicObjectToVehicle");
+	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
+	if (o != core->getData()->objects.end())
+	{
+		if (o->second->move)
+		{
+			logprintf("AttachDynamicObjectToVehicle: Object is currently moving and cannot be attached");
+			return 0;
+		}
+		o->second->attach = boost::intrusive_ptr<Element::Object::Attach>(new Element::Object::Attach);
+		o->second->attach->vehicle = static_cast<int>(params[2]);
+		o->second->attach->offset = Eigen::Vector3f(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
+		o->second->attach->rotation = Eigen::Vector3f(amx_ctof(params[6]), amx_ctof(params[7]), amx_ctof(params[8]));
+		for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
+		{
+			boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
+			if (i != p->second.internalObjects.end())
+			{
+				AttachPlayerObjectToVehicle(p->first, i->second, o->second->attach->vehicle, o->second->attach->offset[0], o->second->attach->offset[1], o->second->attach->offset[2], o->second->attach->rotation[0], o->second->attach->rotation[1], o->second->attach->rotation[2]);
+			}
+		}
+		if (static_cast<int>(params[2]) != INVALID_GENERIC_ID)
+		{
+			core->getStreamer()->attachedObjects.insert(o->second);
+		}
+		else
+		{
+			o->second->attach.reset();
+			core->getStreamer()->attachedObjects.erase(o->second);
+			core->getGrid()->removeObject(o->second, true);
+		}
+		return 1;
+	}
+	return 0;
+}
+
+cell AMX_NATIVE_CALL Natives::EditDynamicObject(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(2, "EditDynamicObject");
+	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
+	if (p != core->getData()->players.end())
+	{
+		boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(static_cast<int>(params[2]));
+		if (i != p->second.internalObjects.end())
+		{
+			EditPlayerObject(p->first, i->second);
+			return 1;
+		}
+	}
+	return 0;
+}
+
+cell AMX_NATIVE_CALL Natives::GetDynamicObjectMaterial(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(8, "GetDynamicObjectMaterial");
+	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
+	if (o != core->getData()->objects.end())
+	{
+		boost::unordered_map<int, Element::Object::Material>::iterator m = o->second->materials.find(static_cast<int>(params[2]));
+		if (m != o->second->materials.end())
+		{
+			if (m->second.main)
+			{
+				Utility::storeIntegerInNative(amx, params[3], m->second.main->modelID);
+				Utility::convertStringToNativeString(amx, params[4], params[7], m->second.main->txdFileName);
+				Utility::convertStringToNativeString(amx, params[5], params[8], m->second.main->textureName);
+				Utility::storeIntegerInNative(amx, params[6], m->second.main->materialColor);
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+cell AMX_NATIVE_CALL Natives::SetDynamicObjectMaterial(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(6, "SetDynamicObjectMaterial");
+	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
+	if (o != core->getData()->objects.end())
+	{
+		int index = static_cast<int>(params[2]);
+		o->second->materials[index].main = boost::intrusive_ptr<Element::Object::Material::Main>(new Element::Object::Material::Main);
+		o->second->materials[index].main->modelID = static_cast<int>(params[3]);
+		o->second->materials[index].main->txdFileName = Utility::convertNativeStringToString(amx, params[4]);
+		o->second->materials[index].main->textureName = Utility::convertNativeStringToString(amx, params[5]);
+		o->second->materials[index].main->materialColor = static_cast<int>(params[6]);
+		for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
+		{
+			boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
+			if (i != p->second.internalObjects.end())
+			{
+				SetPlayerObjectMaterial(p->first, i->second, index, o->second->materials[index].main->modelID, o->second->materials[index].main->txdFileName.c_str(), o->second->materials[index].main->textureName.c_str(), o->second->materials[index].main->materialColor);
+			}
+		}
+		o->second->materials[index].text.reset();
+		return 1;
+	}
+	return 0;
+}
+
+cell AMX_NATIVE_CALL Natives::GetDynamicObjectMaterialText(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(12, "GetDynamicObjectMaterialText");
+	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
+	if (o != core->getData()->objects.end())
+	{
+		boost::unordered_map<int, Element::Object::Material>::iterator m = o->second->materials.find(static_cast<int>(params[2]));
+		if (m != o->second->materials.end())
+		{
+			if (m->second.text)
+			{
+				Utility::convertStringToNativeString(amx, params[3], params[11], m->second.text->materialText);
+				Utility::storeIntegerInNative(amx, params[4], m->second.text->materialSize);
+				Utility::convertStringToNativeString(amx, params[5], params[12], m->second.text->fontFace);
+				Utility::storeIntegerInNative(amx, params[6], m->second.text->fontSize);
+				Utility::storeIntegerInNative(amx, params[7], m->second.text->bold != 0);
+				Utility::storeIntegerInNative(amx, params[8], m->second.text->fontColor);
+				Utility::storeIntegerInNative(amx, params[9], m->second.text->backColor);
+				Utility::storeIntegerInNative(amx, params[10], m->second.text->textAlignment);
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+cell AMX_NATIVE_CALL Natives::SetDynamicObjectMaterialText(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(10, "SetDynamicObjectMaterialText");
+	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[1]));
+	if (o != core->getData()->objects.end())
+	{
+		int index = static_cast<int>(params[2]);
+		o->second->materials[index].text = boost::intrusive_ptr<Element::Object::Material::Text>(new Element::Object::Material::Text);
+		o->second->materials[index].text->materialText = Utility::convertNativeStringToString(amx, params[3]);
+		o->second->materials[index].text->materialSize = static_cast<int>(params[4]);
+		o->second->materials[index].text->fontFace = Utility::convertNativeStringToString(amx, params[5]);
+		o->second->materials[index].text->fontSize = static_cast<int>(params[6]);
+		o->second->materials[index].text->bold = static_cast<int>(params[7]) != 0;
+		o->second->materials[index].text->fontColor = static_cast<int>(params[8]);
+		o->second->materials[index].text->backColor = static_cast<int>(params[9]);
+		o->second->materials[index].text->textAlignment = static_cast<int>(params[10]);
+		for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
+		{
+			boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
+			if (i != p->second.internalObjects.end())
+			{
+				SetPlayerObjectMaterialText(p->first, i->second, o->second->materials[index].text->materialText.c_str(), index, o->second->materials[index].text->materialSize, o->second->materials[index].text->fontFace.c_str(), o->second->materials[index].text->fontSize, o->second->materials[index].text->bold, o->second->materials[index].text->fontColor, o->second->materials[index].text->backColor, o->second->materials[index].text->textAlignment);
+			}
+		}
+		o->second->materials[index].main.reset();
+		return 1;
+	}
+	return 0;
+}
+
 cell AMX_NATIVE_CALL Natives::DestroyAllDynamicObjects(AMX *amx, cell *params)
 {
 	Element::Object::identifier.reset();
@@ -914,6 +1083,7 @@ cell AMX_NATIVE_CALL Natives::DestroyAllDynamicObjects(AMX *amx, cell *params)
 		p->second.internalObjects.clear();
 	}
 	core->getGrid()->eraseAllItems(STREAMER_TYPE_OBJECT);
+	core->getStreamer()->attachedObjects.clear();
 	core->getStreamer()->movingObjects.clear();
 	core->getData()->objects.clear();
 	return 1;
@@ -1378,7 +1548,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamic3DTextLabel(AMX *amx, cell *params)
 	textLabel->amx = amx;
 	textLabel->extraID = 0;
 	textLabel->textLabelID = textLabelID;
-	textLabel->text = Utility::getStringFromNative(amx, params[1]);
+	textLabel->text = Utility::convertNativeStringToString(amx, params[1]);
 	textLabel->color = static_cast<int>(params[2]);
 	textLabel->position = Eigen::Vector3f(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
 	textLabel->drawDistance = amx_ctof(params[6]);
@@ -1447,7 +1617,7 @@ cell AMX_NATIVE_CALL Natives::UpdateDynamic3DTextLabelText(AMX *amx, cell *param
 	if (t != core->getData()->textLabels.end())
 	{
 		t->second->color = static_cast<int>(params[2]);
-		t->second->text = Utility::getStringFromNative(amx, params[3]);
+		t->second->text = Utility::convertNativeStringToString(amx, params[3]);
 		for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
 		{
 			boost::unordered_map<int, int>::iterator i = p->second.internalTextLabels.find(t->first);
@@ -1993,7 +2163,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamic3DTextLabelEx(AMX *amx, cell *params)
 	textLabel->amx = amx;
 	textLabel->extraID = 0;
 	textLabel->textLabelID = textLabelID;
-	textLabel->text = Utility::getStringFromNative(amx, params[1]);
+	textLabel->text = Utility::convertNativeStringToString(amx, params[1]);
 	textLabel->color = static_cast<int>(params[2]);
 	textLabel->position = Eigen::Vector3f(amx_ctof(params[3]), amx_ctof(params[4]), amx_ctof(params[5]));
 	textLabel->drawDistance = amx_ctof(params[6]);
@@ -2161,6 +2331,37 @@ cell AMX_NATIVE_CALL Natives::Streamer_CallbackHook(AMX *amx, cell *params)
 			amx_GetAddr(amx, params[2], &playerid);
 			amx_GetAddr(amx, params[3], &reason);
 			return static_cast<cell>(core->getEvents()->OnPlayerDisconnect(static_cast<int>(*playerid), static_cast<int>(*reason)));
+		}
+		break;
+		case STREAMER_OPEO:
+		{
+			CHECK_PARAMS(11, "Streamer_CallbackHook");
+			cell *playerid = NULL, *playerobject = NULL, *objectid = NULL, *response = NULL, *x = NULL, *y = NULL, *z = NULL, *rx = NULL, *ry = NULL, *rz = NULL;
+			amx_GetAddr(amx, params[2], &playerid);
+			amx_GetAddr(amx, params[3], &playerobject);
+			amx_GetAddr(amx, params[4], &objectid);
+			amx_GetAddr(amx, params[5], &response);
+			amx_GetAddr(amx, params[6], &x);
+			amx_GetAddr(amx, params[7], &y);
+			amx_GetAddr(amx, params[8], &z);
+			amx_GetAddr(amx, params[9], &rx);
+			amx_GetAddr(amx, params[10], &ry);
+			amx_GetAddr(amx, params[11], &rz);
+			return static_cast<cell>(core->getEvents()->OnPlayerEditObject(static_cast<int>(*playerid), static_cast<int>(*playerobject), static_cast<int>(*objectid), static_cast<int>(*response), amx_ctof(*x), amx_ctof(*y), amx_ctof(*z), amx_ctof(*rx), amx_ctof(*ry), amx_ctof(*rz)));
+		}
+		break;
+		case STREAMER_OPSO:
+		{
+			CHECK_PARAMS(8, "Streamer_CallbackHook");
+			cell *playerid = NULL, *type = NULL, *objectid = NULL, *modelid = NULL, *x = NULL, *y = NULL, *z = NULL;
+			amx_GetAddr(amx, params[2], &playerid);
+			amx_GetAddr(amx, params[3], &type);
+			amx_GetAddr(amx, params[4], &objectid);
+			amx_GetAddr(amx, params[5], &modelid);
+			amx_GetAddr(amx, params[6], &x);
+			amx_GetAddr(amx, params[7], &y);
+			amx_GetAddr(amx, params[8], &z);
+			return static_cast<cell>(core->getEvents()->OnPlayerSelectObject(static_cast<int>(*playerid), static_cast<int>(*type), static_cast<int>(*objectid), static_cast<int>(*modelid), amx_ctof(*x), amx_ctof(*y), amx_ctof(*z)));
 		}
 		break;
 		case STREAMER_OPPP:

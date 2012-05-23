@@ -15,14 +15,17 @@
 
 #ifndef SAMPGDK_CORE_H
 #define SAMPGDK_CORE_H
+#pragma once
 
 #include <sampgdk/config.h>
 #include <sampgdk/amx.h>
 #include <sampgdk/export.h>
+#include <sampgdk/version.h>
 
 #define AMX_EXEC_GDK (-10)
 
 SAMPGDK_EXPORT void SAMPGDK_CALL sampgdk_initialize(void **ppPluginData);
+SAMPGDK_EXPORT void **SAMPGDK_CALL sampgdk_get_plugin_data();
 SAMPGDK_EXPORT void SAMPGDK_CALL sampgdk_finalize();
 
 SAMPGDK_EXPORT void SAMPGDK_CALL sampgdk_register_plugin(void *plugin);
@@ -37,10 +40,6 @@ SAMPGDK_EXPORT void *SAMPGDK_CALL sampgdk_get_plugin_symbol(void *plugin, const 
 	} while (false);
 
 SAMPGDK_EXPORT void SAMPGDK_CALL sampgdk_process_timers();
-
-SAMPGDK_EXPORT int SAMPGDK_CALL sampgdk_version_id();
-SAMPGDK_EXPORT const char *SAMPGDK_CALL sampgdk_version_string();
-#define sampgdk_version sampgdk_version_id
 
 SAMPGDK_EXPORT const AMX_NATIVE_INFO *SAMPGDK_CALL sampgdk_get_natives();
 

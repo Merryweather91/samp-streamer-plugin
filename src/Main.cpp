@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -77,6 +77,13 @@ AMX_NATIVE_INFO natives[] =
 	{ "MoveDynamicObject", Natives::MoveDynamicObject },
 	{ "StopDynamicObject", Natives::StopDynamicObject },
 	{ "IsDynamicObjectMoving", Natives::IsDynamicObjectMoving },
+	{ "AttachCameraToDynamicObject", Natives::AttachCameraToDynamicObject },
+	{ "AttachDynamicObjectToVehicle", Natives::AttachDynamicObjectToVehicle },
+	{ "EditDynamicObject", Natives::EditDynamicObject },
+	{ "GetDynamicObjectMaterial", Natives::GetDynamicObjectMaterial },
+	{ "SetDynamicObjectMaterial", Natives::SetDynamicObjectMaterial },
+	{ "GetDynamicObjectMaterialText", Natives::GetDynamicObjectMaterialText },
+	{ "SetDynamicObjectMaterialText", Natives::SetDynamicObjectMaterialText },
 	{ "DestroyAllDynamicObjects", Natives::DestroyAllDynamicObjects },
 	{ "CountDynamicObjects", Natives::CountDynamicObjects },
 	{ "CreateDynamicPickup", Natives::CreateDynamicPickup },

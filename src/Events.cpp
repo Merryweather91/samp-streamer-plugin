@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -47,6 +47,73 @@ bool Events::OnPlayerConnect(int playerid)
 bool Events::OnPlayerDisconnect(int playerid, int reason)
 {
 	core->getData()->players.erase(playerid);
+	return true;
+}
+
+bool Events::OnPlayerEditObject(int playerid, int playerobject, int objectid, int response, float x, float y, float z, float rx, float ry, float rz)
+{
+	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(playerid);
+	if (p != core->getData()->players.end())
+	{
+		for (boost::unordered_map<int, int>::iterator i = p->second.internalObjects.begin(); i != p->second.internalObjects.end(); ++i)
+		{
+			if (i->second == objectid)
+			{
+				int objectid = i->first;
+				for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
+				{
+					int index = 0;
+					if (!amx_FindPublic(*a, "OnPlayerEditDynamicObject", &index))
+					{
+						amx_Push(*a, amx_ftoc(rz));
+						amx_Push(*a, amx_ftoc(ry));
+						amx_Push(*a, amx_ftoc(rx));
+						amx_Push(*a, amx_ftoc(z));
+						amx_Push(*a, amx_ftoc(y));
+						amx_Push(*a, amx_ftoc(x));
+						amx_Push(*a, static_cast<cell>(response));
+						amx_Push(*a, static_cast<cell>(objectid));
+						amx_Push(*a, static_cast<cell>(playerid));
+						amx_Exec(*a, NULL, index);
+						break;
+					}
+				}
+				break;
+			}
+		}
+	}
+	return true;
+}
+
+bool Events::OnPlayerSelectObject(int playerid, int type, int objectid, int modelid, float x, float y, float z)
+{
+	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(playerid);
+	if (p != core->getData()->players.end())
+	{
+		for (boost::unordered_map<int, int>::iterator i = p->second.internalObjects.begin(); i != p->second.internalObjects.end(); ++i)
+		{
+			if (i->second == objectid)
+			{
+				int objectid = i->first;
+				for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
+				{
+					int index = 0;
+					if (!amx_FindPublic(*a, "OnPlayerSelectDynamicObject", &index))
+					{
+						amx_Push(*a, amx_ftoc(z));
+						amx_Push(*a, amx_ftoc(y));
+						amx_Push(*a, amx_ftoc(x));
+						amx_Push(*a, static_cast<cell>(modelid));
+						amx_Push(*a, static_cast<cell>(objectid));
+						amx_Push(*a, static_cast<cell>(playerid));
+						amx_Exec(*a, NULL, index);
+						break;
+					}
+				}
+				break;
+			}
+		}
+	}
 	return true;
 }
 

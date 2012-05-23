@@ -1,5 +1,5 @@
 /*
-    SA-MP Streamer Plugin v2.6
+    SA-MP Streamer Plugin v2.6.1
     Copyright © 2012 Incognito
 
     This program is free software: you can redistribute it and/or modify
@@ -125,7 +125,16 @@ void Grid::addObject(const Element::SharedObject &object)
 	}
 	else
 	{
-		CellID cellID = getCellID(Eigen::Vector2f(object->position[0], object->position[1]));
+		Eigen::Vector2f position = Eigen::Vector2f::Zero();
+		if (object->attach)
+		{
+			position = Eigen::Vector2f(object->attach->position[0], object->attach->position[1]);
+		}
+		else
+		{
+			position = Eigen::Vector2f(object->position[0], object->position[1]);
+		}
+		CellID cellID = getCellID(Eigen::Vector2f(position[0], position[1]));
 		cells[cellID]->objects.insert(std::make_pair(object->objectID, object));
 		object->cell = cells[cellID];
 	}
@@ -629,6 +638,10 @@ void Grid::removeObject(const Element::SharedObject &object, bool reassign)
 		}
 		else
 		{
+			if (object->attach)
+			{
+				core->getStreamer()->attachedObjects.erase(object);
+			}
 			if (object->move)
 			{
 				core->getStreamer()->movingObjects.erase(object);
