@@ -105,7 +105,7 @@ AMX_NATIVE_INFO natives[] =
 	{ "IsValidDynamicRaceCP", Natives::IsValidDynamicRaceCP },
 	{ "TogglePlayerDynamicRaceCP", Natives::TogglePlayerDynamicRaceCP },
 	{ "TogglePlayerAllDynamicRaceCPs", Natives::TogglePlayerAllDynamicRaceCPs },
-	{ "IsPlayerInDynamicRaceCP", Natives::IsPlayerInDynamicCP },
+	{ "IsPlayerInDynamicRaceCP", Natives::IsPlayerInDynamicRaceCP },
 	{ "GetPlayerVisibleDynamicRaceCP", Natives::GetPlayerVisibleDynamicRaceCP },
 	{ "DestroyAllDynamicRaceCPs", Natives::DestroyAllDynamicRaceCPs },
 	{ "CountDynamicRaceCPs", Natives::CountDynamicRaceCPs },
