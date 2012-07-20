@@ -23,9 +23,9 @@ class Cell
 {
 public:
 	Cell();
-	Cell(CellID assignedID);
+	Cell(CellID cellID);
 
-	CellID id;
+	CellID cellID;
 	int references;
 
 	boost::unordered_map<int, Element::SharedArea> areas;

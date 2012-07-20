@@ -19,8 +19,10 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#define INCLUDE_FILE_VERSION (0x26104)
+#define INCLUDE_FILE_VERSION (0x26105)
 #define PLUGIN_VERSION "2.6.1"
+
+#define STREAMER_MAX_ITEM_TYPES (7)
 
 #define STREAMER_TYPE_OBJECT (0)
 #define STREAMER_TYPE_PICKUP (1)
@@ -48,6 +50,7 @@
 #include <map>
 #include <queue>
 #include <set>
+#include <sstream>
 #include <string>
 #include <vector>
 

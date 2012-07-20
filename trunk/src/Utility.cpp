@@ -26,52 +26,60 @@ cell AMX_NATIVE_CALL Utility::hookedNative(AMX *amx, cell *params)
 	return 1;
 }
 
-void Utility::checkIncludeFileInInterface(AMX *amx)
+int Utility::checkInterfaceAndRegisterNatives(AMX *amx, AMX_NATIVE_INFO *amxNativeList)
 {
-	bool anyNativesFound = false;
-	bool anyNativesHooked = false;
-	AMX_HEADER *header = reinterpret_cast<AMX_HEADER*>(amx->base);
-	AMX_FUNCSTUBNT *natives = reinterpret_cast<AMX_FUNCSTUBNT*>(amx->base + header->natives);
+	AMX_HEADER *amxHeader = reinterpret_cast<AMX_HEADER*>(amx->base);
+	AMX_FUNCSTUBNT *amxNativeTable = reinterpret_cast<AMX_FUNCSTUBNT*>(amx->base + amxHeader->natives);
+	int amxRegisterResult = amx_Register(amx, amxNativeList, -1);
+	bool foundNatives = false;
+	bool hookedNatives = false;
 	int numberOfNatives = 0;
 	amx_NumNatives(amx, &numberOfNatives);
 	for (int i = 0; i < numberOfNatives; ++i)
 	{
-		char *name = reinterpret_cast<char*>(amx->base + natives[i].nameofs);
+		char *name = reinterpret_cast<char*>(amx->base + amxNativeTable[i].nameofs);
 		if (std::string(name).find("Streamer_") != std::string::npos)
 		{
-			anyNativesFound = true;
-			if (!natives[i].address)
+			foundNatives = true;
+			if (!amxNativeTable[i].address)
 			{
-				char *name = reinterpret_cast<char*>(amx->base + natives[i].nameofs);
-				if (std::string(name).find("Streamer_") != std::string::npos)
-				{
-					natives[i].address = reinterpret_cast<cell>(hookedNative);
-					anyNativesHooked = true;
-				}
+				logprintf("*** Streamer Plugin: Obsolete or invalid native \"%s\" found (script needs to be recompiled with the latest include file)", name);
+				amxNativeTable[i].address = reinterpret_cast<cell>(hookedNative);
+				hookedNatives = true;
 			}
 		}
 	}
-	if (anyNativesFound)
+	if (foundNatives)
 	{
-		cell amx_addr = 0;
-		int includeFileVersion = 0;
-		if (!amx_FindPubVar(amx, "Streamer_IncludeFileVersion", &amx_addr))
+		cell amxAddr = 0;
+		int includeFileValue = 0;
+		if (!amx_FindPubVar(amx, "Streamer_IncludeFileVersion", &amxAddr))
 		{
-			cell *phys_addr = NULL;
-			if (!amx_GetAddr(amx, amx_addr, &phys_addr))
+			cell *amxPhysAddr = NULL;
+			if (!amx_GetAddr(amx, amxAddr, &amxPhysAddr))
 			{
-				includeFileVersion = static_cast<int>(*phys_addr);
+				includeFileValue = static_cast<int>(*amxPhysAddr);
 			}
 		}
-		if (includeFileVersion != INCLUDE_FILE_VERSION)
+		if (includeFileValue != INCLUDE_FILE_VERSION)
 		{
-			logprintf("*** Streamer Plugin: Include file version (%#x) does not match plugin version (%#x) (script needs to be recompiled with the latest include file)", includeFileVersion, INCLUDE_FILE_VERSION);
+			std::ostringstream includeFileVersion;
+			if (includeFileValue <= 0)
+			{
+				includeFileVersion << "unknown version";
+			}
+			else
+			{
+				includeFileVersion << std::hex << std::showbase << includeFileValue;
+			}
+			logprintf("*** Streamer Plugin: Include file version (%s) does not match plugin version (%#x) (script needs to be recompiled with the latest include file)", includeFileVersion.str().c_str(), INCLUDE_FILE_VERSION);
 		}
 	}
-	if (anyNativesHooked)
+	if (hookedNatives)
 	{
-		logprintf("*** Streamer Plugin: Obsolete or invalid native found (script needs to be recompiled with the latest include file)");
+		amxRegisterResult = amx_Register(amx, amxNativeList, -1);
 	}
+	return amxRegisterResult;
 }
 
 void Utility::destroyAllItemsInInterface(AMX *amx)

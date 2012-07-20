@@ -51,6 +51,7 @@ AMX_NATIVE_INFO natives[] =
 	{ "Streamer_CellSize", Natives::Streamer_CellSize },
 	{ "Streamer_ProcessActiveItems", Natives::Streamer_ProcessActiveItems },
 	{ "Streamer_ToggleIdleUpdate", Natives::Streamer_ToggleIdleUpdate },
+	{ "Streamer_ToggleItemUpdate", Natives::Streamer_ToggleItemUpdate },
 	{ "Streamer_Update", Natives::Streamer_Update },
 	{ "Streamer_UpdateEx", Natives::Streamer_UpdateEx },
 	{ "Streamer_GetFloatData", Natives::Streamer_GetFloatData },
@@ -157,9 +158,7 @@ AMX_NATIVE_INFO natives[] =
 PLUGIN_EXPORT int PLUGIN_CALL AmxLoad(AMX *amx)
 {
 	core->getData()->interfaces.insert(amx);
-	int result = amx_Register(amx, natives, -1);
-	Utility::checkIncludeFileInInterface(amx);
-	return result;
+	return Utility::checkInterfaceAndRegisterNatives(amx, natives);
 }
 
 PLUGIN_EXPORT int PLUGIN_CALL AmxUnload(AMX *amx)

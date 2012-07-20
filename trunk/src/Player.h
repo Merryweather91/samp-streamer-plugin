@@ -18,13 +18,15 @@
 
 struct Player
 {
+	Player(int playerID);
+
 	int activeCheckpoint;
 	int activeRaceCheckpoint;
-	bool idleUpdate;
 	int interiorID;
 	int playerID;
 	Eigen::Vector3f position;
 	int references;
+	bool updateWhenIdle;
 	SharedCell visibleCell;
 	int visibleCheckpoint;
 	int visibleRaceCheckpoint;
@@ -35,6 +37,8 @@ struct Player
 	boost::unordered_set<int> disabledAreas;
 	boost::unordered_set<int> disabledCheckpoints;
 	boost::unordered_set<int> disabledRaceCheckpoints;
+
+	std::bitset<STREAMER_MAX_ITEM_TYPES> enabledItems;
 
 	boost::unordered_set<int> internalAreas;
 	boost::unordered_map<int, int> internalMapIcons;

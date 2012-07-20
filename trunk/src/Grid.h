@@ -31,10 +31,10 @@ public:
 	void addPickup(const Element::SharedPickup &pickup);
 	void addRaceCheckpoint(const Element::SharedRaceCheckpoint &raceCheckpoint);
 	void addTextLabel(const Element::SharedTextLabel &textLabel);
-	void eraseAllItems(int type);
-	void findAllCells(Player &player, std::vector<SharedCell> &playerCells);
-	void findMinimalCells(Player &player, std::vector<SharedCell> &playerCells);
+
 	void rebuildGrid();
+	void removeAllItems(int type);
+
 	void removeArea(const Element::SharedArea &area, bool reassign = false);
 	void removeCheckpoint(const Element::SharedCheckpoint &checkpoint, bool reassign = false);
 	void removeMapIcon(const Element::SharedMapIcon &mapIcon, bool reassign = false);
@@ -43,19 +43,34 @@ public:
 	void removeRaceCheckpoint(const Element::SharedRaceCheckpoint &raceCheckpoint, bool reassign = false);
 	void removeTextLabel(const Element::SharedTextLabel &textLabel, bool reassign = false);
 
+	void findAllCells(Player &player, std::vector<SharedCell> &playerCells);
+	void findMinimalCells(Player &player, std::vector<SharedCell> &playerCells);
+
 	float cellDistance;
 	float cellSize;
 private:
 	SharedCell globalCell;
 
-	boost::unordered_map<CellID, SharedCell> cells;
-
 	Eigen::Matrix<float, 2, 9> translationMatrix;
 
-	void calculateTranslationMatrix();
-	void cleanVisibleCell(SharedCell &visibleCell, const boost::unordered_set<CellID> &discoveredCells);
-	void eraseCellIfEmpty(const SharedCell &cell);
+	boost::unordered_map<CellID, SharedCell> cells;
+
+	inline void calculateTranslationMatrix()
+	{
+		translationMatrix << 0.0f, 0.0f, cellSize, cellSize, cellSize * -1.0f, 0.0f, cellSize * -1.0f, cellSize, cellSize * -1.0f,
+		                     0.0f, cellSize, 0.0f, cellSize, 0.0f, cellSize * -1.0f, cellSize, cellSize * -1.0f, cellSize * -1.0f;
+	}
+
+	inline void eraseCellIfEmpty(const SharedCell &cell)
+	{
+		if (cell->areas.empty() && cell->checkpoints.empty() && cell->mapIcons.empty() && cell->objects.empty() && cell->pickups.empty() && cell->raceCheckpoints.empty() && cell->textLabels.empty())
+		{
+			cells.erase(cell->cellID);
+		}
+	}
+
 	CellID getCellID(const Eigen::Vector2f &position, bool insert = true);
+	void processDiscoveredCells(Player &player, std::vector<SharedCell> &playerCells, const boost::unordered_set<CellID> &discoveredCells);
 };
 
 #endif
