@@ -151,9 +151,9 @@ void Streamer::startManualUpdate(Player &player)
 
 void Streamer::performPlayerUpdate(Player &player, bool automatic)
 {
-	bool idle = false;
 	Eigen::Vector3f position = player.position;
 	int state = GetPlayerState(player.playerID);
+	bool update = true;
 	if (automatic)
 	{
 		player.interiorID = GetPlayerInterior(player.playerID);
@@ -181,41 +181,41 @@ void Streamer::performPlayerUpdate(Player &player, bool automatic)
 			}
 			else
 			{
-				idle = !player.idleUpdate;
+				update = player.updateWhenIdle;
 			}
 		}
 		else
 		{
-			idle = true;
+			update = false;
 		}
 	}
 	std::vector<SharedCell> cells;
-	if (!idle)
+	if (update)
 	{
 		core->getGrid()->findAllCells(player, cells);
 		if (!cells.empty())
 		{
-			if (!core->getData()->objects.empty())
+			if (!core->getData()->objects.empty() && player.enabledItems[STREAMER_TYPE_OBJECT] && !IsPlayerNPC(player.playerID))
 			{
 				processObjects(player, cells);
 			}
-			if (!core->getData()->checkpoints.empty())
+			if (!core->getData()->checkpoints.empty() && player.enabledItems[STREAMER_TYPE_CP])
 			{
 				processCheckpoints(player, cells);
 			}
-			if (!core->getData()->raceCheckpoints.empty())
+			if (!core->getData()->raceCheckpoints.empty() && player.enabledItems[STREAMER_TYPE_RACE_CP])
 			{
 				processRaceCheckpoints(player, cells);
 			}
-			if (!core->getData()->mapIcons.empty())
+			if (!core->getData()->mapIcons.empty() && player.enabledItems[STREAMER_TYPE_MAP_ICON] && !IsPlayerNPC(player.playerID))
 			{
 				processMapIcons(player, cells);
 			}
-			if (!core->getData()->textLabels.empty())
+			if (!core->getData()->textLabels.empty() && player.enabledItems[STREAMER_TYPE_3D_TEXT_LABEL] && !IsPlayerNPC(player.playerID))
 			{
 				processTextLabels(player, cells);
 			}
-			if (!core->getData()->areas.empty())
+			if (!core->getData()->areas.empty() && player.enabledItems[STREAMER_TYPE_AREA])
 			{
 				processAreas(player, cells);
 			}
@@ -225,7 +225,7 @@ void Streamer::performPlayerUpdate(Player &player, bool automatic)
 	{
 		if (!core->getData()->pickups.empty())
 		{
-			if (idle)
+			if (!update)
 			{
 				core->getGrid()->findMinimalCells(player, cells);
 			}
@@ -243,12 +243,12 @@ void Streamer::executeCallbacks(const std::multimap<bool, boost::tuple<int, int>
 		{
 			for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 			{
-				int index = 0;
-				if (!amx_FindPublic(*a, "OnPlayerEnterDynamicArea", &index))
+				int amxIndex = 0;
+				if (!amx_FindPublic(*a, "OnPlayerEnterDynamicArea", &amxIndex))
 				{
 					amx_Push(*a, static_cast<cell>(c->second.get<0>()));
 					amx_Push(*a, static_cast<cell>(c->second.get<1>()));
-					amx_Exec(*a, NULL, index);
+					amx_Exec(*a, NULL, amxIndex);
 				}
 			}
 		}
@@ -256,12 +256,12 @@ void Streamer::executeCallbacks(const std::multimap<bool, boost::tuple<int, int>
 		{
 			for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 			{
-				int index = 0;
-				if (!amx_FindPublic(*a, "OnPlayerLeaveDynamicArea", &index))
+				int amxIndex = 0;
+				if (!amx_FindPublic(*a, "OnPlayerLeaveDynamicArea", &amxIndex))
 				{
 					amx_Push(*a, static_cast<cell>(c->second.get<0>()));
 					amx_Push(*a, static_cast<cell>(c->second.get<1>()));
-					amx_Exec(*a, NULL, index);
+					amx_Exec(*a, NULL, amxIndex);
 				}
 			}
 		}
@@ -274,11 +274,11 @@ void Streamer::executeCallbacks(const std::vector<int> &objectCallbacks)
 	{
 		for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 		{
-			int index = 0;
-			if (!amx_FindPublic(*a, "OnDynamicObjectMoved", &index))
+			int amxIndex = 0;
+			if (!amx_FindPublic(*a, "OnDynamicObjectMoved", &amxIndex))
 			{
 				amx_Push(*a, static_cast<cell>(*c));
-				amx_Exec(*a, NULL, index);
+				amx_Exec(*a, NULL, amxIndex);
 			}
 		}
 	}

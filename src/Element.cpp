@@ -28,67 +28,16 @@ Identifier Pickup::identifier;
 Identifier RaceCheckpoint::identifier;
 Identifier TextLabel::identifier;
 
-Area::Area()
-{
-	references = 0;
-}
-
-Area::Attach::Attach()
-{
-	references = 0;
-}
-
-Checkpoint::Checkpoint()
-{
-	references = 0;
-}
-
-MapIcon::MapIcon()
-{
-	references = 0;
-}
-
-Object::Object()
-{
-	references = 0;
-}
-
-Object::Attach::Attach()
-{
-	references = 0;
-}
-
-Object::Material::Main::Main()
-{
-	references = 0;
-}
-
-Object::Material::Text::Text()
-{
-	references = 0;
-}
-
-Object::Move::Move()
-{
-	references = 0;
-}
-
-Pickup::Pickup()
-{
-	references = 0;
-}
-
-RaceCheckpoint::RaceCheckpoint()
-{
-	references = 0;
-}
-
-TextLabel::TextLabel()
-{
-	references = 0;
-}
-
-TextLabel::Attach::Attach()
-{
-	references = 0;
-}
+Area::Area() : references(0) {}
+Area::Attach::Attach() : references (0) {}
+Checkpoint::Checkpoint() : references (0) {}
+MapIcon::MapIcon() : references (0) {}
+Object::Object() : references (0) {}
+Object::Attach::Attach() : references (0) {}
+Object::Material::Main::Main() : references (0) {}
+Object::Material::Text::Text() : references (0) {}
+Object::Move::Move() : references (0) {}
+Pickup::Pickup() : references (0) {}
+RaceCheckpoint::RaceCheckpoint() : references (0) {}
+TextLabel::TextLabel() : references (0) {}
+TextLabel::Attach::Attach() : references (0) {}

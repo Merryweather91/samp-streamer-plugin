@@ -84,8 +84,23 @@ cell AMX_NATIVE_CALL Natives::Streamer_ToggleIdleUpdate(AMX *amx, cell *params)
 	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
 	if (p != core->getData()->players.end())
 	{
-		p->second.idleUpdate = static_cast<int>(params[2]) != 0;
+		p->second.updateWhenIdle = static_cast<int>(params[2]) != 0;
 		return 1;
+	}
+	return 0;
+}
+
+cell AMX_NATIVE_CALL Natives::Streamer_ToggleItemUpdate(AMX *amx, cell *params)
+{
+	CHECK_PARAMS(3, "Streamer_ToggleItemUpdate");
+	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
+	if (p != core->getData()->players.end())
+	{
+		if (static_cast<size_t>(params[2]) >= 0 && static_cast<size_t>(params[2]) < STREAMER_MAX_ITEM_TYPES)
+		{
+			p->second.enabledItems.set(static_cast<size_t>(params[2]), static_cast<int>(params[3]) != 0);
+			return 1;
+		}
 	}
 	return 0;
 }
@@ -935,6 +950,17 @@ cell AMX_NATIVE_CALL Natives::AttachDynamicObjectToVehicle(AMX *amx, cell *param
 			{
 				AttachPlayerObjectToVehicle(p->first, i->second, o->second->attach->vehicle, o->second->attach->offset[0], o->second->attach->offset[1], o->second->attach->offset[2], o->second->attach->rotation[0], o->second->attach->rotation[1], o->second->attach->rotation[2]);
 			}
+			for (boost::unordered_map<int, Element::Object::Material>::iterator m = o->second->materials.begin(); m != o->second->materials.end(); ++m)
+			{
+				if (m->second.main)
+				{
+					SetPlayerObjectMaterial(p->first, i->second, o->first, m->second.main->modelID, m->second.main->txdFileName.c_str(), m->second.main->textureName.c_str(), m->second.main->materialColor);
+				}
+				else if (m->second.text)
+				{
+					SetPlayerObjectMaterialText(p->first, i->second, m->second.text->materialText.c_str(), m->first, m->second.text->materialSize, m->second.text->fontFace.c_str(), m->second.text->fontSize, m->second.text->bold, m->second.text->fontColor, m->second.text->backColor, m->second.text->textAlignment);
+				}
+			}
 		}
 		if (static_cast<int>(params[2]) != INVALID_GENERIC_ID)
 		{
@@ -1082,7 +1108,7 @@ cell AMX_NATIVE_CALL Natives::DestroyAllDynamicObjects(AMX *amx, cell *params)
 		}
 		p->second.internalObjects.clear();
 	}
-	core->getGrid()->eraseAllItems(STREAMER_TYPE_OBJECT);
+	core->getGrid()->removeAllItems(STREAMER_TYPE_OBJECT);
 	core->getStreamer()->attachedObjects.clear();
 	core->getStreamer()->movingObjects.clear();
 	core->getData()->objects.clear();
@@ -1149,8 +1175,8 @@ cell AMX_NATIVE_CALL Natives::DestroyAllDynamicPickups(AMX *amx, cell *params)
 	{
 		DestroyPickup(p->second);
 	}
+	core->getGrid()->removeAllItems(STREAMER_TYPE_PICKUP);
 	core->getStreamer()->internalPickups.clear();
-	core->getGrid()->eraseAllItems(STREAMER_TYPE_PICKUP);
 	core->getData()->pickups.clear();
 	return 1;
 }
@@ -1302,7 +1328,7 @@ cell AMX_NATIVE_CALL Natives::DestroyAllDynamicCPs(AMX *amx, cell *params)
 			p->second.visibleCheckpoint = 0;
 		}
 	}
-	core->getGrid()->eraseAllItems(STREAMER_TYPE_CP);
+	core->getGrid()->removeAllItems(STREAMER_TYPE_CP);
 	core->getData()->checkpoints.clear();
 	return 1;
 }
@@ -1456,7 +1482,7 @@ cell AMX_NATIVE_CALL Natives::DestroyAllDynamicRaceCPs(AMX *amx, cell *params)
 			p->second.visibleRaceCheckpoint = 0;
 		}
 	}
-	core->getGrid()->eraseAllItems(STREAMER_TYPE_RACE_CP);
+	core->getGrid()->removeAllItems(STREAMER_TYPE_RACE_CP);
 	core->getData()->raceCheckpoints.clear();
 	return 1;
 }
@@ -1526,7 +1552,7 @@ cell AMX_NATIVE_CALL Natives::DestroyAllDynamicMapIcons(AMX *amx, cell *params)
 		p->second.mapIconIdentifier.reset();
 		p->second.internalMapIcons.clear();
 	}
-	core->getGrid()->eraseAllItems(STREAMER_TYPE_MAP_ICON);
+	core->getGrid()->removeAllItems(STREAMER_TYPE_MAP_ICON);
 	core->getData()->mapIcons.clear();
 	return 1;
 }
@@ -1642,7 +1668,7 @@ cell AMX_NATIVE_CALL Natives::DestroyAllDynamic3DTextLabels(AMX *amx, cell *para
 		}
 		p->second.internalTextLabels.clear();
 	}
-	core->getGrid()->eraseAllItems(STREAMER_TYPE_3D_TEXT_LABEL);
+	core->getGrid()->removeAllItems(STREAMER_TYPE_3D_TEXT_LABEL);
 	core->getStreamer()->attachedTextLabels.clear();
 	core->getData()->textLabels.clear();
 	return 1;
@@ -2017,7 +2043,7 @@ cell AMX_NATIVE_CALL Natives::DestroyAllDynamicAreas(AMX *amx, cell *params)
 		p->second.disabledAreas.clear();
 		p->second.internalAreas.clear();
 	}
-	core->getGrid()->eraseAllItems(STREAMER_TYPE_AREA);
+	core->getGrid()->removeAllItems(STREAMER_TYPE_AREA);
 	core->getStreamer()->attachedAreas.clear();
 	core->getData()->areas.clear();
 	return 1;

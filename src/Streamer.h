@@ -32,9 +32,10 @@ public:
 	std::size_t getVisibleItems(int type);
 	bool setVisibleItems(int type, std::size_t value);
 
-	void processActiveItems();
 	void startAutomaticUpdate();
 	void startManualUpdate(Player &player);
+
+	void processActiveItems();
 
 	boost::unordered_set<Element::SharedArea> attachedAreas;
 	boost::unordered_set<Element::SharedObject> attachedObjects;

@@ -18,5 +18,18 @@
 
 #include "Main.h"
 
-Cell::Cell() : references(0) {}
-Cell::Cell(CellID cellID) : cellID(cellID), references(0) {}
+Player::Player(int playerID) : playerID(playerID)
+{
+	activeCheckpoint = 0;
+	activeRaceCheckpoint = 0;
+	enabledItems.set();
+	interiorID = 0;
+	position.setZero();
+	updateWhenIdle = false;
+	visibleCell = SharedCell(new Cell());
+	visibleCheckpoint = 0;
+	visibleRaceCheckpoint = 0;
+	visibleObjects = core->getStreamer()->getVisibleItems(STREAMER_TYPE_OBJECT);
+	visibleTextLabels = core->getStreamer()->getVisibleItems(STREAMER_TYPE_3D_TEXT_LABEL);
+	worldID = 0;
+}
