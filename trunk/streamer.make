@@ -52,6 +52,7 @@ OBJECTS := \
 	$(OBJDIR)/Main.o \
 	$(OBJDIR)/Manipulation.o \
 	$(OBJDIR)/Natives.o \
+	$(OBJDIR)/Player.o \
 	$(OBJDIR)/Streamer.o \
 	$(OBJDIR)/Utility.o \
 
@@ -142,6 +143,9 @@ $(OBJDIR)/Manipulation.o: src/Manipulation.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/Natives.o: src/Natives.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+$(OBJDIR)/Player.o: src/Player.cpp
 	@echo $(notdir $<)
 	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
 $(OBJDIR)/Streamer.o: src/Streamer.cpp
