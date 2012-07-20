@@ -187,6 +187,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\src\Player.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\src\Player.h"
 				>
 			</File>
