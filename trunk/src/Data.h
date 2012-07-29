@@ -16,6 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef DATA_H
+#define DATA_H
+
+#include "common.h"
+#include "player.h"
+
+#include <boost/intrusive_ptr.hpp>
+#include <boost/unordered_map.hpp>
+#include <sampgdk/plugin.h>
+
+#include <set>
+
 class Data
 {
 public:
@@ -26,15 +38,15 @@ public:
 
 	std::set<AMX*> interfaces;
 
-	boost::unordered_map<int, Player> players;
+	boost::unordered_map<int, Item::SharedArea> areas;
+	boost::unordered_map<int, Item::SharedCheckpoint> checkpoints;
+	boost::unordered_map<int, Item::SharedMapIcon> mapIcons;
+	boost::unordered_map<int, Item::SharedObject> objects;
+	boost::unordered_map<int, Item::SharedPickup> pickups;
+	boost::unordered_map<int, Item::SharedRaceCheckpoint> raceCheckpoints;
+	boost::unordered_map<int, Item::SharedTextLabel> textLabels;
 
-	boost::unordered_map<int, Element::SharedArea> areas;
-	boost::unordered_map<int, Element::SharedCheckpoint> checkpoints;
-	boost::unordered_map<int, Element::SharedMapIcon> mapIcons;
-	boost::unordered_map<int, Element::SharedObject> objects;
-	boost::unordered_map<int, Element::SharedPickup> pickups;
-	boost::unordered_map<int, Element::SharedRaceCheckpoint> raceCheckpoints;
-	boost::unordered_map<int, Element::SharedTextLabel> textLabels;
+	boost::unordered_map<int, Player> players;
 private:
 	std::size_t maxAreas;
 	std::size_t maxCheckpoints;
@@ -44,3 +56,5 @@ private:
 	std::size_t maxRaceCheckpoints;
 	std::size_t maxTextLabels;
 };
+
+#endif

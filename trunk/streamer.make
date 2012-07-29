@@ -19,17 +19,47 @@ ifndef AR
   AR = ar
 endif
 
+ifndef RESCOMP
+  ifdef WINDRES
+    RESCOMP = $(WINDRES)
+  else
+    RESCOMP = windres
+  endif
+endif
+
+ifeq ($(config),debug)
+  OBJDIR     = obj/linux/Debug
+  TARGETDIR  = bin/linux/Debug
+  TARGET     = $(TARGETDIR)/streamer.so
+  DEFINES   += -DBOOST_CHRONO_HEADER_ONLY
+  INCLUDES  += -Iinclude
+  CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
+  CFLAGS    += $(CPPFLAGS) $(ARCH) -g -O0 -Wall
+  CXXFLAGS  += $(CFLAGS) 
+  LDFLAGS   += -rdynamic -shared
+  LIBS      += -lrt
+  RESFLAGS  += $(DEFINES) $(INCLUDES) 
+  LDDEPS    += 
+  LINKCMD    = $(CXX) -o $(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(ARCH) $(LIBS)
+  define PREBUILDCMDS
+  endef
+  define PRELINKCMDS
+  endef
+  define POSTBUILDCMDS
+  endef
+endif
+
 ifeq ($(config),release)
   OBJDIR     = obj/linux/Release
   TARGETDIR  = bin/linux/Release
   TARGET     = $(TARGETDIR)/streamer.so
-  DEFINES   += 
+  DEFINES   += -DBOOST_CHRONO_HEADER_ONLY -DNDEBUG
   INCLUDES  += -Iinclude
   CPPFLAGS  += -MMD -MP $(DEFINES) $(INCLUDES)
   CFLAGS    += $(CPPFLAGS) $(ARCH) -ffast-math -fmerge-all-constants -fno-strict-aliasing -fvisibility=hidden -fvisibility-inlines-hidden -O3 -Wall
   CXXFLAGS  += $(CFLAGS) 
-  LDFLAGS   += -s -shared -Llib/linux/boost -Llib/linux/sampgdk
-  LIBS      += -lboost_system -lsampgdk -lrt
+  LDFLAGS   += -s -shared
+  LIBS      += -lrt
   RESFLAGS  += $(DEFINES) $(INCLUDES) 
   LDDEPS    += 
   LINKCMD    = $(CXX) -o $(TARGET) $(OBJECTS) $(LDFLAGS) $(RESOURCES) $(ARCH) $(LIBS)
@@ -42,19 +72,35 @@ ifeq ($(config),release)
 endif
 
 OBJECTS := \
-	$(OBJDIR)/Cell.o \
-	$(OBJDIR)/Core.o \
-	$(OBJDIR)/Data.o \
-	$(OBJDIR)/Element.o \
-	$(OBJDIR)/Events.o \
-	$(OBJDIR)/Grid.o \
-	$(OBJDIR)/Identifier.o \
-	$(OBJDIR)/Main.o \
-	$(OBJDIR)/Manipulation.o \
-	$(OBJDIR)/Natives.o \
-	$(OBJDIR)/Player.o \
-	$(OBJDIR)/Streamer.o \
-	$(OBJDIR)/Utility.o \
+	$(OBJDIR)/error_code.o \
+	$(OBJDIR)/amxhooks.o \
+	$(OBJDIR)/a_objects.o \
+	$(OBJDIR)/a_players.o \
+	$(OBJDIR)/a_samp.o \
+	$(OBJDIR)/a_vehicles.o \
+	$(OBJDIR)/core-linux.o \
+	$(OBJDIR)/core1.o \
+	$(OBJDIR)/fakeamx.o \
+	$(OBJDIR)/hook-linux.o \
+	$(OBJDIR)/hook.o \
+	$(OBJDIR)/natives1.o \
+	$(OBJDIR)/timers-linux.o \
+	$(OBJDIR)/timers.o \
+	$(OBJDIR)/version.o \
+	$(OBJDIR)/plugin.o \
+	$(OBJDIR)/cell.o \
+	$(OBJDIR)/core2.o \
+	$(OBJDIR)/data.o \
+	$(OBJDIR)/events.o \
+	$(OBJDIR)/grid.o \
+	$(OBJDIR)/identifier.o \
+	$(OBJDIR)/item.o \
+	$(OBJDIR)/main.o \
+	$(OBJDIR)/manipulation.o \
+	$(OBJDIR)/natives2.o \
+	$(OBJDIR)/player.o \
+	$(OBJDIR)/streamer.o \
+	$(OBJDIR)/utility.o \
 
 RESOURCES := \
 
@@ -111,48 +157,100 @@ prelink:
 ifneq (,$(PCH))
 $(GCH): $(PCH)
 	@echo $(notdir $<)
+ifeq (posix,$(SHELLTYPE))
 	-$(SILENT) cp $< $(OBJDIR)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+else
+	$(SILENT) xcopy /D /Y /Q "$(subst /,\,$<)" "$(subst /,\,$(OBJDIR))" 1>nul
+endif
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
 endif
 
-$(OBJDIR)/Cell.o: src/Cell.cpp
+$(OBJDIR)/error_code.o: lib/boost/system/src/error_code.cpp
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/Core.o: src/Core.cpp
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/amxhooks.o: lib/sampgdk/src/amxhooks.cpp
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/Data.o: src/Data.cpp
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/a_objects.o: lib/sampgdk/src/a_objects.cpp
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/Element.o: src/Element.cpp
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/a_players.o: lib/sampgdk/src/a_players.cpp
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/Events.o: src/Events.cpp
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/a_samp.o: lib/sampgdk/src/a_samp.cpp
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/Grid.o: src/Grid.cpp
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/a_vehicles.o: lib/sampgdk/src/a_vehicles.cpp
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/Identifier.o: src/Identifier.cpp
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/core-linux.o: lib/sampgdk/src/core-linux.cpp
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/Main.o: src/Main.cpp
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/core1.o: lib/sampgdk/src/core.cpp
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/Manipulation.o: src/Manipulation.cpp
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/fakeamx.o: lib/sampgdk/src/fakeamx.cpp
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/Natives.o: src/Natives.cpp
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/hook-linux.o: lib/sampgdk/src/hook-linux.cpp
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/Player.o: src/Player.cpp
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/hook.o: lib/sampgdk/src/hook.cpp
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/Streamer.o: src/Streamer.cpp
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/natives1.o: lib/sampgdk/src/natives.cpp
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
-$(OBJDIR)/Utility.o: src/Utility.cpp
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/timers-linux.o: lib/sampgdk/src/timers-linux.cpp
 	@echo $(notdir $<)
-	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -c "$<"
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/timers.o: lib/sampgdk/src/timers.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/version.o: lib/sampgdk/src/version.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/plugin.o: lib/sampgdk/src/sdk/plugin.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/cell.o: src/cell.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/core2.o: src/core.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/data.o: src/data.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/events.o: src/events.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/grid.o: src/grid.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/identifier.o: src/identifier.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/item.o: src/item.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/main.o: src/main.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/manipulation.o: src/manipulation.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/natives2.o: src/natives.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/player.o: src/player.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/streamer.o: src/streamer.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
+$(OBJDIR)/utility.o: src/utility.cpp
+	@echo $(notdir $<)
+	$(SILENT) $(CXX) $(CXXFLAGS) -o "$@" -MF $(@:%.o=%.d) -c "$<"
 
 -include $(OBJECTS:%.o=%.d)

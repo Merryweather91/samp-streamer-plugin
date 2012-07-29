@@ -16,7 +16,23 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Main.h"
+#include "grid.h"
+
+#include "core.h"
+#include "main.h"
+
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/geometries.hpp>
+#include <boost/intrusive_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+#include <boost/variant.hpp>
+
+#include <Eigen/Core>
+
+#include <cmath>
+#include <vector>
 
 Grid::Grid()
 {
@@ -26,7 +42,7 @@ Grid::Grid()
 	calculateTranslationMatrix();
 }
 
-void Grid::addArea(const Element::SharedArea &area)
+void Grid::addArea(const Item::SharedArea &area)
 {
 	if (area->size > cellDistance)
 	{
@@ -48,13 +64,13 @@ void Grid::addArea(const Element::SharedArea &area)
 				{
 					position = boost::get<Eigen::Vector2f>(area->position);
 				}
+				break;
 			}
-			break;
 			case STREAMER_AREA_TYPE_RECTANGLE:
 			{
-				boost::geometry::centroid(boost::get<Element::Box2D>(area->position), position);
+				boost::geometry::centroid(boost::get<Box2D>(area->position), position);
+				break;
 			}
-			break;
 			case STREAMER_AREA_TYPE_SPHERE:
 			{
 				if (area->attach)
@@ -65,20 +81,19 @@ void Grid::addArea(const Element::SharedArea &area)
 				{
 					position = Eigen::Vector2f(boost::get<Eigen::Vector3f>(area->position)[0], boost::get<Eigen::Vector3f>(area->position)[1]);
 				}
+				break;
 			}
-			break;
 			case STREAMER_AREA_TYPE_CUBE:
 			{
-				Eigen::Vector3f centroid = Eigen::Vector3f::Zero();
-				boost::geometry::centroid(boost::get<Element::Box3D>(area->position), centroid);
+				Eigen::Vector3f centroid = boost::geometry::return_centroid<Eigen::Vector3f>(boost::get<Box3D>(area->position));
 				position = Eigen::Vector2f(centroid[0], centroid[1]);
+				break;
 			}
-			break;
 			case STREAMER_AREA_TYPE_POLYGON:
 			{
-				boost::geometry::centroid(boost::get<Element::Polygon2D>(area->position).get<0>(), position);
+				boost::geometry::centroid(boost::get<Polygon2D>(area->position).get<0>(), position);
+				break;
 			}
-			break;
 		}
 		CellID cellID = getCellID(position);
 		cells[cellID]->areas.insert(std::make_pair(area->areaID, area));
@@ -86,7 +101,7 @@ void Grid::addArea(const Element::SharedArea &area)
 	}
 }
 
-void Grid::addCheckpoint(const Element::SharedCheckpoint &checkpoint)
+void Grid::addCheckpoint(const Item::SharedCheckpoint &checkpoint)
 {
 	if (checkpoint->streamDistance > cellDistance)
 	{
@@ -101,7 +116,7 @@ void Grid::addCheckpoint(const Element::SharedCheckpoint &checkpoint)
 	}
 }
 
-void Grid::addMapIcon(const Element::SharedMapIcon &mapIcon)
+void Grid::addMapIcon(const Item::SharedMapIcon &mapIcon)
 {
 	if (mapIcon->streamDistance > cellDistance)
 	{
@@ -116,7 +131,7 @@ void Grid::addMapIcon(const Element::SharedMapIcon &mapIcon)
 	}
 }
 
-void Grid::addObject(const Element::SharedObject &object)
+void Grid::addObject(const Item::SharedObject &object)
 {
 	if (object->streamDistance > cellDistance)
 	{
@@ -140,7 +155,7 @@ void Grid::addObject(const Element::SharedObject &object)
 	}
 }
 
-void Grid::addPickup(const Element::SharedPickup &pickup)
+void Grid::addPickup(const Item::SharedPickup &pickup)
 {
 	if (pickup->streamDistance > cellDistance)
 	{
@@ -155,7 +170,7 @@ void Grid::addPickup(const Element::SharedPickup &pickup)
 	}
 }
 
-void Grid::addRaceCheckpoint(const Element::SharedRaceCheckpoint &raceCheckpoint)
+void Grid::addRaceCheckpoint(const Item::SharedRaceCheckpoint &raceCheckpoint)
 {
 	if (raceCheckpoint->streamDistance > cellDistance)
 	{
@@ -170,7 +185,7 @@ void Grid::addRaceCheckpoint(const Element::SharedRaceCheckpoint &raceCheckpoint
 	}
 }
 
-void Grid::addTextLabel(const Element::SharedTextLabel &textLabel)
+void Grid::addTextLabel(const Item::SharedTextLabel &textLabel)
 {
 	if (textLabel->streamDistance > cellDistance)
 	{
@@ -199,31 +214,31 @@ void Grid::rebuildGrid()
 	cells.clear();
 	globalCell = SharedCell(new Cell());
 	calculateTranslationMatrix();
-	for (boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.begin(); a != core->getData()->areas.end(); ++a)
+	for (boost::unordered_map<int, Item::SharedArea>::iterator a = core->getData()->areas.begin(); a != core->getData()->areas.end(); ++a)
 	{
 		addArea(a->second);
 	}
-	for (boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = core->getData()->checkpoints.begin(); c != core->getData()->checkpoints.end(); ++c)
+	for (boost::unordered_map<int, Item::SharedCheckpoint>::iterator c = core->getData()->checkpoints.begin(); c != core->getData()->checkpoints.end(); ++c)
 	{
 		addCheckpoint(c->second);
 	}
-	for (boost::unordered_map<int, Element::SharedMapIcon>::iterator m = core->getData()->mapIcons.begin(); m != core->getData()->mapIcons.end(); ++m)
+	for (boost::unordered_map<int, Item::SharedMapIcon>::iterator m = core->getData()->mapIcons.begin(); m != core->getData()->mapIcons.end(); ++m)
 	{
 		addMapIcon(m->second);
 	}
-	for (boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.begin(); o != core->getData()->objects.end(); ++o)
+	for (boost::unordered_map<int, Item::SharedObject>::iterator o = core->getData()->objects.begin(); o != core->getData()->objects.end(); ++o)
 	{
 		addObject(o->second);
 	}
-	for (boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.begin(); p != core->getData()->pickups.end(); ++p)
+	for (boost::unordered_map<int, Item::SharedPickup>::iterator p = core->getData()->pickups.begin(); p != core->getData()->pickups.end(); ++p)
 	{
 		addPickup(p->second);
 	}
-	for (boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.begin(); r != core->getData()->raceCheckpoints.end(); ++r)
+	for (boost::unordered_map<int, Item::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.begin(); r != core->getData()->raceCheckpoints.end(); ++r)
 	{
 		addRaceCheckpoint(r->second);
 	}
-	for (boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.begin(); t != core->getData()->textLabels.end(); ++t)
+	for (boost::unordered_map<int, Item::SharedTextLabel>::iterator t = core->getData()->textLabels.begin(); t != core->getData()->textLabels.end(); ++t)
 	{
 		addTextLabel(t->second);
 	}
@@ -242,8 +257,8 @@ void Grid::removeAllItems(int type)
 				c->second->objects.clear();
 				eraseCellIfEmpty(c->second);
 			}
+			break;
 		}
-		break;
 		case STREAMER_TYPE_PICKUP:
 		{
 			globalCell->pickups.clear();
@@ -252,8 +267,8 @@ void Grid::removeAllItems(int type)
 				c->second->pickups.clear();
 				eraseCellIfEmpty(c->second);
 			}
+			break;
 		}
-		break;
 		case STREAMER_TYPE_CP:
 		{
 			globalCell->checkpoints.clear();
@@ -262,8 +277,8 @@ void Grid::removeAllItems(int type)
 				c->second->checkpoints.clear();
 				eraseCellIfEmpty(c->second);
 			}
+			break;
 		}
-		break;
 		case STREAMER_TYPE_RACE_CP:
 		{
 			globalCell->raceCheckpoints.clear();
@@ -272,8 +287,8 @@ void Grid::removeAllItems(int type)
 				c->second->raceCheckpoints.clear();
 				eraseCellIfEmpty(c->second);
 			}
+			break;
 		}
-		break;
 		case STREAMER_TYPE_MAP_ICON:
 		{
 			globalCell->mapIcons.clear();
@@ -282,8 +297,8 @@ void Grid::removeAllItems(int type)
 				c->second->mapIcons.clear();
 				eraseCellIfEmpty(c->second);
 			}
+			break;
 		}
-		break;
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
 			globalCell->textLabels.clear();
@@ -292,8 +307,8 @@ void Grid::removeAllItems(int type)
 				c->second->textLabels.clear();
 				eraseCellIfEmpty(c->second);
 			}
+			break;
 		}
-		break;
 		case STREAMER_TYPE_AREA:
 		{
 			globalCell->areas.clear();
@@ -302,12 +317,12 @@ void Grid::removeAllItems(int type)
 				c->second->areas.clear();
 				eraseCellIfEmpty(c->second);
 			}
+			break;
 		}
-		break;
 	}
 }
 
-void Grid::removeArea(const Element::SharedArea &area, bool reassign)
+void Grid::removeArea(const Item::SharedArea &area, bool reassign)
 {
 	bool found = false;
 	if (area->cell)
@@ -315,7 +330,7 @@ void Grid::removeArea(const Element::SharedArea &area, bool reassign)
 		boost::unordered_map<CellID, SharedCell>::iterator c = cells.find(area->cell->cellID);
 		if (c != cells.end())
 		{
-			boost::unordered_map<int, Element::SharedArea>::iterator a = c->second->areas.find(area->areaID);
+			boost::unordered_map<int, Item::SharedArea>::iterator a = c->second->areas.find(area->areaID);
 			if (a != c->second->areas.end())
 			{
 				c->second->areas.quick_erase(a);
@@ -326,7 +341,7 @@ void Grid::removeArea(const Element::SharedArea &area, bool reassign)
 	}
 	else
 	{
-		boost::unordered_map<int, Element::SharedArea>::iterator a = globalCell->areas.find(area->areaID);
+		boost::unordered_map<int, Item::SharedArea>::iterator a = globalCell->areas.find(area->areaID);
 		if (a != globalCell->areas.end())
 		{
 			globalCell->areas.quick_erase(a);
@@ -349,7 +364,7 @@ void Grid::removeArea(const Element::SharedArea &area, bool reassign)
 	}
 }
 
-void Grid::removeCheckpoint(const Element::SharedCheckpoint &checkpoint, bool reassign)
+void Grid::removeCheckpoint(const Item::SharedCheckpoint &checkpoint, bool reassign)
 {
 	bool found = false;
 	if (checkpoint->cell)
@@ -357,7 +372,7 @@ void Grid::removeCheckpoint(const Element::SharedCheckpoint &checkpoint, bool re
 		boost::unordered_map<CellID, SharedCell>::iterator c = cells.find(checkpoint->cell->cellID);
 		if (c != cells.end())
 		{
-			boost::unordered_map<int, Element::SharedCheckpoint>::iterator d = c->second->checkpoints.find(checkpoint->checkpointID);
+			boost::unordered_map<int, Item::SharedCheckpoint>::iterator d = c->second->checkpoints.find(checkpoint->checkpointID);
 			if (d != c->second->checkpoints.end())
 			{
 				c->second->checkpoints.quick_erase(d);
@@ -368,7 +383,7 @@ void Grid::removeCheckpoint(const Element::SharedCheckpoint &checkpoint, bool re
 	}
 	else
 	{
-		boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = globalCell->checkpoints.find(checkpoint->checkpointID);
+		boost::unordered_map<int, Item::SharedCheckpoint>::iterator c = globalCell->checkpoints.find(checkpoint->checkpointID);
 		if (c != globalCell->checkpoints.end())
 		{
 			globalCell->checkpoints.quick_erase(c);
@@ -384,7 +399,7 @@ void Grid::removeCheckpoint(const Element::SharedCheckpoint &checkpoint, bool re
 	}
 }
 
-void Grid::removeMapIcon(const Element::SharedMapIcon &mapIcon, bool reassign)
+void Grid::removeMapIcon(const Item::SharedMapIcon &mapIcon, bool reassign)
 {
 	bool found = false;
 	if (mapIcon->cell)
@@ -392,7 +407,7 @@ void Grid::removeMapIcon(const Element::SharedMapIcon &mapIcon, bool reassign)
 		boost::unordered_map<CellID, SharedCell>::iterator c = cells.find(mapIcon->cell->cellID);
 		if (c != cells.end())
 		{
-			boost::unordered_map<int, Element::SharedMapIcon>::iterator m = c->second->mapIcons.find(mapIcon->mapIconID);
+			boost::unordered_map<int, Item::SharedMapIcon>::iterator m = c->second->mapIcons.find(mapIcon->mapIconID);
 			if (m != c->second->mapIcons.end())
 			{
 				c->second->mapIcons.quick_erase(m);
@@ -403,7 +418,7 @@ void Grid::removeMapIcon(const Element::SharedMapIcon &mapIcon, bool reassign)
 	}
 	else
 	{
-		boost::unordered_map<int, Element::SharedMapIcon>::iterator m = globalCell->mapIcons.find(mapIcon->mapIconID);
+		boost::unordered_map<int, Item::SharedMapIcon>::iterator m = globalCell->mapIcons.find(mapIcon->mapIconID);
 		if (m != globalCell->mapIcons.end())
 		{
 			globalCell->mapIcons.quick_erase(m);
@@ -419,7 +434,7 @@ void Grid::removeMapIcon(const Element::SharedMapIcon &mapIcon, bool reassign)
 	}
 }
 
-void Grid::removeObject(const Element::SharedObject &object, bool reassign)
+void Grid::removeObject(const Item::SharedObject &object, bool reassign)
 {
 	bool found = false;
 	if (object->cell)
@@ -427,7 +442,7 @@ void Grid::removeObject(const Element::SharedObject &object, bool reassign)
 		boost::unordered_map<CellID, SharedCell>::iterator c = cells.find(object->cell->cellID);
 		if (c != cells.end())
 		{
-			boost::unordered_map<int, Element::SharedObject>::iterator o = c->second->objects.find(object->objectID);
+			boost::unordered_map<int, Item::SharedObject>::iterator o = c->second->objects.find(object->objectID);
 			if (o != c->second->objects.end())
 			{
 				c->second->objects.quick_erase(o);
@@ -438,7 +453,7 @@ void Grid::removeObject(const Element::SharedObject &object, bool reassign)
 	}
 	else
 	{
-		boost::unordered_map<int, Element::SharedObject>::iterator o = globalCell->objects.find(object->objectID);
+		boost::unordered_map<int, Item::SharedObject>::iterator o = globalCell->objects.find(object->objectID);
 		if (o != globalCell->objects.end())
 		{
 			globalCell->objects.quick_erase(o);
@@ -465,7 +480,7 @@ void Grid::removeObject(const Element::SharedObject &object, bool reassign)
 	}
 }
 
-void Grid::removePickup(const Element::SharedPickup &pickup, bool reassign)
+void Grid::removePickup(const Item::SharedPickup &pickup, bool reassign)
 {
 	bool found = false;
 	if (pickup->cell)
@@ -473,7 +488,7 @@ void Grid::removePickup(const Element::SharedPickup &pickup, bool reassign)
 		boost::unordered_map<CellID, SharedCell>::iterator c = cells.find(pickup->cell->cellID);
 		if (c != cells.end())
 		{
-			boost::unordered_map<int, Element::SharedPickup>::iterator p = c->second->pickups.find(pickup->pickupID);
+			boost::unordered_map<int, Item::SharedPickup>::iterator p = c->second->pickups.find(pickup->pickupID);
 			if (p != c->second->pickups.end())
 			{
 				c->second->pickups.quick_erase(p);
@@ -484,7 +499,7 @@ void Grid::removePickup(const Element::SharedPickup &pickup, bool reassign)
 	}
 	else
 	{
-		boost::unordered_map<int, Element::SharedPickup>::iterator p = globalCell->pickups.find(pickup->pickupID);
+		boost::unordered_map<int, Item::SharedPickup>::iterator p = globalCell->pickups.find(pickup->pickupID);
 		if (p != globalCell->pickups.end())
 		{
 			globalCell->pickups.quick_erase(p);
@@ -500,7 +515,7 @@ void Grid::removePickup(const Element::SharedPickup &pickup, bool reassign)
 	}
 }
 
-void Grid::removeRaceCheckpoint(const Element::SharedRaceCheckpoint &raceCheckpoint, bool reassign)
+void Grid::removeRaceCheckpoint(const Item::SharedRaceCheckpoint &raceCheckpoint, bool reassign)
 {
 	bool found = false;
 	if (raceCheckpoint->cell)
@@ -508,7 +523,7 @@ void Grid::removeRaceCheckpoint(const Element::SharedRaceCheckpoint &raceCheckpo
 		boost::unordered_map<CellID, SharedCell>::iterator c = cells.find(raceCheckpoint->cell->cellID);
 		if (c != cells.end())
 		{
-			boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = c->second->raceCheckpoints.find(raceCheckpoint->raceCheckpointID);
+			boost::unordered_map<int, Item::SharedRaceCheckpoint>::iterator r = c->second->raceCheckpoints.find(raceCheckpoint->raceCheckpointID);
 			if (r != c->second->raceCheckpoints.end())
 			{
 				c->second->raceCheckpoints.quick_erase(r);
@@ -519,7 +534,7 @@ void Grid::removeRaceCheckpoint(const Element::SharedRaceCheckpoint &raceCheckpo
 	}
 	else
 	{
-		boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = globalCell->raceCheckpoints.find(raceCheckpoint->raceCheckpointID);
+		boost::unordered_map<int, Item::SharedRaceCheckpoint>::iterator r = globalCell->raceCheckpoints.find(raceCheckpoint->raceCheckpointID);
 		if (r != globalCell->raceCheckpoints.end())
 		{
 			globalCell->raceCheckpoints.quick_erase(r);
@@ -535,7 +550,7 @@ void Grid::removeRaceCheckpoint(const Element::SharedRaceCheckpoint &raceCheckpo
 	}
 }
 
-void Grid::removeTextLabel(const Element::SharedTextLabel &textLabel, bool reassign)
+void Grid::removeTextLabel(const Item::SharedTextLabel &textLabel, bool reassign)
 {
 	bool found = false;
 	if (textLabel->cell)
@@ -543,7 +558,7 @@ void Grid::removeTextLabel(const Element::SharedTextLabel &textLabel, bool reass
 		boost::unordered_map<CellID, SharedCell>::iterator c = cells.find(textLabel->cell->cellID);
 		if (c != cells.end())
 		{
-			boost::unordered_map<int, Element::SharedTextLabel>::iterator t = c->second->textLabels.find(textLabel->textLabelID);
+			boost::unordered_map<int, Item::SharedTextLabel>::iterator t = c->second->textLabels.find(textLabel->textLabelID);
 			if (t != c->second->textLabels.end())
 			{
 				c->second->textLabels.quick_erase(t);
@@ -554,7 +569,7 @@ void Grid::removeTextLabel(const Element::SharedTextLabel &textLabel, bool reass
 	}
 	else
 	{
-		boost::unordered_map<int, Element::SharedTextLabel>::iterator t = globalCell->textLabels.find(textLabel->textLabelID);
+		boost::unordered_map<int, Item::SharedTextLabel>::iterator t = globalCell->textLabels.find(textLabel->textLabelID);
 		if (t != globalCell->textLabels.end())
 		{
 			globalCell->textLabels.quick_erase(t);
@@ -579,13 +594,12 @@ void Grid::removeTextLabel(const Element::SharedTextLabel &textLabel, bool reass
 
 CellID Grid::getCellID(const Eigen::Vector2f &position, bool insert)
 {
-	Element::Box2D box;
-	box.min_corner()[0] = floor((position[0] / cellSize)) * cellSize;
+	Box2D box;
+	box.min_corner()[0] = std::floor((position[0] / cellSize)) * cellSize;
+	box.min_corner()[1] = std::floor((position[1] / cellSize)) * cellSize;
 	box.max_corner()[0] = box.min_corner()[0] + cellSize;
-	box.min_corner()[1] = floor((position[1] / cellSize)) * cellSize;
 	box.max_corner()[1] = box.min_corner()[1] + cellSize;
-	Eigen::Vector2f centroid = Eigen::Vector2f::Zero();
-	boost::geometry::centroid(box, centroid);
+	Eigen::Vector2f centroid = boost::geometry::return_centroid<Eigen::Vector2f>(box);
 	CellID cellID = std::make_pair(static_cast<int>(centroid[0]), static_cast<int>(centroid[1]));
 	if (insert)
 	{
@@ -604,7 +618,7 @@ void Grid::processDiscoveredCells(Player &player, std::vector<SharedCell> &playe
 	playerCells.push_back(SharedCell(new Cell()));;
 	if (player.enabledItems[STREAMER_TYPE_OBJECT])
 	{
-		boost::unordered_map<int, Element::SharedObject>::iterator o = player.visibleCell->objects.begin();
+		boost::unordered_map<int, Item::SharedObject>::iterator o = player.visibleCell->objects.begin();
 		while (o != player.visibleCell->objects.end())
 		{
 			boost::unordered_set<CellID>::iterator d = discoveredCells.find(o->second->cell->cellID);
@@ -621,7 +635,7 @@ void Grid::processDiscoveredCells(Player &player, std::vector<SharedCell> &playe
 	}
 	if (player.enabledItems[STREAMER_TYPE_CP])
 	{
-		boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = player.visibleCell->checkpoints.begin();
+		boost::unordered_map<int, Item::SharedCheckpoint>::iterator c = player.visibleCell->checkpoints.begin();
 		while (c != player.visibleCell->checkpoints.end())
 		{
 			boost::unordered_set<CellID>::iterator d = discoveredCells.find(c->second->cell->cellID);
@@ -638,7 +652,7 @@ void Grid::processDiscoveredCells(Player &player, std::vector<SharedCell> &playe
 	}
 	if (player.enabledItems[STREAMER_TYPE_RACE_CP])
 	{
-		boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator t = player.visibleCell->raceCheckpoints.begin();
+		boost::unordered_map<int, Item::SharedRaceCheckpoint>::iterator t = player.visibleCell->raceCheckpoints.begin();
 		while (t != player.visibleCell->raceCheckpoints.end())
 		{
 			boost::unordered_set<CellID>::iterator d = discoveredCells.find(t->second->cell->cellID);
@@ -655,7 +669,7 @@ void Grid::processDiscoveredCells(Player &player, std::vector<SharedCell> &playe
 	}
 	if (player.enabledItems[STREAMER_TYPE_MAP_ICON])
 	{
-		boost::unordered_map<int, Element::SharedMapIcon>::iterator m = player.visibleCell->mapIcons.begin();
+		boost::unordered_map<int, Item::SharedMapIcon>::iterator m = player.visibleCell->mapIcons.begin();
 		while (m != player.visibleCell->mapIcons.end())
 		{
 			boost::unordered_set<CellID>::iterator d = discoveredCells.find(m->second->cell->cellID);
@@ -672,7 +686,7 @@ void Grid::processDiscoveredCells(Player &player, std::vector<SharedCell> &playe
 	}
 	if (player.enabledItems[STREAMER_TYPE_3D_TEXT_LABEL])
 	{
-		boost::unordered_map<int, Element::SharedTextLabel>::iterator t = player.visibleCell->textLabels.begin();
+		boost::unordered_map<int, Item::SharedTextLabel>::iterator t = player.visibleCell->textLabels.begin();
 		while (t != player.visibleCell->textLabels.end())
 		{
 			boost::unordered_set<CellID>::iterator d = discoveredCells.find(t->second->cell->cellID);
@@ -689,7 +703,7 @@ void Grid::processDiscoveredCells(Player &player, std::vector<SharedCell> &playe
 	}
 	if (player.enabledItems[STREAMER_TYPE_AREA])
 	{
-		boost::unordered_map<int, Element::SharedArea>::iterator a = player.visibleCell->areas.begin();
+		boost::unordered_map<int, Item::SharedArea>::iterator a = player.visibleCell->areas.begin();
 		while (a != player.visibleCell->areas.end())
 		{
 			boost::unordered_set<CellID>::iterator d = discoveredCells.find(a->second->cell->cellID);

@@ -16,7 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Main.h"
+#include "data.h"
+
+#include <limits>
 
 Data::Data()
 {
@@ -37,37 +39,30 @@ std::size_t Data::getMaxItems(int type)
 		{
 			return maxObjects;
 		}
-		break;
 		case STREAMER_TYPE_PICKUP:
 		{
 			return maxPickups;
 		}
-		break;
 		case STREAMER_TYPE_CP:
 		{
 			return maxCheckpoints;
 		}
-		break;
 		case STREAMER_TYPE_RACE_CP:
 		{
 			return maxRaceCheckpoints;
 		}
-		break;
 		case STREAMER_TYPE_MAP_ICON:
 		{
 			return maxMapIcons;
 		}
-		break;
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
 			return maxTextLabels;
 		}
-		break;
 		case STREAMER_TYPE_AREA:
 		{
 			return maxAreas;
 		}
-		break;
 	}
 	return 0;
 }
@@ -81,43 +76,36 @@ bool Data::setMaxItems(int type, std::size_t value)
 			maxObjects = value;
 			return true;
 		}
-		break;
 		case STREAMER_TYPE_PICKUP:
 		{
 			maxPickups = value;
 			return true;
 		}
-		break;
 		case STREAMER_TYPE_CP:
 		{
 			maxCheckpoints = value;
 			return true;
 		}
-		break;
 		case STREAMER_TYPE_RACE_CP:
 		{
 			maxRaceCheckpoints = value;
 			return true;
 		}
-		break;
 		case STREAMER_TYPE_MAP_ICON:
 		{
 			maxMapIcons = value;
 			return true;
 		}
-		break;
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
 			maxTextLabels = value;
 			return true;
 		}
-		break;
 		case STREAMER_TYPE_AREA:
 		{
 			maxAreas = value;
 			return true;
 		}
-		break;
 	}
 	return false;
 }

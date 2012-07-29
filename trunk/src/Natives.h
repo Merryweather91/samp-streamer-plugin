@@ -16,12 +16,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#define CHECK_PARAMS(m, n) \
-	if (params[0] != (m * 4)) \
-	{ \
-		logprintf("*** %s: Expecting %d parameter(s), but found %d", n, m, params[0] / 4); \
-		return 0; \
-	}
+#ifndef NATIVES_H
+#define NATIVES_H
 
 #define STREAMER_OPC (0)
 #define STREAMER_OPDC (1)
@@ -32,6 +28,15 @@
 #define STREAMER_OPLC (6)
 #define STREAMER_OPERC (7)
 #define STREAMER_OPLRC (8)
+
+#include <sampgdk/plugin.h>
+
+#define CHECK_PARAMS(m, n) \
+	if (params[0] != (m * 4)) \
+	{ \
+	logprintf("*** %s: Expecting %d parameter(s), but found %d", n, m, params[0] / 4); \
+	return 0; \
+	}
 
 namespace Natives
 {
@@ -144,3 +149,5 @@ namespace Natives
 	cell AMX_NATIVE_CALL CreateDynamicPolygonEx(AMX *amx, cell *params);
 	cell AMX_NATIVE_CALL Streamer_CallbackHook(AMX *amx, cell *params);
 }
+
+#endif

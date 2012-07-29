@@ -19,6 +19,12 @@
 #ifndef CELL_H
 #define CELL_H
 
+#include "common.h"
+#include "item.h"
+
+#include <boost/intrusive_ptr.hpp>
+#include <boost/unordered_map.hpp>
+
 class Cell
 {
 public:
@@ -28,29 +34,13 @@ public:
 	CellID cellID;
 	int references;
 
-	boost::unordered_map<int, Element::SharedArea> areas;
-	boost::unordered_map<int, Element::SharedCheckpoint> checkpoints;
-	boost::unordered_map<int, Element::SharedMapIcon> mapIcons;
-	boost::unordered_map<int, Element::SharedObject> objects;
-	boost::unordered_map<int, Element::SharedPickup> pickups;
-	boost::unordered_map<int, Element::SharedRaceCheckpoint> raceCheckpoints;
-	boost::unordered_map<int, Element::SharedTextLabel> textLabels;
+	boost::unordered_map<int, Item::SharedArea> areas;
+	boost::unordered_map<int, Item::SharedCheckpoint> checkpoints;
+	boost::unordered_map<int, Item::SharedMapIcon> mapIcons;
+	boost::unordered_map<int, Item::SharedObject> objects;
+	boost::unordered_map<int, Item::SharedPickup> pickups;
+	boost::unordered_map<int, Item::SharedRaceCheckpoint> raceCheckpoints;
+	boost::unordered_map<int, Item::SharedTextLabel> textLabels;
 };
-
-namespace boost
-{
-	inline void intrusive_ptr_add_ref(Cell *cell)
-	{
-		++cell->references;
-	}
-
-	inline void intrusive_ptr_release(Cell *cell)
-	{
-		if (!(--cell->references))
-		{
-			delete cell;
-		}
-	}
-}
 
 #endif

@@ -19,158 +19,150 @@
 
 #include <sampgdk/config.h>
 #include <sampgdk/export.h>
+#include <sampgdk/plugin.h>
+#include <sampgdk/generated/a_samp-defs.h>
 
 #include <stddef.h>
 
-#define MAX_PLAYER_NAME     (24)
-#define MAX_PLAYERS         (500)
-#define MAX_VEHICLES        (2000)
-#define INVALID_PLAYER_ID   (0xFFFF)
-#define INVALID_VEHICLE_ID  (0xFFFF)
-#define NO_TEAM             (255)
-#define MAX_OBJECTS         (1000)
-#define INVALID_OBJECT_ID   (0xFFFF)
-#define MAX_GANG_ZONES      (1024)
-#define MAX_TEXT_DRAWS      (2048)
-#define MAX_MENUS           (128)
-#define MAX_3DTEXT_GLOBAL   (1024)
-#define MAX_3DTEXT_PLAYER   (1024)
-#define MAX_PICKUPS         (4096)
-#define INVALID_MENU        (0xFF)
-#define INVALID_TEXT_DRAW   (0xFFFF)
-#define INVALID_GANG_ZONE   (-1)
-#define INVALID_3DTEXT_ID   (0xFFFF)
+#define MAX_PLAYER_NAME         (24)
+#define MAX_PLAYERS             (500)
+#define MAX_VEHICLES            (2000)
+#define INVALID_PLAYER_ID       (0xFFFF)
+#define INVALID_VEHICLE_ID      (0xFFFF)
+#define NO_TEAM                 (255)
+#define MAX_OBJECTS             (1000)
+#define INVALID_OBJECT_ID       (0xFFFF)
+#define MAX_GANG_ZONES          (1024)
+#define MAX_TEXT_DRAWS          (2048)
+#define MAX_PLAYER_TEXT_DRAWS   (256)
+#define MAX_MENUS               (128)
+#define MAX_3DTEXT_GLOBAL       (1024)
+#define MAX_3DTEXT_PLAYER       (1024)
+#define MAX_PICKUPS             (4096)
+#define INVALID_MENU            (0xFF)
+#define INVALID_TEXT_DRAW       (0xFFFF)
+#define INVALID_GANG_ZONE       (-1)
+#define INVALID_3DTEXT_ID       (0xFFFF)
 
-SAMPGDK_EXPORT bool SAMPGDK_CALL SendClientMessage(int playerid, int color, const char *message);
-SAMPGDK_EXPORT bool SAMPGDK_CALL SendClientMessageToAll(int color, const char *message);
-SAMPGDK_EXPORT bool SAMPGDK_CALL SendPlayerMessageToPlayer(int playerid, int senderid, const char *message);
-SAMPGDK_EXPORT bool SAMPGDK_CALL SendPlayerMessageToAll(int senderid, const char *message);
-SAMPGDK_EXPORT bool SAMPGDK_CALL SendDeathMessage(int killer, int killee, int weapon);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GameTextForAll(const char *text, int time, int style);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GameTextForPlayer(int playerid, const char *text, int time, int style);
-SAMPGDK_EXPORT int SAMPGDK_CALL GetServerTickCount();
-SAMPGDK_EXPORT int SAMPGDK_CALL GetMaxPlayers();
+SAMPGDK_NATIVE(bool, SendClientMessage(int playerid, int color, const char *message));
+SAMPGDK_NATIVE(bool, SendClientMessageToAll(int color, const char *message));
+SAMPGDK_NATIVE(bool, SendPlayerMessageToPlayer(int playerid, int senderid, const char *message));
+SAMPGDK_NATIVE(bool, SendPlayerMessageToAll(int senderid, const char *message));
+SAMPGDK_NATIVE(bool, SendDeathMessage(int killer, int killee, int weapon));
+SAMPGDK_NATIVE(bool, GameTextForAll(const char *text, int time, int style));
+SAMPGDK_NATIVE(bool, GameTextForPlayer(int playerid, const char *text, int time, int style));
+SAMPGDK_NATIVE(int, GetTickCount());
+SAMPGDK_NATIVE(int, GetMaxPlayers());
 
-SAMPGDK_EXPORT bool SAMPGDK_CALL SetGameModeText(const char *text);
-SAMPGDK_EXPORT bool SAMPGDK_CALL SetTeamCount(int count);
-SAMPGDK_EXPORT int SAMPGDK_CALL AddPlayerClass(int modelid, float spawn_x, float spawn_y, float spawn_z, float z_angle, int weapon1, int weapon1_ammo, int weapon2, int weapon2_ammo, int weapon3, int weapon3_ammo);
-SAMPGDK_EXPORT int SAMPGDK_CALL AddPlayerClassEx(int teamid, int modelid, float spawn_x, float spawn_y, float spawn_z, float z_angle, int weapon1, int weapon1_ammo, int weapon2, int weapon2_ammo, int weapon3, int weapon3_ammo);
-SAMPGDK_EXPORT int SAMPGDK_CALL AddStaticVehicle(int modelid, float spawn_x, float spawn_y, float spawn_z, float z_angle, int color1, int color2);
-SAMPGDK_EXPORT int SAMPGDK_CALL AddStaticVehicleEx(int modelid, float spawn_x, float spawn_y, float spawn_z, float z_angle, int color1, int color2, int respawn_delay);
-SAMPGDK_EXPORT int SAMPGDK_CALL AddStaticPickup(int model, int type, float x, float y, float z, int virtualworld);
-SAMPGDK_EXPORT int SAMPGDK_CALL CreatePickup(int model, int type, float x, float y, float z, int virtualworld);
-SAMPGDK_EXPORT bool SAMPGDK_CALL DestroyPickup(int pickup);
-SAMPGDK_EXPORT bool SAMPGDK_CALL ShowNameTags(bool show);
-SAMPGDK_EXPORT bool SAMPGDK_CALL ShowPlayerMarkers(bool mode);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GameModeExit();
-SAMPGDK_EXPORT bool SAMPGDK_CALL SetWorldTime(int hour);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetWeaponName(int weaponid, char *name, int size);
-SAMPGDK_EXPORT bool SAMPGDK_CALL EnableTirePopping(bool enable);
-SAMPGDK_EXPORT bool SAMPGDK_CALL AllowInteriorWeapons(bool allow);
-SAMPGDK_EXPORT bool SAMPGDK_CALL SetWeather(int weatherid);
-SAMPGDK_EXPORT bool SAMPGDK_CALL SetGravity(float gravity);
-SAMPGDK_EXPORT bool SAMPGDK_CALL AllowAdminTeleport(bool allow);
-SAMPGDK_EXPORT bool SAMPGDK_CALL SetDeathDropAmount(int amount);
-SAMPGDK_EXPORT bool SAMPGDK_CALL CreateExplosion(float x, float y, float z, int type, float radius);
-SAMPGDK_EXPORT bool SAMPGDK_CALL EnableZoneNames(bool enable);
-SAMPGDK_EXPORT bool SAMPGDK_CALL UsePlayerPedAnims();
-SAMPGDK_EXPORT bool SAMPGDK_CALL DisableInteriorEnterExits();
-SAMPGDK_EXPORT bool SAMPGDK_CALL SetNameTagDrawDistance(float distance);
-SAMPGDK_EXPORT bool SAMPGDK_CALL DisableNameTagLOS();
-SAMPGDK_EXPORT bool SAMPGDK_CALL LimitGlobalChatRadius(float chat_radius);
-SAMPGDK_EXPORT bool SAMPGDK_CALL LimitPlayerMarkerRadius(float marker_radius);
+SAMPGDK_NATIVE(bool, SetGameModeText(const char *text));
+SAMPGDK_NATIVE(bool, SetTeamCount(int count));
+SAMPGDK_NATIVE(int, AddPlayerClass(int modelid, float spawn_x, float spawn_y, float spawn_z, float z_angle, int weapon1, int weapon1_ammo, int weapon2, int weapon2_ammo, int weapon3, int weapon3_ammo));
+SAMPGDK_NATIVE(int, AddPlayerClassEx(int teamid, int modelid, float spawn_x, float spawn_y, float spawn_z, float z_angle, int weapon1, int weapon1_ammo, int weapon2, int weapon2_ammo, int weapon3, int weapon3_ammo));
+SAMPGDK_NATIVE(int, AddStaticVehicle(int modelid, float spawn_x, float spawn_y, float spawn_z, float z_angle, int color1, int color2));
+SAMPGDK_NATIVE(int, AddStaticVehicleEx(int modelid, float spawn_x, float spawn_y, float spawn_z, float z_angle, int color1, int color2, int respawn_delay));
+SAMPGDK_NATIVE(int, AddStaticPickup(int model, int type, float x, float y, float z, int virtualworld));
+SAMPGDK_NATIVE(int, CreatePickup(int model, int type, float x, float y, float z, int virtualworld));
+SAMPGDK_NATIVE(bool, DestroyPickup(int pickup));
+SAMPGDK_NATIVE(bool, ShowNameTags(bool show));
+SAMPGDK_NATIVE(bool, ShowPlayerMarkers(bool mode));
+SAMPGDK_NATIVE(bool, GameModeExit());
+SAMPGDK_NATIVE(bool, SetWorldTime(int hour));
+SAMPGDK_NATIVE(bool, GetWeaponName(int weaponid, char *name, int size));
+SAMPGDK_NATIVE(bool, EnableTirePopping(bool enable));
+SAMPGDK_NATIVE(bool, AllowInteriorWeapons(bool allow));
+SAMPGDK_NATIVE(bool, SetWeather(int weatherid));
+SAMPGDK_NATIVE(bool, SetGravity(float gravity));
+SAMPGDK_NATIVE(bool, AllowAdminTeleport(bool allow));
+SAMPGDK_NATIVE(bool, SetDeathDropAmount(int amount));
+SAMPGDK_NATIVE(bool, CreateExplosion(float x, float y, float z, int type, float radius));
+SAMPGDK_NATIVE(bool, EnableZoneNames(bool enable));
+SAMPGDK_NATIVE(bool, UsePlayerPedAnims());
+SAMPGDK_NATIVE(bool, DisableInteriorEnterExits());
+SAMPGDK_NATIVE(bool, SetNameTagDrawDistance(float distance));
+SAMPGDK_NATIVE(bool, DisableNameTagLOS());
+SAMPGDK_NATIVE(bool, LimitGlobalChatRadius(float chat_radius));
+SAMPGDK_NATIVE(bool, LimitPlayerMarkerRadius(float marker_radius));
 
-SAMPGDK_EXPORT bool SAMPGDK_CALL ConnectNPC(const char *name, const char *script);
-SAMPGDK_EXPORT bool SAMPGDK_CALL IsPlayerNPC(int playerid);
+SAMPGDK_NATIVE(bool, ConnectNPC(const char *name, const char *script));
+SAMPGDK_NATIVE(bool, IsPlayerNPC(int playerid));
 
-SAMPGDK_EXPORT bool SAMPGDK_CALL IsPlayerAdmin(int playerid);
-SAMPGDK_EXPORT bool SAMPGDK_CALL Kick(int playerid);
-SAMPGDK_EXPORT bool SAMPGDK_CALL Ban(int playerid);
-SAMPGDK_EXPORT bool SAMPGDK_CALL BanEx(int playerid, const char *reason);
-SAMPGDK_EXPORT bool SAMPGDK_CALL SendRconCommand(const char *command);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetServerVarAsString(const char *varname, char *value, int size);
-SAMPGDK_EXPORT int SAMPGDK_CALL GetServerVarAsInt(const char *varname);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetServerVarAsBool(const char *varname);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetPlayerNetworkStats(int playerid, char *retstr, int size);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetNetworkStats(char *retstr, int size);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GetPlayerVersion(int playerid, char *version, int len);
+SAMPGDK_NATIVE(bool, IsPlayerAdmin(int playerid));
+SAMPGDK_NATIVE(bool, Kick(int playerid));
+SAMPGDK_NATIVE(bool, Ban(int playerid));
+SAMPGDK_NATIVE(bool, BanEx(int playerid, const char *reason));
+SAMPGDK_NATIVE(bool, SendRconCommand(const char *command));
+SAMPGDK_NATIVE(bool, GetServerVarAsString(const char *varname, char *value, int size));
+SAMPGDK_NATIVE(int, GetServerVarAsInt(const char *varname));
+SAMPGDK_NATIVE(bool, GetServerVarAsBool(const char *varname));
+SAMPGDK_NATIVE(bool, GetPlayerNetworkStats(int playerid, char *retstr, int size));
+SAMPGDK_NATIVE(bool, GetNetworkStats(char *retstr, int size));
+SAMPGDK_NATIVE(bool, GetPlayerVersion(int playerid, char *version, int len));
 
-SAMPGDK_EXPORT int SAMPGDK_CALL MenuCreate(const char *title, int columns, float x, float y, float col1width, float col2width);
-SAMPGDK_EXPORT bool SAMPGDK_CALL MenuDestroy(int menuid);
-SAMPGDK_EXPORT int SAMPGDK_CALL MenuAddItem(int menuid, int column, const char *menutext);
-SAMPGDK_EXPORT bool SAMPGDK_CALL MenuSetColumnHeader(int menuid, int column, const char *columnheader);
-SAMPGDK_EXPORT bool SAMPGDK_CALL MenuShowForPlayer(int menuid, int playerid);
-SAMPGDK_EXPORT bool SAMPGDK_CALL MenuHideForPlayer(int menuid, int playerid);
-SAMPGDK_EXPORT bool SAMPGDK_CALL IsValidMenu(int menuid);
-SAMPGDK_EXPORT bool SAMPGDK_CALL MenuDisable(int menuid);
-SAMPGDK_EXPORT bool SAMPGDK_CALL MenuDisableRow(int menuid, int row);
-SAMPGDK_EXPORT int SAMPGDK_CALL GetPlayerMenu(int playerid);
+SAMPGDK_NATIVE(int, CreateMenu(const char *title, int columns, float x, float y, float col1width, float col2width));
+SAMPGDK_NATIVE(bool, DestroyMenu(int menuid));
+SAMPGDK_NATIVE(int, AddMenuItem(int menuid, int column, const char *menutext));
+SAMPGDK_NATIVE(bool, SetMenuColumnHeader(int menuid, int column, const char *columnheader));
+SAMPGDK_NATIVE(bool, ShowMenuForPlayer(int menuid, int playerid));
+SAMPGDK_NATIVE(bool, HideMenuForPlayer(int menuid, int playerid));
+SAMPGDK_NATIVE(bool, IsValidMenu(int menuid));
+SAMPGDK_NATIVE(bool, DisableMenu(int menuid));
+SAMPGDK_NATIVE(bool, DisableMenuRow(int menuid, int row));
+SAMPGDK_NATIVE(int, GetPlayerMenu(int playerid));
 
-#define CreateMenu MenuCreate
-#define DestroyMenu MenuDestroy
-#define AddMenuItem MenuAddItem
-#define SetMenuColumnHeader MenuSetColumnHeader
-#define ShowMenuForPlayer MenuShowForPlayer
-#define HideMenuForPlayer MenuHideForPlayer
-#define DisableMenu MenuDisable
-#define DisableMenuRow MenuDisableRow
+SAMPGDK_NATIVE(int, TextDrawCreate(float x, float y, const char *text));
+SAMPGDK_NATIVE(bool, TextDrawDestroy(int text));
+SAMPGDK_NATIVE(bool, TextDrawLetterSize(int text, float x, float y));
+SAMPGDK_NATIVE(bool, TextDrawTextSize(int text, float x, float y));
+SAMPGDK_NATIVE(bool, TextDrawAlignment(int text, int alignment));
+SAMPGDK_NATIVE(bool, TextDrawColor(int text, int color));
+SAMPGDK_NATIVE(bool, TextDrawUseBox(int text, bool use));
+SAMPGDK_NATIVE(bool, TextDrawBoxColor(int text, int color));
+SAMPGDK_NATIVE(bool, TextDrawSetShadow(int text, int size));
+SAMPGDK_NATIVE(bool, TextDrawSetOutline(int text, int size));
+SAMPGDK_NATIVE(bool, TextDrawBackgroundColor(int text, int color));
+SAMPGDK_NATIVE(bool, TextDrawFont(int text, int font));
+SAMPGDK_NATIVE(bool, TextDrawSetProportional(int text, bool set));
+SAMPGDK_NATIVE(bool, TextDrawSetSelectable(int text, bool set));
+SAMPGDK_NATIVE(bool, TextDrawShowForPlayer(int playerid, int text));
+SAMPGDK_NATIVE(bool, TextDrawHideForPlayer(int playerid, int text));
+SAMPGDK_NATIVE(bool, TextDrawShowForAll(int text));
+SAMPGDK_NATIVE(bool, TextDrawHideForAll(int text));
+SAMPGDK_NATIVE(bool, TextDrawSetString(int text, const char *string));
+SAMPGDK_NATIVE(bool, SelectTextDraw(int playerid, int hovercolor));
+SAMPGDK_NATIVE(bool, CancelSelectTextDraw(int playerid));
 
-SAMPGDK_EXPORT int SAMPGDK_CALL TextDrawCreate(float x, float y, const char *text);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawDestroy(int text);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawLetterSize(int text, float x, float y);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawTextSize(int text, float x, float y);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawAlignment(int text, int alignment);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawColor(int text, int color);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawUseBox(int text, bool use);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawBoxColor(int text, int color);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawSetShadow(int text, int size);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawSetOutline(int text, int size);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawBackgroundColor(int text, int color);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawFont(int text, int font);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawSetProportional(int text, bool set);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawSetSelectable(int text, bool set);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawShowForPlayer(int playerid, int text);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawHideForPlayer(int playerid, int text);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawShowForAll(int text);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawHideForAll(int text);
-SAMPGDK_EXPORT bool SAMPGDK_CALL TextDrawSetString(int text, const char *string);
-SAMPGDK_EXPORT bool SAMPGDK_CALL SelectTextDraw(int playerid, int hovercolor);
-SAMPGDK_EXPORT bool SAMPGDK_CALL CancelSelectTextDraw(int playerid);
+SAMPGDK_NATIVE(int, GangZoneCreate(float minx, float miny, float maxx, float maxy));
+SAMPGDK_NATIVE(bool, GangZoneDestroy(int zone));
+SAMPGDK_NATIVE(bool, GangZoneShowForPlayer(int playerid, int zone, int color));
+SAMPGDK_NATIVE(bool, GangZoneShowForAll(int zone, int color));
+SAMPGDK_NATIVE(bool, GangZoneHideForPlayer(int playerid, int zone));
+SAMPGDK_NATIVE(bool, GangZoneHideForAll(int zone));
+SAMPGDK_NATIVE(bool, GangZoneFlashForPlayer(int playerid, int zone, int flashcolor));
+SAMPGDK_NATIVE(bool, GangZoneFlashForAll(int zone, int flashcolor));
+SAMPGDK_NATIVE(bool, GangZoneStopFlashForPlayer(int playerid, int zone));
+SAMPGDK_NATIVE(bool, GangZoneStopFlashForAll(int zone));
 
-SAMPGDK_EXPORT int SAMPGDK_CALL GangZoneCreate(float minx, float miny, float maxx, float maxy);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GangZoneDestroy(int zone);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GangZoneShowForPlayer(int playerid, int zone, int color);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GangZoneShowForAll(int zone, int color);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GangZoneHideForPlayer(int playerid, int zone);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GangZoneHideForAll(int zone);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GangZoneFlashForPlayer(int playerid, int zone, int flashcolor);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GangZoneFlashForAll(int zone, int flashcolor);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GangZoneStopFlashForPlayer(int playerid, int zone);
-SAMPGDK_EXPORT bool SAMPGDK_CALL GangZoneStopFlashForAll(int zone);
+SAMPGDK_NATIVE(int, Create3DTextLabel(const char *text, int color, float x, float y, float z, float DrawDistance, int virtualworld, bool testLOS));
+SAMPGDK_NATIVE(bool, Delete3DTextLabel(int id));
+SAMPGDK_NATIVE(bool, Attach3DTextLabelToPlayer(int id, int playerid, float OffsetX, float OffsetY, float OffsetZ));
+SAMPGDK_NATIVE(bool, Attach3DTextLabelToVehicle(int id, int vehicleid, float OffsetX, float OffsetY, float OffsetZ));
+SAMPGDK_NATIVE(bool, Update3DTextLabelText(int id, int color, const char *text));
 
-SAMPGDK_EXPORT int SAMPGDK_CALL Create3DTextLabel(const char *text, int color, float x, float y, float z, float DrawDistance, int virtualworld, bool testLOS);
-SAMPGDK_EXPORT bool SAMPGDK_CALL Delete3DTextLabel(int id);
-SAMPGDK_EXPORT bool SAMPGDK_CALL Attach3DTextLabelToPlayer(int id, int playerid, float OffsetX, float OffsetY, float OffsetZ);
-SAMPGDK_EXPORT bool SAMPGDK_CALL Attach3DTextLabelToVehicle(int id, int vehicleid, float OffsetX, float OffsetY, float OffsetZ);
-SAMPGDK_EXPORT bool SAMPGDK_CALL Update3DTextLabelText(int id, int color, const char *text);
+SAMPGDK_NATIVE(int, CreatePlayer3DTextLabel(int playerid, const char *text, int color, float x, float y, float z, float DrawDistance, int attachedplayer, int attachedvehicle, bool testLOS));
+SAMPGDK_NATIVE(bool, DeletePlayer3DTextLabel(int playerid, int id));
+SAMPGDK_NATIVE(bool, UpdatePlayer3DTextLabelText(int playerid, int id, int color, const char *text));
 
-SAMPGDK_EXPORT int SAMPGDK_CALL CreatePlayer3DTextLabel(int playerid, const char *text, int color, float x, float y, float z, float DrawDistance, int attachedplayer, int attachedvehicle, bool testLOS);
-SAMPGDK_EXPORT bool SAMPGDK_CALL DeletePlayer3DTextLabel(int playerid, int id);
-SAMPGDK_EXPORT bool SAMPGDK_CALL UpdatePlayer3DTextLabelText(int playerid, int id, int color, const char *text);
+#define DIALOG_STYLE_MSGBOX   (0)
+#define DIALOG_STYLE_INPUT    (1)
+#define DIALOG_STYLE_LIST     (2)
+#define DIALOG_STYLE_PASSWORD (3)
 
-#define DIALOG_STYLE_MSGBOX (0)
-#define DIALOG_STYLE_INPUT  (1)
-#define DIALOG_STYLE_LIST   (2)
+SAMPGDK_NATIVE(bool, ShowPlayerDialog(int playerid, int dialogid, int style, const char *caption, const char *info, const char *button1, const char *button2));
 
-SAMPGDK_EXPORT bool SAMPGDK_CALL ShowPlayerDialog(int playerid, int dialogid, int style, const char *caption, const char *info, const char *button1, const char *button2);
+typedef void (SAMPGDK_CALL *TimerCallback)(int timerid, void *param);
 
-typedef void (SAMPGDK_CALL *TimerHandler)(int timerid, void *param);
-
-SAMPGDK_EXPORT int SAMPGDK_CALL CreateTimer(int interval, bool repeat, TimerHandler hander, void *param);
-SAMPGDK_EXPORT bool SAMPGDK_CALL DestroyTimer(int timerid);
-
-#define SetTimer CreateTimer
-#define KillTimer DestroyTimer
+SAMPGDK_NATIVE(int, SetTimer(int interval, bool repeat, TimerCallback callback, void *param)); /* $codeless */
+SAMPGDK_NATIVE(bool, KillTimer(int timerid)); /* $codeless */
 
 #define PLAYER_STATE_NONE                    (0)
 #define PLAYER_STATE_ONFOOT                  (1)
@@ -256,8 +248,34 @@ SAMPGDK_EXPORT bool SAMPGDK_CALL DestroyTimer(int timerid);
 #define KEY_LEFT                  (-128)
 #define KEY_RIGHT                 (128)
 
-#define CLICK_SOURCE_SCOREBOARD   (0)
+SAMPGDK_NATIVE(bool, gpci(int playerid, char *buffer, int size));
 
-SAMPGDK_EXPORT bool SAMPGDK_CALL gpci(int playerid, char *buffer, int size);
+#ifdef __cplusplus
+
+#include <string>
+
+template<size_t N> inline bool GetNetworkStats(char (&retstr)[N]) {
+	return GetNetworkStats(retstr, N);
+}
+template<size_t N> inline bool GetPlayerNetworkStats(int playerid, char (&retstr)[N]) {
+	return GetPlayerNetworkStats(playerid, retstr, N);
+}
+template<size_t N> inline bool GetPlayerVersion(int playerid, char (&version)[N]) {
+	return GetPlayerVersion(playerid, version, N);
+}
+template<size_t N> inline bool GetWeaponName(int weaponid, char (&name)[N]) {
+	return GetWeaponName(weaponid, name, N);
+}
+
+#endif /* __cplusplus */
+
+#define CLICK_SOURCE_SCOREBOARD (0)
+
+#define EDIT_RESPONSE_CANCEL   (0)
+#define EDIT_RESPONSE_FINAL    (1)
+#define EDIT_RESPONSE_UPDATE   (2)
+
+#define SELECT_OBJECT_GLOBAL_OBJECT (1)
+#define SELECT_OBJECT_PLAYER_OBJECT (2)
 
 #endif /* !SAMPGDK_A_SAMP_H */

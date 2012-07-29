@@ -19,6 +19,10 @@
 #ifndef IDENTIFIER_H
 #define IDENTIFIER_H
 
+#include <functional>
+#include <queue>
+#include <vector>
+
 class Identifier
 {
 public:

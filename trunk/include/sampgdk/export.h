@@ -15,13 +15,17 @@
 
 #ifndef SAMPGDK_EXPORT_H
 #define SAMPGDK_EXPORT_H
+#pragma once
 
 #undef SAMPGDK_EXPORT
 #undef SAMPGDK_CALL
 
 #include <sampgdk/config.h>
 
-#define SAMPGDK_EXPORT
 #define SAMPGDK_CALL
+#define SAMPGDK_EXPORT
+
+#define SAMPGDK_NATIVE(ret_type, native) \
+	SAMPGDK_EXPORT ret_type SAMPGDK_CALL sampgdk_##native
 
 #endif /* SAMPGDK_EXPORT_H */

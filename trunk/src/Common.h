@@ -16,18 +16,58 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef COMMON_H
+#define COMMON_H
+
+#define STREAMER_MAX_TYPES (7)
+
+#define STREAMER_TYPE_OBJECT (0)
+#define STREAMER_TYPE_PICKUP (1)
+#define STREAMER_TYPE_CP (2)
+#define STREAMER_TYPE_RACE_CP (3)
+#define STREAMER_TYPE_MAP_ICON (4)
+#define STREAMER_TYPE_3D_TEXT_LABEL (5)
+#define STREAMER_TYPE_AREA (6)
+
+#define STREAMER_MAX_AREA_TYPES (5)
+
+#define STREAMER_AREA_TYPE_CIRCLE (0)
+#define STREAMER_AREA_TYPE_RECTANGLE (1)
+#define STREAMER_AREA_TYPE_SPHERE (2)
+#define STREAMER_AREA_TYPE_CUBE (3)
+#define STREAMER_AREA_TYPE_POLYGON (4)
+
+#define STREAMER_MAX_OBJECT_TYPES (3)
+
+#define STREAMER_OBJECT_TYPE_GLOBAL (0)
+#define STREAMER_OBJECT_TYPE_PLAYER (1)
+#define STREAMER_OBJECT_TYPE_DYNAMIC (2)
+
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/geometries.hpp>
+#include <boost/intrusive_ptr.hpp>
+#include <boost/tuple/tuple.hpp>
+
+#include <Eigen/Core>
+
+#include <utility>
+
 class Cell;
 class Data;
+class Events;
 class Identifier;
 class Grid;
-class Streamer;
-
 struct Player;
+class Streamer;
 
 typedef std::pair<int, int> CellID;
 typedef boost::intrusive_ptr<Cell> SharedCell;
 
-namespace Element
+typedef boost::geometry::model::box<Eigen::Vector2f> Box2D;
+typedef boost::geometry::model::box<Eigen::Vector3f> Box3D;
+typedef boost::tuple<boost::geometry::model::polygon<Eigen::Vector2f>, Eigen::Vector2f> Polygon2D;
+
+namespace Item
 {
 	struct Area;
 	struct Checkpoint;
@@ -44,14 +84,9 @@ namespace Element
 	typedef boost::intrusive_ptr<Pickup> SharedPickup;
 	typedef boost::intrusive_ptr<RaceCheckpoint> SharedRaceCheckpoint;
 	typedef boost::intrusive_ptr<TextLabel> SharedTextLabel;
-
-	typedef boost::geometry::model::box<Eigen::Vector2f> Box2D;
-	typedef boost::geometry::model::box<Eigen::Vector3f> Box3D;
-	typedef boost::tuple<boost::geometry::model::polygon<Eigen::Vector2f>, Eigen::Vector2f> Polygon2D;
 }
 
-namespace boost { namespace geometry { namespace traits
-{
+namespace boost { namespace geometry { namespace traits {
 	template<typename _Scalar, int _Rows, int _Cols, int _Options, int _MaxRows, int _MaxCols>
 	struct tag<Eigen::Matrix<_Scalar, _Rows, _Cols, _Options, _MaxRows, _MaxCols> >
 	{
@@ -87,3 +122,20 @@ namespace boost { namespace geometry { namespace traits
 		}
 	};
 }}}
+
+template<typename T>
+inline void intrusive_ptr_add_ref(T *t)
+{
+	++t->references;
+}
+
+template<typename T>
+inline void intrusive_ptr_release(T *t)
+{
+	if (!(--t->references))
+	{
+		delete t;
+	}
+}
+
+#endif

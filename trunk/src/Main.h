@@ -22,58 +22,7 @@
 #define INCLUDE_FILE_VERSION (0x26105)
 #define PLUGIN_VERSION "2.6.1"
 
-#define STREAMER_MAX_ITEM_TYPES (7)
-
-#define STREAMER_TYPE_OBJECT (0)
-#define STREAMER_TYPE_PICKUP (1)
-#define STREAMER_TYPE_CP (2)
-#define STREAMER_TYPE_RACE_CP (3)
-#define STREAMER_TYPE_MAP_ICON (4)
-#define STREAMER_TYPE_3D_TEXT_LABEL (5)
-#define STREAMER_TYPE_AREA (6)
-
-#define STREAMER_AREA_TYPE_CIRCLE (0)
-#define STREAMER_AREA_TYPE_RECTANGLE (1)
-#define STREAMER_AREA_TYPE_SPHERE (2)
-#define STREAMER_AREA_TYPE_CUBE (3)
-#define STREAMER_AREA_TYPE_POLYGON (4)
-
-#define STREAMER_OBJECT_TYPE_GLOBAL (0)
-#define STREAMER_OBJECT_TYPE_PLAYER (1)
-#define STREAMER_OBJECT_TYPE_DYNAMIC (2)
-
-#define BOOST_CHRONO_HEADER_ONLY
-
-#include <bitset>
-#include <cmath>
-#include <limits>
-#include <map>
-#include <queue>
-#include <set>
-#include <sstream>
-#include <string>
-#include <vector>
-
-#include "../include/boost/chrono.hpp"
-#include "../include/boost/geometry.hpp"
-#include "../include/boost/geometry/geometries/geometries.hpp"
-#include "../include/boost/intrusive_ptr.hpp"
-#include "../include/boost/scoped_ptr.hpp"
-#include "../include/boost/tuple/tuple.hpp"
-#include "../include/boost/unordered_map.hpp"
-#include "../include/boost/unordered_set.hpp"
-#include "../include/boost/variant.hpp"
-
-#include "../include/Eigen/Core"
-
-#include "../include/sampgdk/a_objects.h"
-#include "../include/sampgdk/a_players.h"
-#include "../include/sampgdk/a_samp.h"
-#include "../include/sampgdk/a_vehicles.h"
-#include "../include/sampgdk/core.h"
-#include "../include/sampgdk/plugin.h"
-
-#include "Core.h"
+#include <sampgdk/plugin.h>
 
 typedef void (*logprintf_t)(const char*, ...);
 

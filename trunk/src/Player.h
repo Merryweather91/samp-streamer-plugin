@@ -16,6 +16,21 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef PLAYER_H
+#define PLAYER_H
+
+#include "cell.h"
+#include "common.h"
+#include "identifier.h"
+
+#include <boost/intrusive_ptr.hpp>
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+
+#include <Eigen/Core>
+
+#include <bitset>
+
 struct Player
 {
 	Player(int playerID);
@@ -38,7 +53,7 @@ struct Player
 	boost::unordered_set<int> disabledCheckpoints;
 	boost::unordered_set<int> disabledRaceCheckpoints;
 
-	std::bitset<STREAMER_MAX_ITEM_TYPES> enabledItems;
+	std::bitset<STREAMER_MAX_TYPES> enabledItems;
 
 	boost::unordered_set<int> internalAreas;
 	boost::unordered_map<int, int> internalMapIcons;
@@ -47,3 +62,5 @@ struct Player
 
 	Identifier mapIconIdentifier;
 };
+
+#endif

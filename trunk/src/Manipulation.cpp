@@ -16,9 +16,30 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Main.h"
-#include "Manipulation.h"
-#include "Utility.h"
+#include "manipulation.h"
+
+#include "core.h"
+#include "main.h"
+#include "utility.h"
+
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/geometries.hpp>
+#include <boost/intrusive_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+#include <boost/variant.hpp>
+
+#include <Eigen/Core>
+
+#include <sampgdk/a_objects.h>
+#include <sampgdk/a_players.h>
+#include <sampgdk/a_samp.h>
+#include <sampgdk/plugin.h>
+
+#include <bitset>
+#include <cmath>
 
 using namespace Manipulation;
 
@@ -28,7 +49,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 	{
 		case STREAMER_TYPE_OBJECT:
 		{
-			boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
 			if (o != core->getData()->objects.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -40,8 +61,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->attach->offset[0]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case AttachOffsetY:
 					{
 						if (o->second->attach)
@@ -49,8 +70,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->attach->offset[1]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case AttachOffsetZ:
 					{
 						if (o->second->attach)
@@ -58,8 +79,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->attach->offset[2]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case AttachRX:
 					{
 						if (o->second->attach)
@@ -67,8 +88,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->attach->rotation[0]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case AttachRY:
 					{
 						if (o->second->attach)
@@ -76,8 +97,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->attach->rotation[1]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case AttachRZ:
 					{
 						if (o->second->attach)
@@ -85,8 +106,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->attach->rotation[2]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case AttachX:
 					{
 						if (o->second->attach)
@@ -94,8 +115,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->attach->position[0]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case AttachY:
 					{
 						if (o->second->attach)
@@ -103,8 +124,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->attach->position[1]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case AttachZ:
 					{
 						if (o->second->attach)
@@ -112,14 +133,13 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->attach->position[2]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case DrawDistance:
 					{
 						Utility::storeFloatInNative(amx, params[4], o->second->drawDistance);
 						return 1;
 					}
-					break;
 					case MoveSpeed:
 					{
 						if (o->second->move)
@@ -127,8 +147,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->move->speed);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case MoveRX:
 					{
 						if (o->second->move)
@@ -136,8 +156,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->move->rotation.get<0>()[0]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case MoveRY:
 					{
 						if (o->second->move)
@@ -145,8 +165,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->move->rotation.get<0>()[1]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case MoveRZ:
 					{
 						if (o->second->move)
@@ -154,8 +174,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->move->rotation.get<0>()[2]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case MoveX:
 					{
 						if (o->second->move)
@@ -163,8 +183,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->move->position.get<0>()[0]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case MoveY:
 					{
 						if (o->second->move)
@@ -172,8 +192,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->move->position.get<0>()[1]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case MoveZ:
 					{
 						if (o->second->move)
@@ -181,106 +201,93 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], o->second->move->position.get<0>()[2]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case RX:
 					{
 						Utility::storeFloatInNative(amx, params[4], o->second->rotation[0]);
 						return 1;
 					}
-					break;
 					case RY:
 					{
 						Utility::storeFloatInNative(amx, params[4], o->second->rotation[1]);
 						return 1;
 					}
-					break;
 					case RZ:
 					{
 						Utility::storeFloatInNative(amx, params[4], o->second->rotation[2]);
 						return 1;
 					}
-					break;
 					case StreamDistance:
 					{
-						Utility::storeFloatInNative(amx, params[4], sqrt(o->second->streamDistance));
+						Utility::storeFloatInNative(amx, params[4], std::sqrt(o->second->streamDistance));
 						return 1;
 					}
-					break;
 					case X:
 					{
 						Utility::storeFloatInNative(amx, params[4], o->second->position[0]);
 						return 1;
 					}
-					break;
 					case Y:
 					{
 						Utility::storeFloatInNative(amx, params[4], o->second->position[1]);
 						return 1;
 					}
-					break;
 					case Z:
 					{
 						Utility::storeFloatInNative(amx, params[4], o->second->position[2]);
 						return 1;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_GetFloatData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_GetFloatData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_PICKUP:
 		{
-			boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
 			if (p != core->getData()->pickups.end())
 			{
 				switch (static_cast<int>(params[3]))
 				{
 					case StreamDistance:
 					{
-						Utility::storeFloatInNative(amx, params[4], sqrt(p->second->streamDistance));
+						Utility::storeFloatInNative(amx, params[4], std::sqrt(p->second->streamDistance));
 						return 1;
 					}
-					break;
 					case X:
 					{
 						Utility::storeFloatInNative(amx, params[4], p->second->position[0]);
 						return 1;
 					}
-					break;
 					case Y:
 					{
 						Utility::storeFloatInNative(amx, params[4], p->second->position[1]);
 						return 1;
 					}
-					break;
 					case Z:
 					{
 						Utility::storeFloatInNative(amx, params[4], p->second->position[2]);
 						return 1;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_GetFloatData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_GetFloatData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_CP:
 		{
-			boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
 			if (c != core->getData()->checkpoints.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -290,45 +297,39 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 						Utility::storeFloatInNative(amx, params[4], c->second->size);
 						return 1;
 					}
-					break;
 					case StreamDistance:
 					{
-						Utility::storeFloatInNative(amx, params[4], sqrt(c->second->streamDistance));
+						Utility::storeFloatInNative(amx, params[4], std::sqrt(c->second->streamDistance));
 						return 1;
 					}
-					break;
 					case X:
 					{
 						Utility::storeFloatInNative(amx, params[4], c->second->position[0]);
 						return 1;
 					}
-					break;
 					case Y:
 					{
 						Utility::storeFloatInNative(amx, params[4], c->second->position[1]);
 						return 1;
 					}
-					break;
 					case Z:
 					{
 						Utility::storeFloatInNative(amx, params[4], c->second->position[2]);
 						return 1;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_GetFloatData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_GetFloatData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_RACE_CP:
 		{
-			boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
 			if (r != core->getData()->raceCheckpoints.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -338,106 +339,91 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 						Utility::storeFloatInNative(amx, params[4], r->second->next[0]);
 						return 1;
 					}
-					break;
 					case NextY:
 					{
 						Utility::storeFloatInNative(amx, params[4], r->second->next[1]);
 						return 1;
 					}
-					break;
 					case NextZ:
 					{
 						Utility::storeFloatInNative(amx, params[4], r->second->next[2]);
 						return 1;
 					}
-					break;
-					break;
 					case Size:
 					{
 						Utility::storeFloatInNative(amx, params[4], r->second->size);
 						return 1;
 					}
-					break;
 					case StreamDistance:
 					{
-						Utility::storeFloatInNative(amx, params[4], sqrt(r->second->streamDistance));
+						Utility::storeFloatInNative(amx, params[4], std::sqrt(r->second->streamDistance));
 						return 1;
 					}
-					break;
 					case X:
 					{
 						Utility::storeFloatInNative(amx, params[4], r->second->position[0]);
 						return 1;
 					}
-					break;
 					case Y:
 					{
 						Utility::storeFloatInNative(amx, params[4], r->second->position[1]);
 						return 1;
 					}
-					break;
 					case Z:
 					{
 						Utility::storeFloatInNative(amx, params[4], r->second->position[2]);
 						return 1;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_GetFloatData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_GetFloatData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_MAP_ICON:
 		{
-			boost::unordered_map<int, Element::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
 			if (m != core->getData()->mapIcons.end())
 			{
 				switch (static_cast<int>(params[3]))
 				{
 					case StreamDistance:
 					{
-						Utility::storeFloatInNative(amx, params[4], sqrt(m->second->streamDistance));
+						Utility::storeFloatInNative(amx, params[4], std::sqrt(m->second->streamDistance));
 						return 1;
 					}
-					break;
 					case X:
 					{
 						Utility::storeFloatInNative(amx, params[4], m->second->position[0]);
 						return 1;
 					}
-					break;
 					case Y:
 					{
 						Utility::storeFloatInNative(amx, params[4], m->second->position[1]);
 						return 1;
 					}
-					break;
 					case Z:
 					{
 						Utility::storeFloatInNative(amx, params[4], m->second->position[2]);
 						return 1;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_GetFloatData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_GetFloatData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
-			boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
 			if (t != core->getData()->textLabels.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -449,8 +435,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], t->second->attach->position[0]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case AttachY:
 					{
 						if (t->second->attach)
@@ -458,8 +444,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], t->second->attach->position[1]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case AttachZ:
 					{
 						if (t->second->attach)
@@ -467,55 +453,49 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], t->second->attach->position[2]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case DrawDistance:
 					{
 						Utility::storeFloatInNative(amx, params[4], t->second->drawDistance);
 						return 1;
 					}
-					break;
 					case StreamDistance:
 					{
-						Utility::storeFloatInNative(amx, params[4], sqrt(t->second->streamDistance));
+						Utility::storeFloatInNative(amx, params[4], std::sqrt(t->second->streamDistance));
 						return 1;
 					}
-					break;
 					case AttachOffsetX:
 					case X:
 					{
 						Utility::storeFloatInNative(amx, params[4], t->second->position[0]);
 						return 1;
 					}
-					break;
 					case AttachOffsetY:
 					case Y:
 					{
 						Utility::storeFloatInNative(amx, params[4], t->second->position[1]);
 						return 1;
 					}
-					break;
 					case AttachOffsetZ:
 					case Z:
 					{
 						Utility::storeFloatInNative(amx, params[4], t->second->position[2]);
 						return 1;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_GetFloatData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_GetFloatData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_AREA:
 		{
-			boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
 			if (a != core->getData()->areas.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -527,8 +507,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], a->second->attach->position[0]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case AttachY:
 					{
 						if (a->second->attach)
@@ -536,8 +516,8 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], a->second->attach->position[1]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case AttachZ:
 					{
 						if (a->second->attach)
@@ -545,122 +525,115 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							Utility::storeFloatInNative(amx, params[4], a->second->attach->position[2]);
 							return 1;
 						}
+						return 0;
 					}
-					break;
 					case MaxX:
 					{
 						switch (a->second->type)
 						{
 							case STREAMER_AREA_TYPE_RECTANGLE:
 							{
-								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box2D>(a->second->position).max_corner()[0]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Box2D>(a->second->position).max_corner()[0]);
+								return 1;
 							}
-							break;
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box3D>(a->second->position).max_corner()[0]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Box3D>(a->second->position).max_corner()[0]);
+								return 1;
 							}
-							break;
 						}
-						return 1;
+						return 0;
 					}
-					break;
 					case MaxY:
 					{
 						switch (a->second->type)
 						{
 							case STREAMER_AREA_TYPE_RECTANGLE:
 							{
-								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box2D>(a->second->position).max_corner()[1]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Box2D>(a->second->position).max_corner()[1]);
+								return 1;
 							}
-							break;
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box3D>(a->second->position).max_corner()[1]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Box3D>(a->second->position).max_corner()[1]);
+								return 1;
 							}
-							break;
 						}
-						return 1;
+						return 0;
 					}
-					break;
 					case MaxZ:
 					{
 						switch (a->second->type)
 						{
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box3D>(a->second->position).max_corner()[2]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Box3D>(a->second->position).max_corner()[2]);
+								return 1;
 							}
-							break;
 							case STREAMER_AREA_TYPE_POLYGON:
 							{
-								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Polygon2D>(a->second->position).get<1>()[1]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Polygon2D>(a->second->position).get<1>()[1]);
+								return 1;
 							}
-							break;
 						}
-						return 1;
+						return 0;
 					}
-					break;
 					case MinX:
 					{
 						switch (a->second->type)
 						{
 							case STREAMER_AREA_TYPE_RECTANGLE:
 							{
-								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box2D>(a->second->position).min_corner()[0]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Box2D>(a->second->position).min_corner()[0]);
+								return 1;
 							}
-							break;
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box3D>(a->second->position).min_corner()[0]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Box3D>(a->second->position).min_corner()[0]);
+								return 1;
 							}
-							break;
 						}
-						return 1;
+						return 0;
 					}
-					break;
 					case MinY:
 					{
 						switch (a->second->type)
 						{
 							case STREAMER_AREA_TYPE_RECTANGLE:
 							{
-								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box2D>(a->second->position).min_corner()[1]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Box2D>(a->second->position).min_corner()[1]);
+								return 1;
 							}
-							break;
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box3D>(a->second->position).min_corner()[0]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Box3D>(a->second->position).min_corner()[0]);
+								return 1;
 							}
-							break;
 						}
-						return 1;
+						return 0;
 					}
-					break;
 					case MinZ:
 					{
 						switch (a->second->type)
 						{
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Box3D>(a->second->position).min_corner()[2]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Box3D>(a->second->position).min_corner()[2]);
+								return 1;
 							}
-							break;
 							case STREAMER_AREA_TYPE_POLYGON:
 							{
-								Utility::storeFloatInNative(amx, params[4], boost::get<Element::Polygon2D>(a->second->position).get<1>()[0]);
+								Utility::storeFloatInNative(amx, params[4], boost::get<Polygon2D>(a->second->position).get<1>()[0]);
+								return 1;
 							}
-							break;
 						}
-						return 1;
+						return 0;
 					}
-					break;
 					case Size:
 					{
-						Utility::storeFloatInNative(amx, params[4], sqrt(a->second->size));
+						Utility::storeFloatInNative(amx, params[4], std::sqrt(a->second->size));
 						return 1;
 					}
-					break;
 					case X:
 					{
 						switch (a->second->type)
@@ -668,17 +641,16 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							case STREAMER_AREA_TYPE_CIRCLE:
 							{
 								Utility::storeFloatInNative(amx, params[4], boost::get<Eigen::Vector2f>(a->second->position)[0]);
+								return 1;
 							}
-							break;
 							case STREAMER_AREA_TYPE_SPHERE:
 							{
 								Utility::storeFloatInNative(amx, params[4], boost::get<Eigen::Vector3f>(a->second->position)[0]);
+								return 1;
 							}
-							break;
 						}
-						return 1;
+						return 0;
 					}
-					break;
 					case Y:
 					{
 						switch (a->second->type)
@@ -686,17 +658,16 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							case STREAMER_AREA_TYPE_CIRCLE:
 							{
 								Utility::storeFloatInNative(amx, params[4], boost::get<Eigen::Vector2f>(a->second->position)[1]);
+								return 1;
 							}
-							break;
 							case STREAMER_AREA_TYPE_SPHERE:
 							{
 								Utility::storeFloatInNative(amx, params[4], boost::get<Eigen::Vector3f>(a->second->position)[1]);
+								return 1;
 							}
-							break;
 						}
-						return 1;
+						return 0;
 					}
-					break;
 					case Z:
 					{
 						switch (a->second->type)
@@ -704,28 +675,26 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 							case STREAMER_AREA_TYPE_SPHERE:
 							{
 								Utility::storeFloatInNative(amx, params[4], boost::get<Eigen::Vector3f>(a->second->position)[2]);
+								return 1;
 							}
-							break;
 						}
-						return 1;
+						return 0;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_GetFloatData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_GetFloatData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		default:
 		{
 			logprintf("*** Streamer_GetFloatData: Invalid type specified");
+			return 0;
 		}
-		break;
 	}
 	return 0;
 }
@@ -737,7 +706,7 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 	{
 		case STREAMER_TYPE_OBJECT:
 		{
-			boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
 			if (o != core->getData()->objects.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -749,8 +718,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							o->second->attach->offset[0] = amx_ctof(params[4]);
 							update = true;
 						}
+						break;
 					}
-					break;
 					case AttachOffsetY:
 					{
 						if (o->second->attach)
@@ -758,8 +727,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							o->second->attach->offset[1] = amx_ctof(params[4]);
 							update = true;
 						}
+						break;
 					}
-					break;
 					case AttachOffsetZ:
 					{
 						if (o->second->attach)
@@ -767,8 +736,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							o->second->attach->offset[2] = amx_ctof(params[4]);
 							update = true;
 						}
+						break;
 					}
-					break;
 					case AttachRX:
 					{
 						if (o->second->attach)
@@ -776,8 +745,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							o->second->attach->rotation[0] = amx_ctof(params[4]);
 							update = true;
 						}
+						break;
 					}
-					break;
 					case AttachRY:
 					{
 						if (o->second->attach)
@@ -785,8 +754,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							o->second->attach->rotation[1] = amx_ctof(params[4]);
 							update = true;
 						}
+						break;
 					}
-					break;
 					case AttachRZ:
 					{
 						if (o->second->attach)
@@ -794,14 +763,14 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							o->second->attach->rotation[2] = amx_ctof(params[4]);
 							update = true;
 						}
+						break;
 					}
-					break;
 					case DrawDistance:
 					{
 						o->second->drawDistance = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					case MoveRX:
 					case MoveRY:
 					case MoveRZ:
@@ -811,32 +780,32 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					case MoveZ:
 					{
 						logprintf("*** Streamer_SetFloatData: Use MoveDynamicObject to adjust moving object data");
+						return 0;
 					}
-					break;
 					case RX:
 					{
 						o->second->rotation[0] = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					case RY:
 					{
 						o->second->rotation[1] = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					case RZ:
 					{
 						o->second->rotation[2] = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					case StreamDistance:
 					{
 						o->second->streamDistance = amx_ctof(params[4]) * amx_ctof(params[4]);
 						reassign = true;
+						break;
 					}
-					break;
 					case X:
 					{
 						if (o->second->move)
@@ -850,8 +819,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							reassign = true;
 						}
 						update = true;
+						break;
 					}
-					break;
 					case Y:
 					{
 						if (o->second->move)
@@ -865,8 +834,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							reassign = true;
 						}
 						update = true;
+						break;
 					}
-					break;
 					case Z:
 					{
 						if (o->second->move)
@@ -876,13 +845,13 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						}
 						o->second->position[2] = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_SetFloatData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
 				if (reassign)
 				{
@@ -905,7 +874,7 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							{
 								MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
 							}
-							for (boost::unordered_map<int, Element::Object::Material>::iterator m = o->second->materials.begin(); m != o->second->materials.end(); ++m)
+							for (boost::unordered_map<int, Item::Object::Material>::iterator m = o->second->materials.begin(); m != o->second->materials.end(); ++m)
 							{
 								if (m->second.main)
 								{
@@ -922,11 +891,11 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 				return (reassign || update);
 			}
 			logprintf("*** Streamer_SetFloatData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_PICKUP:
 		{
-			boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
 			if (p != core->getData()->pickups.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -935,8 +904,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					{
 						p->second->streamDistance = amx_ctof(params[4]) * amx_ctof(params[4]);
 						reassign = true;
+						break;
 					}
-					break;
 					case X:
 					{
 						p->second->position[0] = amx_ctof(params[4]);
@@ -945,8 +914,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							reassign = true;
 						}
 						update = true;
+						break;
 					}
-					break;
 					case Y:
 					{
 						p->second->position[1] = amx_ctof(params[4]);
@@ -955,19 +924,19 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							reassign = true;
 						}
 						update = true;
+						break;
 					}
-					break;
 					case Z:
 					{
 						p->second->position[2] = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_SetFloatData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
 				if (reassign)
 				{
@@ -985,11 +954,11 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 				return (reassign || update);
 			}
 			logprintf("*** Streamer_SetFloatData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_CP:
 		{
-			boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
 			if (c != core->getData()->checkpoints.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -998,14 +967,14 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					{
 						c->second->size = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					case StreamDistance:
 					{
 						c->second->streamDistance = amx_ctof(params[4]) * amx_ctof(params[4]);
 						reassign = true;
+						break;
 					}
-					break;
 					case X:
 					{
 						c->second->position[0] = amx_ctof(params[4]);
@@ -1014,8 +983,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							reassign = true;
 						}
 						update = true;
+						break;
 					}
-					break;
 					case Y:
 					{
 						c->second->position[1] = amx_ctof(params[4]);
@@ -1024,19 +993,19 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							reassign = true;
 						}
 						update = true;
+						break;
 					}
-					break;
 					case Z:
 					{
 						c->second->position[2] = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_SetFloatData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
 				if (reassign)
 				{
@@ -1056,11 +1025,11 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 				return (reassign || update);
 			}
 			logprintf("*** Streamer_SetFloatData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_RACE_CP:
 		{
-			boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
 			if (r != core->getData()->raceCheckpoints.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -1069,33 +1038,32 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					{
 						r->second->next[0] = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					case NextY:
 					{
 						r->second->next[1] = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					case NextZ:
 					{
 						r->second->next[2] = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
-					break;
 					case Size:
 					{
 						r->second->size = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					case StreamDistance:
 					{
 						r->second->streamDistance = amx_ctof(params[4]) * amx_ctof(params[4]);
 						reassign = true;
+						break;
 					}
-					break;
 					case X:
 					{
 						r->second->position[0] = amx_ctof(params[4]);
@@ -1104,8 +1072,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							reassign = true;
 						}
 						update = true;
+						break;
 					}
-					break;
 					case Y:
 					{
 						r->second->position[1] = amx_ctof(params[4]);
@@ -1114,19 +1082,19 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							reassign = true;
 						}
 						update = true;
+						break;
 					}
-					break;
 					case Z:
 					{
 						r->second->position[2] = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_SetFloatData: Invalid data for type specified");
+						return 0;
 					}
-					break;
 				}
 				if (reassign)
 				{
@@ -1146,11 +1114,11 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 				return (reassign || update);
 			}
 			logprintf("*** Streamer_SetFloatData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_MAP_ICON:
 		{
-			boost::unordered_map<int, Element::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
 			if (m != core->getData()->mapIcons.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -1159,8 +1127,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					{
 						m->second->streamDistance = amx_ctof(params[4]) * amx_ctof(params[4]);
 						reassign = true;
+						break;
 					}
-					break;
 					case X:
 					{
 						m->second->position[0] = amx_ctof(params[4]);
@@ -1169,8 +1137,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							reassign = true;
 						}
 						update = true;
+						break;
 					}
-					break;
 					case Y:
 					{
 						m->second->position[1] = amx_ctof(params[4]);
@@ -1179,19 +1147,19 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							reassign = true;
 						}
 						update = true;
+						break;
 					}
-					break;
 					case Z:
 					{
 						m->second->position[2] = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_SetFloatData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
 				if (reassign)
 				{
@@ -1212,11 +1180,11 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 				return (reassign || update);
 			}
 			logprintf("*** Streamer_SetFloatData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
-			boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
 			if (t != core->getData()->textLabels.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -1225,14 +1193,14 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					{
 						t->second->drawDistance = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					case StreamDistance:
 					{
 						t->second->streamDistance = amx_ctof(params[4]) * amx_ctof(params[4]);
 						reassign = true;
+						break;
 					}
-					break;
 					case AttachOffsetX:
 					case X:
 					{
@@ -1242,8 +1210,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							reassign = true;
 						}
 						update = true;
+						break;
 					}
-					break;
 					case AttachOffsetY:
 					case Y:
 					{
@@ -1253,20 +1221,20 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							reassign = true;
 						}
 						update = true;
+						break;
 					}
-					break;
 					case AttachOffsetZ:
 					case Z:
 					{
 						t->second->position[2] = amx_ctof(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_SetFloatData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
 				if (reassign)
 				{
@@ -1287,11 +1255,11 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 				return (reassign || update);
 			}
 			logprintf("*** Streamer_SetFloatData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_AREA:
 		{
-			boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
 			if (a != core->getData()->areas.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -1302,112 +1270,110 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						{
 							case STREAMER_AREA_TYPE_RECTANGLE:
 							{
-								boost::get<Element::Box2D>(a->second->position).max_corner()[0] = amx_ctof(params[4]);
+								boost::get<Box2D>(a->second->position).max_corner()[0] = amx_ctof(params[4]);
 								reassign = true;
+								break;
 							}
-							break;
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								boost::get<Element::Box3D>(a->second->position).max_corner()[0] = amx_ctof(params[4]);
+								boost::get<Box3D>(a->second->position).max_corner()[0] = amx_ctof(params[4]);
 								reassign = true;
+								break;
 							}
-							break;
 						}
+						break;
 					}
-					break;
 					case MaxY:
 					{
 						switch (a->second->type)
 						{
 							case STREAMER_AREA_TYPE_RECTANGLE:
 							{
-								boost::get<Element::Box2D>(a->second->position).max_corner()[1] = amx_ctof(params[4]);
+								boost::get<Box2D>(a->second->position).max_corner()[1] = amx_ctof(params[4]);
 								reassign = true;
+								break;
 							}
-							break;
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								boost::get<Element::Box3D>(a->second->position).max_corner()[1] = amx_ctof(params[4]);
+								boost::get<Box3D>(a->second->position).max_corner()[1] = amx_ctof(params[4]);
 								reassign = true;
+								break;
 							}
-							break;
 						}
+						break;
 					}
-					break;
 					case MaxZ:
 					{
 						switch (a->second->type)
 						{
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								boost::get<Element::Box3D>(a->second->position).max_corner()[2] = amx_ctof(params[4]);
+								boost::get<Box3D>(a->second->position).max_corner()[2] = amx_ctof(params[4]);
+								return 1;
 							}
-							break;
 							case STREAMER_AREA_TYPE_POLYGON:
 							{
-								boost::get<Element::Polygon2D>(a->second->position).get<1>()[1] = amx_ctof(params[4]);
+								boost::get<Polygon2D>(a->second->position).get<1>()[1] = amx_ctof(params[4]);
+								return 0;
 							}
-							break;
 						}
-						return 1;
+						return 0;
 					}
-					break;
 					case MinX:
 					{
 						switch (a->second->type)
 						{
 							case STREAMER_AREA_TYPE_RECTANGLE:
 							{
-								boost::get<Element::Box2D>(a->second->position).min_corner()[0] = amx_ctof(params[4]);
+								boost::get<Box2D>(a->second->position).min_corner()[0] = amx_ctof(params[4]);
 								reassign = true;
+								break;
 							}
-							break;
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								boost::get<Element::Box3D>(a->second->position).min_corner()[0] = amx_ctof(params[4]);
+								boost::get<Box3D>(a->second->position).min_corner()[0] = amx_ctof(params[4]);
 								reassign = true;
+								break;
 							}
-							break;
 						}
+						break;
 					}
-					break;
 					case MinY:
 					{
 						switch (a->second->type)
 						{
 							case STREAMER_AREA_TYPE_RECTANGLE:
 							{
-								boost::get<Element::Box2D>(a->second->position).min_corner()[1] = amx_ctof(params[4]);
+								boost::get<Box2D>(a->second->position).min_corner()[1] = amx_ctof(params[4]);
 								reassign = true;
+								break;
 							}
-							break;
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								boost::get<Element::Box3D>(a->second->position).min_corner()[1] = amx_ctof(params[4]);
+								boost::get<Box3D>(a->second->position).min_corner()[1] = amx_ctof(params[4]);
 								reassign = true;
+								break;
 							}
-							break;
 						}
+						break;
 					}
-					break;
 					case MinZ:
 					{
 						switch (a->second->type)
 						{
 							case STREAMER_AREA_TYPE_CUBE:
 							{
-								boost::get<Element::Box3D>(a->second->position).min_corner()[2] = amx_ctof(params[4]);
+								boost::get<Box3D>(a->second->position).min_corner()[2] = amx_ctof(params[4]);
+								return 1;
 							}
-							break;
 							case STREAMER_AREA_TYPE_POLYGON:
 							{
-								boost::get<Element::Polygon2D>(a->second->position).get<1>()[0] = amx_ctof(params[4]);
+								boost::get<Polygon2D>(a->second->position).get<1>()[0] = amx_ctof(params[4]);
+								return 1;
 							}
-							break;
 						}
-						return 1;
+						return 0;
 					}
-					break;
 					case Size:
 					{
 						switch (a->second->type)
@@ -1417,11 +1383,11 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							{
 								a->second->size = amx_ctof(params[4]) * amx_ctof(params[4]);
 								reassign = true;
+								break;
 							}
-							break;
 						}
+						break;
 					}
-					break;
 					case X:
 					{
 						switch (a->second->type)
@@ -1430,17 +1396,17 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							{
 								boost::get<Eigen::Vector2f>(a->second->position)[0] = amx_ctof(params[4]);
 								reassign = true;
+								break;
 							}
-							break;
 							case STREAMER_AREA_TYPE_SPHERE:
 							{
 								boost::get<Eigen::Vector3f>(a->second->position)[0] = amx_ctof(params[4]);
 								reassign = true;
+								break;
 							}
-							break;
 						}
+						break;
 					}
-					break;
 					case Y:
 					{
 						switch (a->second->type)
@@ -1449,17 +1415,17 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							{
 								boost::get<Eigen::Vector2f>(a->second->position)[1] = amx_ctof(params[4]);
 								reassign = true;
+								break;
 							}
-							break;
 							case STREAMER_AREA_TYPE_SPHERE:
 							{
 								boost::get<Eigen::Vector3f>(a->second->position)[1] = amx_ctof(params[4]);
 								reassign = true;
+								break;
 							}
-							break;
 						}
+						break;
 					}
-					break;
 					case Z:
 					{
 						switch (a->second->type)
@@ -1467,17 +1433,16 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 							case STREAMER_AREA_TYPE_SPHERE:
 							{
 								boost::get<Eigen::Vector3f>(a->second->position)[2] = amx_ctof(params[4]);
+								return 1;
 							}
-							break;
 						}
-						return 1;
+						return 0;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_SetFloatData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
 				if (reassign)
 				{
@@ -1485,30 +1450,29 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					{
 						case STREAMER_AREA_TYPE_RECTANGLE:
 						{
-							boost::geometry::correct(boost::get<Element::Box2D>(a->second->position));
-							a->second->size = boost::geometry::comparable_distance(boost::get<Element::Box2D>(a->second->position).min_corner(), boost::get<Element::Box2D>(a->second->position).max_corner());
+							boost::geometry::correct(boost::get<Box2D>(a->second->position));
+							a->second->size = static_cast<float>(boost::geometry::comparable_distance(boost::get<Box2D>(a->second->position).min_corner(), boost::get<Box2D>(a->second->position).max_corner()));
+							break;
 						}
-						break;
 						case STREAMER_AREA_TYPE_CUBE:
 						{
-							boost::geometry::correct(boost::get<Element::Box3D>(a->second->position));
-							a->second->size = boost::geometry::comparable_distance(Eigen::Vector2f(boost::get<Element::Box3D>(a->second->position).min_corner()[0], boost::get<Element::Box3D>(a->second->position).min_corner()[1]), Eigen::Vector2f(boost::get<Element::Box3D>(a->second->position).max_corner()[0], boost::get<Element::Box3D>(a->second->position).max_corner()[1]));
+							boost::geometry::correct(boost::get<Box3D>(a->second->position));
+							a->second->size = static_cast<float>(boost::geometry::comparable_distance(Eigen::Vector2f(boost::get<Box3D>(a->second->position).min_corner()[0], boost::get<Box3D>(a->second->position).min_corner()[1]), Eigen::Vector2f(boost::get<Box3D>(a->second->position).max_corner()[0], boost::get<Box3D>(a->second->position).max_corner()[1])));
+							break;
 						}
-						break;
 					}
 					core->getGrid()->removeArea(a->second, true);
-					return 1;
 				}
-				return 0;
+				return reassign;
 			}
 			logprintf("*** Streamer_SetFloatData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		default:
 		{
 			logprintf("*** Streamer_SetFloatData: Invalid type specified");
+			return 0;
 		}
-		break;
 	}
 	return 0;
 }
@@ -1519,7 +1483,7 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 	{
 		case STREAMER_TYPE_OBJECT:
 		{
-			boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
 			if (o != core->getData()->objects.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -1530,36 +1494,29 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 						{
 							return o->second->attach->vehicle;
 						}
-						else
-						{
-							return INVALID_GENERIC_ID;
-						}
+						return INVALID_GENERIC_ID;
 					}
-					break;
 					case ExtraID:
 					{
 						return o->second->extraID;
 					}
-					break;
 					case ModelID:
 					{
 						return o->second->modelID;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_GetIntData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_GetIntData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_PICKUP:
 		{
-			boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
 			if (p != core->getData()->pickups.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -1568,31 +1525,27 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 					{
 						return p->second->extraID;
 					}
-					break;
 					case ModelID:
 					{
 						return p->second->modelID;
 					}
-					break;
 					case Type:
 					{
 						return p->second->type;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_GetIntData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_GetIntData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_CP:
 		{
-			boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
 			if (c != core->getData()->checkpoints.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -1601,21 +1554,19 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 					{
 						return c->second->extraID;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_GetIntData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_GetIntData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_RACE_CP:
 		{
-			boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
 			if (r != core->getData()->raceCheckpoints.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -1624,26 +1575,23 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 					{
 						return r->second->extraID;
 					}
-					break;
 					case Type:
 					{
 						return r->second->type;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_GetIntData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_GetIntData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_MAP_ICON:
 		{
-			boost::unordered_map<int, Element::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
 			if (m != core->getData()->mapIcons.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -1652,36 +1600,31 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 					{
 						return m->second->color;
 					}
-					break;
 					case ExtraID:
 					{
 						return m->second->extraID;
 					}
-					break;
 					case Style:
 					{
 						return m->second->style;
 					}
-					break;
 					case Type:
 					{
 						return m->second->type;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_GetIntData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_GetIntData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
-			boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
 			if (t != core->getData()->textLabels.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -1692,53 +1635,41 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 						{
 							return t->second->attach->player;
 						}
-						else
-						{
-							return INVALID_GENERIC_ID;
-						}
+						return INVALID_GENERIC_ID;
 					}
-					break;
 					case AttachedVehicle:
 					{
 						if (t->second->attach)
 						{
 							return t->second->attach->vehicle;
 						}
-						else
-						{
-							return INVALID_GENERIC_ID;
-						}
+						return INVALID_GENERIC_ID;
 					}
-					break;
 					case Color:
 					{
 						return t->second->color;
 					}
-					break;
 					case ExtraID:
 					{
 						return t->second->extraID;
 					}
-					break;
 					case TestLOS:
 					{
 						return t->second->testLOS;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_GetIntData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_GetIntData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_AREA:
 		{
-			boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
 			if (a != core->getData()->areas.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -1749,66 +1680,50 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 						{
 							return a->second->attach->object.get<0>();
 						}
-						else
-						{
-							return INVALID_GENERIC_ID;
-						}
+						return INVALID_GENERIC_ID;
 					}
-					break;
 					case AttachedPlayer:
 					{
 						if (a->second->attach)
 						{
 							return a->second->attach->player;
 						}
-						else
-						{
-							return INVALID_GENERIC_ID;
-						}
+						return INVALID_GENERIC_ID;
 					}
-					break;
 					case AttachedVehicle:
 					{
 						if (a->second->attach)
 						{
 							return a->second->attach->vehicle;
 						}
-						else
-						{
-							return INVALID_GENERIC_ID;
-						}
+						return INVALID_GENERIC_ID;
 					}
-					break;
 					case ExtraID:
 					{
 						return a->second->extraID;
 					}
-					break;
 					case Type:
 					{
 						return a->second->type;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_GetIntData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_GetIntData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		default:
 		{
 			logprintf("*** Streamer_GetIntData: Invalid type specified");
+			return 0;
 		}
-		break;
 	}
 	return 0;
 }
-
 
 int Manipulation::setIntData(AMX *amx, cell *params)
 {
@@ -1817,7 +1732,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 	{
 		case STREAMER_TYPE_OBJECT:
 		{
-			boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
 			if (o != core->getData()->objects.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -1826,11 +1741,12 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					{
 						if (static_cast<int>(params[4]) != INVALID_GENERIC_ID)
 						{
-							o->second->attach = boost::intrusive_ptr<Element::Object::Attach>(new Element::Object::Attach);
+							o->second->attach = boost::intrusive_ptr<Item::Object::Attach>(new Item::Object::Attach);
 							o->second->attach->vehicle = static_cast<int>(params[4]);
 							o->second->attach->offset.setZero();
 							o->second->attach->rotation.setZero();
 							core->getStreamer()->attachedObjects.insert(o->second);
+							update = true;
 						}
 						else
 						{
@@ -1841,29 +1757,28 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 									o->second->attach.reset();
 									core->getStreamer()->attachedObjects.erase(o->second);
 									core->getGrid()->removeObject(o->second, true);
+									update = true;
 								}
 							}
 						}
-						update = true;
+						break;
 					}
-					break;
 					case ExtraID:
 					{
 						o->second->extraID = static_cast<int>(params[4]);
 						return 1;
 					}
-					break;
 					case ModelID:
 					{
 						o->second->modelID = static_cast<int>(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_SetIntData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
 				if (update)
 				{
@@ -1882,7 +1797,7 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 							{
 								MovePlayerObject(p->first, i->second, o->second->move->position.get<0>()[0], o->second->move->position.get<0>()[1], o->second->move->position.get<0>()[2], o->second->move->speed, o->second->move->rotation.get<0>()[0], o->second->move->rotation.get<0>()[1], o->second->move->rotation.get<0>()[2]);
 							}
-							for (boost::unordered_map<int, Element::Object::Material>::iterator m = o->second->materials.begin(); m != o->second->materials.end(); ++m)
+							for (boost::unordered_map<int, Item::Object::Material>::iterator m = o->second->materials.begin(); m != o->second->materials.end(); ++m)
 							{
 								if (m->second.main)
 								{
@@ -1895,16 +1810,15 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 							}
 						}
 					}
-					return 1;
+					return update;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_SetIntData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_PICKUP:
 		{
-			boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
 			if (p != core->getData()->pickups.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -1914,24 +1828,23 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						p->second->extraID = static_cast<int>(params[4]);
 						return 1;
 					}
-					break;
 					case ModelID:
 					{
 						p->second->modelID = static_cast<int>(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					case Type:
 					{
 						p->second->type = static_cast<int>(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_SetIntData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
 				if (update)
 				{
@@ -1941,16 +1854,15 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						DestroyPickup(i->second);
 						i->second = CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], p->second->worldID);
 					}
-					return 1;
 				}
-				return 0;
+				return update;
 			}
 			logprintf("*** Streamer_SetIntData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_CP:
 		{
-			boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
 			if (c != core->getData()->checkpoints.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -1960,21 +1872,19 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						c->second->extraID = static_cast<int>(params[4]);
 						return 1;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_SetIntData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_SetIntData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_RACE_CP:
 		{
-			boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
 			if (r != core->getData()->raceCheckpoints.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -1984,18 +1894,17 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						r->second->extraID = static_cast<int>(params[4]);
 						return 1;
 					}
-					break;
 					case Type:
 					{
 						r->second->type = static_cast<int>(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_SetIntData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
 				if (update)
 				{
@@ -2007,16 +1916,15 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 							SetPlayerRaceCheckpoint(p->first, r->second->type, r->second->position[0], r->second->position[1], r->second->position[2], r->second->next[0], r->second->next[1], r->second->next[2], r->second->size);
 						}
 					}
-					return 1;
 				}
-				return 0;
+				return update;
 			}
 			logprintf("*** Streamer_SetIntData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_MAP_ICON:
 		{
-			boost::unordered_map<int, Element::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
 			if (m != core->getData()->mapIcons.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -2025,31 +1933,30 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					{
 						m->second->color = static_cast<int>(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					case ExtraID:
 					{
 						m->second->extraID = static_cast<int>(params[4]);
 						return 1;
 					}
-					break;
 					case Style:
 					{
 						m->second->style = static_cast<int>(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					case Type:
 					{
 						m->second->type = static_cast<int>(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_SetIntData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
 				if (update)
 				{
@@ -2062,16 +1969,15 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 							SetPlayerMapIcon(p->first, i->second, m->second->position[0], m->second->position[1], m->second->position[2], m->second->type, m->second->color, m->second->style);
 						}
 					}
-					return 1;
 				}
-				return 0;
+				return update;
 			}
 			logprintf("*** Streamer_SetIntData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
-			boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
 			if (t != core->getData()->textLabels.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -2080,10 +1986,11 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					{
 						if (static_cast<int>(params[4]) != INVALID_GENERIC_ID)
 						{
-							t->second->attach = boost::intrusive_ptr<Element::TextLabel::Attach>(new Element::TextLabel::Attach);
+							t->second->attach = boost::intrusive_ptr<Item::TextLabel::Attach>(new Item::TextLabel::Attach);
 							t->second->attach->player = static_cast<int>(params[4]);
 							t->second->attach->vehicle = INVALID_GENERIC_ID;
 							core->getStreamer()->attachedTextLabels.insert(t->second);
+							update = true;
 						}
 						else
 						{
@@ -2094,20 +2001,21 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 									t->second->attach.reset();
 									core->getStreamer()->attachedTextLabels.erase(t->second);
 									core->getGrid()->removeTextLabel(t->second, true);
+									update = true;
 								}
 							}
 						}
-						update = true;
+						break;
 					}
-					break;
 					case AttachedVehicle:
 					{
 						if (static_cast<int>(params[4]) != INVALID_GENERIC_ID)
 						{
-							t->second->attach = boost::intrusive_ptr<Element::TextLabel::Attach>(new Element::TextLabel::Attach);
+							t->second->attach = boost::intrusive_ptr<Item::TextLabel::Attach>(new Item::TextLabel::Attach);
 							t->second->attach->player = INVALID_GENERIC_ID;
 							t->second->attach->vehicle = static_cast<int>(params[4]);
 							core->getStreamer()->attachedTextLabels.insert(t->second);
+							update = true;
 						}
 						else
 						{
@@ -2118,35 +2026,34 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 									t->second->attach.reset();
 									core->getStreamer()->attachedTextLabels.erase(t->second);
 									core->getGrid()->removeTextLabel(t->second, true);
+									update = true;
 								}
 							}
 						}
-						update = true;
+						break;
 					}
-					break;
 					case Color:
 					{
 						t->second->color = static_cast<int>(params[4]);
 						update = true;
+						break;
 					}
-					break;
 					case ExtraID:
 					{
 						t->second->extraID = static_cast<int>(params[4]);
 						return 1;
 					}
-					break;
 					case TestLOS:
 					{
 						t->second->testLOS = static_cast<int>(params[4]) != 0;
 						update = true;
+						break;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_SetIntData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
 				if (update)
 				{
@@ -2166,16 +2073,15 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 							i->second = CreatePlayer3DTextLabel(p->first, t->second->text.c_str(), t->second->color, t->second->position[0], t->second->position[1], t->second->position[2], t->second->drawDistance, t->second->attach ? t->second->attach->player : INVALID_GENERIC_ID, t->second->attach ? t->second->attach->vehicle : INVALID_GENERIC_ID, t->second->testLOS);
 						}
 					}
-					return 1;
 				}
-				return 0;
+				return update;
 			}
 			logprintf("*** Streamer_SetIntData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		case STREAMER_TYPE_AREA:
 		{
-			boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
+			boost::unordered_map<int, Item::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
 			if (a != core->getData()->areas.end())
 			{
 				switch (static_cast<int>(params[3]))
@@ -2185,16 +2091,16 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						logprintf("*** Streamer_SetFloatData: Use AttachDynamicAreaToObject to adjust attached area data");
 						return 0;
 					}
-					break;
 					case AttachedPlayer:
 					{
 						if (static_cast<int>(params[4]) != INVALID_GENERIC_ID)
 						{
-							a->second->attach = boost::intrusive_ptr<Element::Area::Attach>(new Element::Area::Attach);
+							a->second->attach = boost::intrusive_ptr<Item::Area::Attach>(new Item::Area::Attach);
 							a->second->attach->object.get<0>() = INVALID_GENERIC_ID;
 							a->second->attach->player = static_cast<int>(params[4]);
 							a->second->attach->vehicle = INVALID_GENERIC_ID;
 							core->getStreamer()->attachedAreas.insert(a->second);
+							return 1;
 						}
 						else
 						{
@@ -2205,21 +2111,22 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 									a->second->attach.reset();
 									core->getStreamer()->attachedAreas.erase(a->second);
 									core->getGrid()->removeArea(a->second, true);
+									return 1;
 								}
 							}
 						}
-						return 1;
+						return 0;
 					}
-					break;
 					case AttachedVehicle:
 					{
 						if (static_cast<int>(params[4]) != INVALID_GENERIC_ID)
 						{
-							a->second->attach = boost::intrusive_ptr<Element::Area::Attach>(new Element::Area::Attach);
+							a->second->attach = boost::intrusive_ptr<Item::Area::Attach>(new Item::Area::Attach);
 							a->second->attach->object.get<0>() = INVALID_GENERIC_ID;
 							a->second->attach->player = INVALID_GENERIC_ID;
 							a->second->attach->vehicle = static_cast<int>(params[4]);
 							core->getStreamer()->attachedAreas.insert(a->second);
+							return 1;
 						}
 						else
 						{
@@ -2230,34 +2137,32 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 									a->second->attach.reset();
 									core->getStreamer()->attachedAreas.erase(a->second);
 									core->getGrid()->removeArea(a->second, true);
+									return 1;
 								}
 							}
 						}
-						return 1;
+						return 0;
 					}
-					break;
 					case ExtraID:
 					{
 						a->second->extraID = static_cast<int>(params[4]);
 						return 1;
 					}
-					break;
 					default:
 					{
 						logprintf("*** Streamer_SetIntData: Invalid data specified");
+						return 0;
 					}
-					break;
 				}
-				return 0;
 			}
 			logprintf("*** Streamer_SetIntData: Invalid ID specified");
+			return 0;
 		}
-		break;
 		default:
 		{
 			logprintf("*** Streamer_SetIntData: Invalid type specified");
+			return 0;
 		}
-		break;
 	}
 	return 0;
 }
@@ -2268,275 +2173,37 @@ int Manipulation::getArrayData(AMX *amx, cell *params)
 	{
 		case STREAMER_TYPE_OBJECT:
 		{
-			boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
-			if (o != core->getData()->objects.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], o->second->extras) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], o->second->interiors) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], o->second->players) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], o->second->worlds) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_GetArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+			return getArrayDataForItem(core->getData()->objects, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
 		}
-		break;
 		case STREAMER_TYPE_PICKUP:
 		{
-			boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
-			if (p != core->getData()->pickups.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], p->second->extras) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], p->second->interiors) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], p->second->players) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], p->second->worlds) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_GetArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+			return getArrayDataForItem(core->getData()->pickups, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
 		}
-		break;
 		case STREAMER_TYPE_CP:
 		{
-			boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
-			if (c != core->getData()->checkpoints.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], c->second->extras) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], c->second->interiors) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], c->second->players) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], c->second->worlds) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_GetArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+			return getArrayDataForItem(core->getData()->checkpoints, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
 		}
-		break;
 		case STREAMER_TYPE_RACE_CP:
 		{
-			boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
-			if (r != core->getData()->raceCheckpoints.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], r->second->extras) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], r->second->interiors) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], r->second->players) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], r->second->worlds) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_GetArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+			return getArrayDataForItem(core->getData()->raceCheckpoints, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
 		}
-		break;
 		case STREAMER_TYPE_MAP_ICON:
 		{
-			boost::unordered_map<int, Element::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
-			if (m != core->getData()->mapIcons.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], m->second->extras) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], m->second->interiors) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], m->second->players) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], m->second->worlds) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_GetArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+			return getArrayDataForItem(core->getData()->mapIcons, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
 		}
-		break;
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
-			boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
-			if (t != core->getData()->textLabels.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], t->second->extras) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], t->second->interiors) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], t->second->players) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], t->second->worlds) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_GetArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+			return getArrayDataForItem(core->getData()->textLabels, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
 		}
-		break;
 		case STREAMER_TYPE_AREA:
 		{
-			boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
-			if (a != core->getData()->areas.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], a->second->extras) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], a->second->interiors) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], a->second->players) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::convertContainerToArray(amx, params[4], params[5], a->second->worlds) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_GetArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+			return getArrayDataForItem(core->getData()->areas, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
 		}
-		break;
 		default:
 		{
 			logprintf("*** Streamer_GetArrayData: Invalid type specified");
+			return 0;
 		}
-		break;
 	}
 	return 0;
 }
@@ -2547,275 +2214,37 @@ int Manipulation::setArrayData(AMX *amx, cell *params)
 	{
 		case STREAMER_TYPE_OBJECT:
 		{
-			boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
-			if (o != core->getData()->objects.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], o->second->extras) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], o->second->interiors) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], o->second->players) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], o->second->worlds) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_SetArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+			return setArrayDataForItem(core->getData()->objects, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
 		}
-		break;
 		case STREAMER_TYPE_PICKUP:
 		{
-			boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
-			if (p != core->getData()->pickups.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], p->second->extras) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], p->second->interiors) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], p->second->players) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], p->second->worlds) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_SetArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+			return setArrayDataForItem(core->getData()->pickups, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
 		}
-		break;
 		case STREAMER_TYPE_CP:
 		{
-			boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
-			if (c != core->getData()->checkpoints.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], c->second->extras) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], c->second->interiors) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], c->second->players) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], c->second->worlds) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_SetArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+			return setArrayDataForItem(core->getData()->checkpoints, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
 		}
-		break;
 		case STREAMER_TYPE_RACE_CP:
 		{
-			boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
-			if (r != core->getData()->raceCheckpoints.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], r->second->extras) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], r->second->interiors) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], r->second->players) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], r->second->worlds) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_SetArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+			return setArrayDataForItem(core->getData()->raceCheckpoints, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
 		}
-		break;
 		case STREAMER_TYPE_MAP_ICON:
 		{
-			boost::unordered_map<int, Element::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
-			if (m != core->getData()->mapIcons.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], m->second->extras) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], m->second->interiors) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], m->second->players) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], m->second->worlds) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_SetArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+			return setArrayDataForItem(core->getData()->mapIcons, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
 		}
-		break;
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
-			boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
-			if (t != core->getData()->textLabels.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], t->second->extras) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], t->second->interiors) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], t->second->players) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], t->second->worlds) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_SetArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+			return setArrayDataForItem(core->getData()->textLabels, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
 		}
-		break;
 		case STREAMER_TYPE_AREA:
 		{
-			boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
-			if (a != core->getData()->areas.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], a->second->extras) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], a->second->interiors) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], a->second->players) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::convertArrayToContainer(amx, params[4], params[5], a->second->worlds) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_SetArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+			return setArrayDataForItem(core->getData()->areas, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
 		}
-		break;
 		default:
 		{
 			logprintf("*** Streamer_SetArrayData: Invalid type specified");
+			return 0;
 		}
-		break;
 	}
 	return 0;
 }
@@ -2826,275 +2255,37 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 	{
 		case STREAMER_TYPE_OBJECT:
 		{
-			boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
-			if (o != core->getData()->objects.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::isInContainer(o->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::isInContainer(o->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::isInContainer(o->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::isInContainer(o->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_IsInArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_IsInArrayData: Invalid ID specified");
+			return isInArrayDataForItem(core->getData()->objects, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_PICKUP:
 		{
-			boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
-			if (p != core->getData()->pickups.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::isInContainer(p->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::isInContainer(p->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::isInContainer(p->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::isInContainer(p->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_IsInArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_IsInArrayData: Invalid ID specified");
+			return isInArrayDataForItem(core->getData()->pickups, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_CP:
 		{
-			boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
-			if (c != core->getData()->checkpoints.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::isInContainer(c->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::isInContainer(c->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::isInContainer(c->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::isInContainer(c->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_IsInArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_IsInArrayData: Invalid ID specified");
+			return isInArrayDataForItem(core->getData()->checkpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_RACE_CP:
 		{
-			boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
-			if (r != core->getData()->raceCheckpoints.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::isInContainer(r->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::isInContainer(r->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::isInContainer(r->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::isInContainer(r->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_IsInArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_IsInArrayData: Invalid ID specified");
+			return isInArrayDataForItem(core->getData()->raceCheckpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_MAP_ICON:
 		{
-			boost::unordered_map<int, Element::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
-			if (m != core->getData()->mapIcons.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::isInContainer(m->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::isInContainer(m->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::isInContainer(m->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::isInContainer(m->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_IsInArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_IsInArrayData: Invalid ID specified");
+			return isInArrayDataForItem(core->getData()->mapIcons, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
-			boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
-			if (t != core->getData()->textLabels.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::isInContainer(t->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::isInContainer(t->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::isInContainer(t->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::isInContainer(t->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_IsInArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_IsInArrayData: Invalid ID specified");
+			return isInArrayDataForItem(core->getData()->textLabels, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_AREA:
 		{
-			boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
-			if (a != core->getData()->areas.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::isInContainer(a->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::isInContainer(a->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::isInContainer(a->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::isInContainer(a->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_IsInArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_IsInArrayData: Invalid ID specified");
+			return isInArrayDataForItem(core->getData()->areas, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		default:
 		{
 			logprintf("*** Streamer_IsInArrayData: Invalid type specified");
+			return 0;
 		}
-		break;
 	}
 	return 0;
 }
@@ -3105,275 +2296,37 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 	{
 		case STREAMER_TYPE_OBJECT:
 		{
-			boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
-			if (o != core->getData()->objects.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::addToContainer(o->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::addToContainer(o->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::addToContainer(o->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::addToContainer(o->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_AppendArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_AppendArrayData: Invalid ID specified");
+			return appendArrayDataForItem(core->getData()->objects, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_PICKUP:
 		{
-			boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
-			if (p != core->getData()->pickups.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::addToContainer(p->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::addToContainer(p->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::addToContainer(p->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::addToContainer(p->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_AppendArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_AppendArrayData: Invalid ID specified");
+			return appendArrayDataForItem(core->getData()->pickups, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_CP:
 		{
-			boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
-			if (c != core->getData()->checkpoints.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::addToContainer(c->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::addToContainer(c->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::addToContainer(c->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::addToContainer(c->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_AppendArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_AppendArrayData: Invalid ID specified");
+			return appendArrayDataForItem(core->getData()->checkpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_RACE_CP:
 		{
-			boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
-			if (r != core->getData()->raceCheckpoints.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::addToContainer(r->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::addToContainer(r->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::addToContainer(r->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::addToContainer(r->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_AppendArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_AppendArrayData: Invalid ID specified");
+			return appendArrayDataForItem(core->getData()->raceCheckpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_MAP_ICON:
 		{
-			boost::unordered_map<int, Element::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
-			if (m != core->getData()->mapIcons.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::addToContainer(m->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::addToContainer(m->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::addToContainer(m->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::addToContainer(m->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_AppendArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_AppendArrayData: Invalid ID specified");
+			return appendArrayDataForItem(core->getData()->mapIcons, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
-			boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
-			if (t != core->getData()->textLabels.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::addToContainer(t->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::addToContainer(t->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::addToContainer(t->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::addToContainer(t->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_AppendArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_AppendArrayData: Invalid ID specified");
+			return appendArrayDataForItem(core->getData()->textLabels, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_AREA:
 		{
-			boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
-			if (a != core->getData()->areas.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::addToContainer(a->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::addToContainer(a->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::addToContainer(a->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::addToContainer(a->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_AppendArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_AppendArrayData: Invalid ID specified");
+			return appendArrayDataForItem(core->getData()->areas, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		default:
 		{
 			logprintf("*** Streamer_AppendArrayData: Invalid type specified");
+			return 0;
 		}
-		break;
 	}
 	return 0;
 }
@@ -3384,275 +2337,37 @@ int Manipulation::removeArrayData(AMX *amx, cell *params)
 	{
 		case STREAMER_TYPE_OBJECT:
 		{
-			boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find(static_cast<int>(params[2]));
-			if (o != core->getData()->objects.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::removeFromContainer(o->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::removeFromContainer(o->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::removeFromContainer(o->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::removeFromContainer(o->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_RemoveArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_RemoveArrayData: Invalid ID specified");
+			return removeArrayDataForItem(core->getData()->objects, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_PICKUP:
 		{
-			boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.find(static_cast<int>(params[2]));
-			if (p != core->getData()->pickups.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::removeFromContainer(p->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::removeFromContainer(p->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::removeFromContainer(p->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::removeFromContainer(p->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_RemoveArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_RemoveArrayData: Invalid ID specified");
+			return removeArrayDataForItem(core->getData()->pickups, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_CP:
 		{
-			boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = core->getData()->checkpoints.find(static_cast<int>(params[2]));
-			if (c != core->getData()->checkpoints.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::removeFromContainer(c->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::removeFromContainer(c->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::removeFromContainer(c->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::removeFromContainer(c->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_RemoveArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_RemoveArrayData: Invalid ID specified");
+			return removeArrayDataForItem(core->getData()->checkpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_RACE_CP:
 		{
-			boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.find(static_cast<int>(params[2]));
-			if (r != core->getData()->raceCheckpoints.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::removeFromContainer(r->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::removeFromContainer(r->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::removeFromContainer(r->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::removeFromContainer(r->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_RemoveArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_RemoveArrayData: Invalid ID specified");
+			return removeArrayDataForItem(core->getData()->raceCheckpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_MAP_ICON:
 		{
-			boost::unordered_map<int, Element::SharedMapIcon>::iterator m = core->getData()->mapIcons.find(static_cast<int>(params[2]));
-			if (m != core->getData()->mapIcons.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::removeFromContainer(m->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::removeFromContainer(m->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::removeFromContainer(m->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::removeFromContainer(m->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_RemoveArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_RemoveArrayData: Invalid ID specified");
+			return removeArrayDataForItem(core->getData()->mapIcons, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
-			boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.find(static_cast<int>(params[2]));
-			if (t != core->getData()->textLabels.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::removeFromContainer(t->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::removeFromContainer(t->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::removeFromContainer(t->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::removeFromContainer(t->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_RemoveArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_RemoveArrayData: Invalid ID specified");
+			return removeArrayDataForItem(core->getData()->textLabels, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		case STREAMER_TYPE_AREA:
 		{
-			boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.find(static_cast<int>(params[2]));
-			if (a != core->getData()->areas.end())
-			{
-				switch (static_cast<int>(params[3]))
-				{
-					case ExtraID:
-					{
-						return Utility::removeFromContainer(a->second->extras, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case InteriorID:
-					{
-						return Utility::removeFromContainer(a->second->interiors, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case PlayerID:
-					{
-						return Utility::removeFromContainer(a->second->players, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					case WorldID:
-					{
-						return Utility::removeFromContainer(a->second->worlds, static_cast<int>(params[4])) != 0;
-					}
-					break;
-					default:
-					{
-						logprintf("*** Streamer_RemoveArrayData: Invalid data specified");
-					}
-					break;
-				}
-				return 0;
-			}
-			logprintf("*** Streamer_RemoveArrayData: Invalid ID specified");
+			return removeArrayDataForItem(core->getData()->areas, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
 		}
-		break;
 		default:
 		{
 			logprintf("*** Streamer_RemoveArrayData: Invalid type specified");
+			return 0;
 		}
-		break;
 	}
 	return 0;
 }

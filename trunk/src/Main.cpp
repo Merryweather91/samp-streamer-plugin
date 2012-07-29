@@ -16,9 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Main.h"
-#include "Natives.h"
-#include "Utility.h"
+#include "main.h"
+
+#include "core.h"
+#include "natives.h"
+#include "utility.h"
+
+#include <boost/scoped_ptr.hpp>
+
+#include <sampgdk/core.h>
+#include <sampgdk/plugin.h>
+
+#include <set>
 
 logprintf_t logprintf;
 

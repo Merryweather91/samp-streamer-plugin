@@ -16,7 +16,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Main.h"
+#include "cell.h"
+
+#include "common.h"
 
 Cell::Cell() : references(0) {}
 Cell::Cell(CellID cellID) : cellID(cellID), references(0) {}

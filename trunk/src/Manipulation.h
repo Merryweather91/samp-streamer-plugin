@@ -16,6 +16,14 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef MANIPULATION_H
+#define MANIPULATION_H
+
+#include "main.h"
+#include "utility.h"
+
+#include <sampgdk/plugin.h>
+
 namespace Manipulation
 {
 	enum
@@ -77,4 +85,181 @@ namespace Manipulation
 	int isInArrayData(AMX *amx, cell *params);
 	int appendArrayData(AMX *amx, cell *params);
 	int removeArrayData(AMX *amx, cell *params);
+
+	template <typename T>
+	int getArrayDataForItem(T &container, AMX *amx, int id, int type, cell output, cell size)
+	{
+		typename T::iterator i = container.find(id);
+		if (i != container.end())
+		{
+			switch (type)
+			{
+				case ExtraID:
+				{
+					return Utility::convertContainerToArray(amx, output, size, i->second->extras) != 0;
+				}
+				case InteriorID:
+				{
+					return Utility::convertContainerToArray(amx, output, size, i->second->interiors) != 0;
+				}
+				case PlayerID:
+				{
+					return Utility::convertContainerToArray(amx, output, size, i->second->players) != 0;
+				}
+				case WorldID:
+				{
+					return Utility::convertContainerToArray(amx, output, size, i->second->worlds) != 0;
+				}
+				default:
+				{
+					logprintf("*** Streamer_GetArrayData: Invalid data specified");
+					return 0;
+				}
+			}
+		}
+		logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+		return 0;
+	}
+
+	template <typename T>
+	int setArrayDataForItem(T &container, AMX *amx, int id, int type, cell input, cell size)
+	{
+		typename T::iterator i = container.find(id);
+		if (i != container.end())
+		{
+			switch (type)
+			{
+				case ExtraID:
+				{
+					return Utility::convertArrayToContainer(amx, input, size, i->second->extras) != 0;
+				}
+				case InteriorID:
+				{
+					return Utility::convertArrayToContainer(amx, input, size, i->second->interiors) != 0;
+				}
+				case PlayerID:
+				{
+					return Utility::convertArrayToContainer(amx, input, size, i->second->players) != 0;
+				}
+				case WorldID:
+				{
+					return Utility::convertArrayToContainer(amx, input, size, i->second->worlds) != 0;
+				}
+				default:
+				{
+					logprintf("*** Streamer_SetArrayData: Invalid data specified");
+					return 0;
+				}
+			}
+		}
+		logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+		return 0;
+	}
+
+	template <typename T>
+	int isInArrayDataForItem(T &container, int id, int type, int value)
+	{
+		typename T::iterator i = container.find(id);
+		if (i != container.end())
+		{
+			switch (type)
+			{
+				case ExtraID:
+				{
+					return Utility::isInContainer(i->second->extras, value) != 0;
+				}
+				case InteriorID:
+				{
+					return Utility::isInContainer(i->second->interiors, value) != 0;
+				}
+				case PlayerID:
+				{
+					return Utility::isInContainer(i->second->players, value) != 0;
+				}
+				case WorldID:
+				{
+					return Utility::isInContainer(i->second->worlds, value) != 0;
+				}
+				default:
+				{
+					logprintf("*** Streamer_IsInArrayData: Invalid data specified");
+					return 0;
+				}
+			}
+		}
+		logprintf("*** Streamer_IsInArrayData: Invalid ID specified");
+		return 0;
+	}
+
+	template <typename T>
+	int appendArrayDataForItem(T &container, int id, int type, int value)
+	{
+		typename T::iterator i = container.find(id);
+		if (i != container.end())
+		{
+			switch (type)
+			{
+				case ExtraID:
+				{
+					return Utility::addToContainer(i->second->extras, value) != 0;
+				}
+				case InteriorID:
+				{
+					return Utility::addToContainer(i->second->interiors, value) != 0;
+				}
+				case PlayerID:
+				{
+					return Utility::addToContainer(i->second->players, value) != 0;
+				}
+				case WorldID:
+				{
+					return Utility::addToContainer(i->second->worlds, value) != 0;
+				}
+				default:
+				{
+					logprintf("*** Streamer_AppendArrayData: Invalid data specified");
+					return 0;
+				}
+			}
+		}
+		logprintf("*** Streamer_AppendArrayData: Invalid ID specified");
+		return 0;
+	}
+
+	template <typename T>
+	int removeArrayDataForItem(T &container, int id, int type, int value)
+	{
+		typename T::iterator i = container.find(id);
+		if (i != container.end())
+		{
+			switch (type)
+			{
+				case ExtraID:
+				{
+					return Utility::removeFromContainer(i->second->extras, value) != 0;
+				}
+				case InteriorID:
+				{
+					return Utility::removeFromContainer(i->second->interiors, value) != 0;
+				}
+				case PlayerID:
+				{
+					return Utility::removeFromContainer(i->second->players, value) != 0;
+				}
+				case WorldID:
+				{
+					return Utility::removeFromContainer(i->second->worlds, value) != 0;
+				}
+				default:
+				{
+					logprintf("*** Streamer_RemoveArrayData: Invalid data specified");
+					return 0;
+				}
+			}
+		}
+		logprintf("*** Streamer_RemoveArrayData: Invalid ID specified");
+		return 0;
+	}
 }
+
+#endif

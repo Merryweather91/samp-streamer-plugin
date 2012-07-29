@@ -19,16 +19,12 @@
 #ifndef CORE_H
 #define CORE_H
 
-#include "Common.h"
+#include "data.h"
+#include "events.h"
+#include "grid.h"
+#include "streamer.h"
 
-#include "Cell.h"
-#include "Data.h"
-#include "Events.h"
-#include "Identifier.h"
-#include "Grid.h"
-#include "Element.h"
-#include "Streamer.h"
-#include "Player.h"
+#include <boost/scoped_ptr.hpp>
 
 class Core
 {
