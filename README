@@ -19,5 +19,5 @@ Compilation
 Windows: Open the solution file (streamer.sln) in Microsoft Visual
 Studio 2010 or higher. Build the project.
 
-Linux: Install the GNU Compiler Collection and GNU Make. Type
-"make" to begin compiling the source.
+Linux: Install the GNU Compiler Collection and GNU Make. Type "make"
+to begin compiling the source.
