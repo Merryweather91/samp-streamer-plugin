@@ -16,7 +16,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Main.h"
+#include "player.h"
+
+#include "core.h"
+
+#include <boost/intrusive_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
+
+#include <Eigen/Core>
+
+#include <bitset>
 
 Player::Player(int playerID) : playerID(playerID)
 {

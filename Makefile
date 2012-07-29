@@ -23,6 +23,7 @@ help:
 	@echo "Usage: make [config=name] [target]"
 	@echo ""
 	@echo "CONFIGURATIONS:"
+	@echo "   debug"
 	@echo "   release"
 	@echo ""
 	@echo "TARGETS:"

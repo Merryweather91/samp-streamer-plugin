@@ -16,8 +16,31 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Main.h"
-#include "Utility.h"
+#include "utility.h"
+
+#include "core.h"
+#include "main.h"
+
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/geometries.hpp>
+#include <boost/intrusive_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+#include <boost/variant.hpp>
+
+#include <Eigen/Core>
+
+#include <sampgdk/a_objects.h>
+#include <sampgdk/a_players.h>
+#include <sampgdk/a_samp.h>
+#include <sampgdk/plugin.h>
+
+#include <set>
+#include <sstream>
+#include <string>
+#include <vector>
 
 using namespace Utility;
 
@@ -84,7 +107,7 @@ int Utility::checkInterfaceAndRegisterNatives(AMX *amx, AMX_NATIVE_INFO *amxNati
 
 void Utility::destroyAllItemsInInterface(AMX *amx)
 {
-	boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.begin();
+	boost::unordered_map<int, Item::SharedObject>::iterator o = core->getData()->objects.begin();
 	while (o != core->getData()->objects.end())
 	{
 		if (o->second->amx == amx)
@@ -96,7 +119,7 @@ void Utility::destroyAllItemsInInterface(AMX *amx)
 			++o;
 		}
 	}
-	boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.begin();
+	boost::unordered_map<int, Item::SharedPickup>::iterator p = core->getData()->pickups.begin();
 	while (p != core->getData()->pickups.end())
 	{
 		if (p->second->amx == amx)
@@ -108,7 +131,7 @@ void Utility::destroyAllItemsInInterface(AMX *amx)
 			++p;
 		}
 	}
-	boost::unordered_map<int, Element::SharedCheckpoint>::iterator c = core->getData()->checkpoints.begin();
+	boost::unordered_map<int, Item::SharedCheckpoint>::iterator c = core->getData()->checkpoints.begin();
 	while (c != core->getData()->checkpoints.end())
 	{
 		if (c->second->amx == amx)
@@ -120,7 +143,7 @@ void Utility::destroyAllItemsInInterface(AMX *amx)
 			++c;
 		}
 	}
-	boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.begin();
+	boost::unordered_map<int, Item::SharedRaceCheckpoint>::iterator r = core->getData()->raceCheckpoints.begin();
 	while (r != core->getData()->raceCheckpoints.end())
 	{
 		if (r->second->amx == amx)
@@ -132,7 +155,7 @@ void Utility::destroyAllItemsInInterface(AMX *amx)
 			++r;
 		}
 	}
-	boost::unordered_map<int, Element::SharedMapIcon>::iterator m = core->getData()->mapIcons.begin();
+	boost::unordered_map<int, Item::SharedMapIcon>::iterator m = core->getData()->mapIcons.begin();
 	while (m != core->getData()->mapIcons.end())
 	{
 		if (m->second->amx == amx)
@@ -144,7 +167,7 @@ void Utility::destroyAllItemsInInterface(AMX *amx)
 			++m;
 		}
 	}
-	boost::unordered_map<int, Element::SharedTextLabel>::iterator t = core->getData()->textLabels.begin();
+	boost::unordered_map<int, Item::SharedTextLabel>::iterator t = core->getData()->textLabels.begin();
 	while (t != core->getData()->textLabels.end())
 	{
 		if (t->second->amx == amx)
@@ -156,7 +179,7 @@ void Utility::destroyAllItemsInInterface(AMX *amx)
 			++t;
 		}
 	}
-	boost::unordered_map<int, Element::SharedArea>::iterator a = core->getData()->areas.begin();
+	boost::unordered_map<int, Item::SharedArea>::iterator a = core->getData()->areas.begin();
 	while (a != core->getData()->areas.end())
 	{
 		if (a->second->amx == amx)
@@ -170,9 +193,9 @@ void Utility::destroyAllItemsInInterface(AMX *amx)
 	}
 }
 
-boost::unordered_map<int, Element::SharedArea>::iterator Utility::destroyArea(boost::unordered_map<int, Element::SharedArea>::iterator a)
+boost::unordered_map<int, Item::SharedArea>::iterator Utility::destroyArea(boost::unordered_map<int, Item::SharedArea>::iterator a)
 {
-	Element::Area::identifier.remove(a->first, core->getData()->areas.size());
+	Item::Area::identifier.remove(a->first, core->getData()->areas.size());
 	for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
 	{
 		p->second.disabledAreas.erase(a->first);
@@ -183,9 +206,9 @@ boost::unordered_map<int, Element::SharedArea>::iterator Utility::destroyArea(bo
 	return core->getData()->areas.erase(a);
 }
 
-boost::unordered_map<int, Element::SharedCheckpoint>::iterator Utility::destroyCheckpoint(boost::unordered_map<int, Element::SharedCheckpoint>::iterator c)
+boost::unordered_map<int, Item::SharedCheckpoint>::iterator Utility::destroyCheckpoint(boost::unordered_map<int, Item::SharedCheckpoint>::iterator c)
 {
-	Element::Checkpoint::identifier.remove(c->first, core->getData()->checkpoints.size());
+	Item::Checkpoint::identifier.remove(c->first, core->getData()->checkpoints.size());
 	for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
 	{
 		if (p->second.visibleCheckpoint == c->first)
@@ -201,9 +224,9 @@ boost::unordered_map<int, Element::SharedCheckpoint>::iterator Utility::destroyC
 	return core->getData()->checkpoints.erase(c);
 }
 
-boost::unordered_map<int, Element::SharedMapIcon>::iterator Utility::destroyMapIcon(boost::unordered_map<int, Element::SharedMapIcon>::iterator m)
+boost::unordered_map<int, Item::SharedMapIcon>::iterator Utility::destroyMapIcon(boost::unordered_map<int, Item::SharedMapIcon>::iterator m)
 {
-	Element::MapIcon::identifier.remove(m->first, core->getData()->mapIcons.size());
+	Item::MapIcon::identifier.remove(m->first, core->getData()->mapIcons.size());
 	for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
 	{
 		boost::unordered_map<int, int>::iterator i = p->second.internalMapIcons.find(m->first);
@@ -219,9 +242,9 @@ boost::unordered_map<int, Element::SharedMapIcon>::iterator Utility::destroyMapI
 	return core->getData()->mapIcons.erase(m);
 }
 
-boost::unordered_map<int, Element::SharedObject>::iterator Utility::destroyObject(boost::unordered_map<int, Element::SharedObject>::iterator o)
+boost::unordered_map<int, Item::SharedObject>::iterator Utility::destroyObject(boost::unordered_map<int, Item::SharedObject>::iterator o)
 {
-	Element::Object::identifier.remove(o->first, core->getData()->objects.size());
+	Item::Object::identifier.remove(o->first, core->getData()->objects.size());
 	for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
 	{
 		boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(o->first);
@@ -236,9 +259,9 @@ boost::unordered_map<int, Element::SharedObject>::iterator Utility::destroyObjec
 	return core->getData()->objects.erase(o);
 }
 
-boost::unordered_map<int, Element::SharedPickup>::iterator Utility::destroyPickup(boost::unordered_map<int, Element::SharedPickup>::iterator p)
+boost::unordered_map<int, Item::SharedPickup>::iterator Utility::destroyPickup(boost::unordered_map<int, Item::SharedPickup>::iterator p)
 {
-	Element::Pickup::identifier.remove(p->first, core->getData()->pickups.size());
+	Item::Pickup::identifier.remove(p->first, core->getData()->pickups.size());
 	boost::unordered_map<int, int>::iterator i = core->getStreamer()->internalPickups.find(p->first);
 	if (i != core->getStreamer()->internalPickups.end())
 	{
@@ -249,9 +272,9 @@ boost::unordered_map<int, Element::SharedPickup>::iterator Utility::destroyPicku
 	return core->getData()->pickups.erase(p);
 }
 
-boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator Utility::destroyRaceCheckpoint(boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r)
+boost::unordered_map<int, Item::SharedRaceCheckpoint>::iterator Utility::destroyRaceCheckpoint(boost::unordered_map<int, Item::SharedRaceCheckpoint>::iterator r)
 {
-	Element::RaceCheckpoint::identifier.remove(r->first, core->getData()->raceCheckpoints.size());
+	Item::RaceCheckpoint::identifier.remove(r->first, core->getData()->raceCheckpoints.size());
 	for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
 	{
 		if (p->second.visibleRaceCheckpoint == r->first)
@@ -267,9 +290,9 @@ boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator Utility::dest
 	return core->getData()->raceCheckpoints.erase(r);
 }
 
-boost::unordered_map<int, Element::SharedTextLabel>::iterator Utility::destroyTextLabel(boost::unordered_map<int, Element::SharedTextLabel>::iterator t)
+boost::unordered_map<int, Item::SharedTextLabel>::iterator Utility::destroyTextLabel(boost::unordered_map<int, Item::SharedTextLabel>::iterator t)
 {
-	Element::TextLabel::identifier.remove(t->first, core->getData()->textLabels.size());
+	Item::TextLabel::identifier.remove(t->first, core->getData()->textLabels.size());
 	for (boost::unordered_map<int, Player>::iterator p = core->getData()->players.begin(); p != core->getData()->players.end(); ++p)
 	{
 		boost::unordered_map<int, int>::iterator i = p->second.internalTextLabels.find(t->first);
@@ -284,7 +307,7 @@ boost::unordered_map<int, Element::SharedTextLabel>::iterator Utility::destroyTe
 	return core->getData()->textLabels.erase(t);
 }
 
-bool Utility::isPointInArea(const Eigen::Vector3f &point, const Element::SharedArea &area)
+bool Utility::isPointInArea(const Eigen::Vector3f &point, const Item::SharedArea &area)
 {
 	switch (area->type)
 	{
@@ -304,13 +327,12 @@ bool Utility::isPointInArea(const Eigen::Vector3f &point, const Element::SharedA
 					return true;
 				}
 			}
+			return false;
 		}
-		break;
 		case STREAMER_AREA_TYPE_RECTANGLE:
 		{
-			return boost::geometry::within(Eigen::Vector2f(point[0], point[1]), boost::get<Element::Box2D>(area->position));
+			return boost::geometry::covered_by(Eigen::Vector2f(point[0], point[1]), boost::get<Box2D>(area->position));
 		}
-		break;
 		case STREAMER_AREA_TYPE_SPHERE:
 		{
 			if (area->attach)
@@ -327,26 +349,25 @@ bool Utility::isPointInArea(const Eigen::Vector3f &point, const Element::SharedA
 					return true;
 				}
 			}
+			return false;
 		}
-		break;
 		case STREAMER_AREA_TYPE_CUBE:
 		{
-			return boost::geometry::within(point, boost::get<Element::Box3D>(area->position));
+			return boost::geometry::covered_by(point, boost::get<Box3D>(area->position));
 		}
-		break;
 		case STREAMER_AREA_TYPE_POLYGON:
 		{
-			if (point[2] >= boost::get<Element::Polygon2D>(area->position).get<1>()[0] && point[2] <= boost::get<Element::Polygon2D>(area->position).get<1>()[1])
+			if (point[2] >= boost::get<Polygon2D>(area->position).get<1>()[0] && point[2] <= boost::get<Polygon2D>(area->position).get<1>()[1])
 			{
-				return boost::geometry::within(Eigen::Vector2f(point[0], point[1]), boost::get<Element::Polygon2D>(area->position).get<0>());
+				return boost::geometry::covered_by(Eigen::Vector2f(point[0], point[1]), boost::get<Polygon2D>(area->position).get<0>());
 			}
+			return false;
 		}
-		break;
 	}
 	return false;
 }
 
-void Utility::convertArrayToPolygon(AMX *amx, cell input, cell size, Element::Polygon2D &polygon)
+void Utility::convertArrayToPolygon(AMX *amx, cell input, cell size, Polygon2D &polygon)
 {
 	cell *array = NULL;
 	std::vector<Eigen::Vector2f> points;
@@ -373,16 +394,16 @@ void Utility::convertStringToNativeString(AMX *amx, cell output, cell size, std:
 	amx_SetString(address, string.c_str(), 0, 0, static_cast<size_t>(size));
 }
 
-void Utility::storeFloatInNative(AMX *amx, cell output, float number)
+void Utility::storeFloatInNative(AMX *amx, cell output, float value)
 {
 	cell *address;
 	amx_GetAddr(amx, output, &address);
-	*address = amx_ftoc(number);
+	*address = amx_ftoc(value);
 }
 
-void Utility::storeIntegerInNative(AMX *amx, cell output, int number)
+void Utility::storeIntegerInNative(AMX *amx, cell output, int value)
 {
 	cell *address;
 	amx_GetAddr(amx, output, &address);
-	*address = number;
+	*address = value;
 }

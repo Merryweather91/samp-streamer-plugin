@@ -29,6 +29,7 @@ SAMPGDK_EXPORT void **SAMPGDK_CALL sampgdk_get_plugin_data();
 SAMPGDK_EXPORT void SAMPGDK_CALL sampgdk_finalize();
 
 SAMPGDK_EXPORT void SAMPGDK_CALL sampgdk_register_plugin(void *plugin);
+SAMPGDK_EXPORT void SAMPGDK_CALL sampgdk_unregister_plugin(void *plugin);
 SAMPGDK_EXPORT void *SAMPGDK_CALL sampgdk_get_plugin_handle(void *symbol);
 SAMPGDK_EXPORT void *SAMPGDK_CALL sampgdk_get_plugin_symbol(void *plugin, const char *name);
 
@@ -40,7 +41,10 @@ SAMPGDK_EXPORT void *SAMPGDK_CALL sampgdk_get_plugin_symbol(void *plugin, const 
 	} while (false);
 
 SAMPGDK_EXPORT void SAMPGDK_CALL sampgdk_process_timers();
+SAMPGDK_EXPORT void SAMPGDK_CALL sampgdk_process_plugin_timers(void *plugin);
 
 SAMPGDK_EXPORT const AMX_NATIVE_INFO *SAMPGDK_CALL sampgdk_get_natives();
+
+typedef void (*sampgdk_logprintf_t)(const char *format, ...);
 
 #endif /* !SAMPGDK_CORE_H */

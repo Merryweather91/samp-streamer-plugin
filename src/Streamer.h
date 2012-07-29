@@ -22,6 +22,17 @@
 #define INVALID_ALTERNATE_ID (-1)
 #define INVALID_GENERIC_ID (0xFFFF)
 
+#include "cell.h"
+#include "common.h"
+#include "item.h"
+#include "player.h"
+
+#include <boost/tuple/tuple.hpp>
+#include <boost/unordered_set.hpp>
+
+#include <bitset>
+#include <map>
+
 class Streamer
 {
 public:
@@ -37,10 +48,10 @@ public:
 
 	void processActiveItems();
 
-	boost::unordered_set<Element::SharedArea> attachedAreas;
-	boost::unordered_set<Element::SharedObject> attachedObjects;
-	boost::unordered_set<Element::SharedTextLabel> attachedTextLabels;
-	boost::unordered_set<Element::SharedObject> movingObjects;
+	boost::unordered_set<Item::SharedArea> attachedAreas;
+	boost::unordered_set<Item::SharedObject> attachedObjects;
+	boost::unordered_set<Item::SharedTextLabel> attachedTextLabels;
+	boost::unordered_set<Item::SharedObject> movingObjects;
 
 	boost::unordered_map<int, int> internalPickups;
 private:
@@ -77,8 +88,8 @@ private:
 	float averageUpdateTime;
 	bool processingFinalPlayer;
 
-	template<std::size_t N>
-	inline bool checkPlayer(const std::bitset<N> &a, const int b, const boost::unordered_set<int> &c, const int d, const boost::unordered_set<int> &e, const int f)
+	template<std::size_t N, typename T>
+	inline bool checkPlayer(const std::bitset<N> &a, const T &b, const boost::unordered_set<T> &c, const T &d, const boost::unordered_set<T> &e, const T &f)
 	{
 		return (a[b] && (c.empty() || c.find(d) != c.end()) && (e.empty() || e.find(f) != e.end()));
 	}

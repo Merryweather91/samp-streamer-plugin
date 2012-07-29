@@ -37,12 +37,14 @@
 
 /* stdint.h */
 #if !defined HAVE_STDINT_H
-	#if (!defined __STDC__ && __STDC_VERSION__ >= 199901L /* C99 or newer */)\
-		|| (defined _MSC_VER_ && _MSC_VER >= 1600 /* Visual Studio 2010 and later */)\
+	#if (!defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L /* C99 or newer */)\
+		|| (defined _MSC_VER && _MSC_VER >= 1600 /* Visual Studio 2010 and later */)\
 		|| defined __GNUC__ /* GCC, MinGW, etc */
 		#define HAVE_STDINT_H 1
 	#endif
 #endif
+
+#define SAMPGDK_STATIC_ASSERT(COND,MSG) typedef char static_assertion_##MSG[(COND)?1:-1]
 
 /* size_t */
 #include <stddef.h>
@@ -64,16 +66,28 @@
 #endif
 
 /* bool */
-#if !defined __cplusplus
+#if !defined __cplusplus && !defined HAVE_BOOL
+	/* If HAVE_BOOL is not defined we attempt to detect stdbool.h first,
+	 * then define our own "bool" type.
+	 */
 	#if defined __STDC__ && defined __STDC_VERSION__ && __STDC_VERSION__ >= 199901L\
 			|| defined HAVE_STDBOOL_H
-		/* have a C99 compiler */
+		/* Have a C99-conformant compiler. */
 		#include <stdbool.h>
 	#else
 		typedef unsigned char bool;
 		#define true 1
 		#define false 0
+		#define __bool_true_false_are_defined
 	#endif
+#else
+	/* Make sure their "bool" is one byte in size. */
+	SAMPGDK_STATIC_ASSERT(sizeof(bool) == 1, size_of_bool_must_be_1_byte);
 #endif
+
+/* Ensure "int", "float" and "void*" are all of the same size as "cell". */
+SAMPGDK_STATIC_ASSERT(sizeof(int) == 4, sizeof_int_must_be_4);
+SAMPGDK_STATIC_ASSERT(sizeof(float) == 4, sizeof_float_must_be_4);
+SAMPGDK_STATIC_ASSERT(sizeof(void*) == 4, sizeof_void_ptr_must_be_4);
 
 #endif /* !SAMPGDK_CONFIG_H */

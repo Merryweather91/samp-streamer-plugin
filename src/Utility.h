@@ -19,6 +19,19 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
+#include "common.h"
+#include "item.h"
+
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+
+#include <Eigen/Core>
+
+#include <sampgdk/plugin.h>
+
+#include <bitset>
+#include <string>
+
 namespace Utility
 {
 	cell AMX_NATIVE_CALL hookedNative(AMX *amx, cell *params);
@@ -26,17 +39,18 @@ namespace Utility
 	int checkInterfaceAndRegisterNatives(AMX *amx, AMX_NATIVE_INFO *amxNativeList);
 	void destroyAllItemsInInterface(AMX *amx);
 
-	boost::unordered_map<int, Element::SharedArea>::iterator destroyArea(boost::unordered_map<int, Element::SharedArea>::iterator a);
-	boost::unordered_map<int, Element::SharedCheckpoint>::iterator destroyCheckpoint(boost::unordered_map<int, Element::SharedCheckpoint>::iterator c);
-	boost::unordered_map<int, Element::SharedMapIcon>::iterator destroyMapIcon(boost::unordered_map<int, Element::SharedMapIcon>::iterator m);
-	boost::unordered_map<int, Element::SharedObject>::iterator destroyObject(boost::unordered_map<int, Element::SharedObject>::iterator o);
-	boost::unordered_map<int, Element::SharedPickup>::iterator destroyPickup(boost::unordered_map<int, Element::SharedPickup>::iterator p);
-	boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator destroyRaceCheckpoint(boost::unordered_map<int, Element::SharedRaceCheckpoint>::iterator r);
-	boost::unordered_map<int, Element::SharedTextLabel>::iterator destroyTextLabel(boost::unordered_map<int, Element::SharedTextLabel>::iterator t);
+	boost::unordered_map<int, Item::SharedArea>::iterator destroyArea(boost::unordered_map<int, Item::SharedArea>::iterator a);
+	boost::unordered_map<int, Item::SharedCheckpoint>::iterator destroyCheckpoint(boost::unordered_map<int, Item::SharedCheckpoint>::iterator c);
+	boost::unordered_map<int, Item::SharedMapIcon>::iterator destroyMapIcon(boost::unordered_map<int, Item::SharedMapIcon>::iterator m);
+	boost::unordered_map<int, Item::SharedObject>::iterator destroyObject(boost::unordered_map<int, Item::SharedObject>::iterator o);
+	boost::unordered_map<int, Item::SharedPickup>::iterator destroyPickup(boost::unordered_map<int, Item::SharedPickup>::iterator p);
+	boost::unordered_map<int, Item::SharedRaceCheckpoint>::iterator destroyRaceCheckpoint(boost::unordered_map<int, Item::SharedRaceCheckpoint>::iterator r);
+	boost::unordered_map<int, Item::SharedTextLabel>::iterator destroyTextLabel(boost::unordered_map<int, Item::SharedTextLabel>::iterator t);
 
-	bool isPointInArea(const Eigen::Vector3f &point, const Element::SharedArea &area);
+	bool isPointInArea(const Eigen::Vector3f &point, const Item::SharedArea &area);
 
-	inline bool addToContainer(boost::unordered_set<int> &container, int value)
+	template<typename T>
+	inline bool addToContainer(boost::unordered_set<T> &container, T value)
 	{
 		if (value >= 0)
 		{
@@ -50,8 +64,8 @@ namespace Utility
 		return false;
 	}
 
-	template<std::size_t N>
-	inline bool addToContainer(std::bitset<N> &container, int value)
+	template<std::size_t N, typename T>
+	inline bool addToContainer(std::bitset<N> &container, T value)
 	{
 		if (value >= 0 && static_cast<std::size_t>(value) < N)
 		{
@@ -65,7 +79,8 @@ namespace Utility
 		return false;
 	}
 
-	inline bool isInContainer(boost::unordered_set<int> &container, int value)
+	template<typename T>
+	inline bool isInContainer(boost::unordered_set<T> &container, T value)
 	{
 		if (value >= 0)
 		{
@@ -84,8 +99,8 @@ namespace Utility
 		return false;
 	}
 
-	template<std::size_t N>
-	inline bool isInContainer(std::bitset<N> &container, int value)
+	template<std::size_t N, typename T>
+	inline bool isInContainer(std::bitset<N> &container, T value)
 	{
 		if (value >= 0 && static_cast<std::size_t>(value) < N)
 		{
@@ -104,7 +119,8 @@ namespace Utility
 		return false;
 	}
 
-	inline bool removeFromContainer(boost::unordered_set<int> &container, int value)
+	template<typename T>
+	inline bool removeFromContainer(boost::unordered_set<T> &container, T value)
 	{
 		if (value >= 0)
 		{
@@ -118,8 +134,8 @@ namespace Utility
 		return false;
 	}
 
-	template<std::size_t N>
-	inline bool removeFromContainer(std::bitset<N> &container, int value)
+	template<std::size_t N, typename T>
+	inline bool removeFromContainer(std::bitset<N> &container, T value)
 	{
 		if (value >= 0 && static_cast<std::size_t>(value) < N)
 		{
@@ -134,11 +150,27 @@ namespace Utility
 	}
 
 	template<typename T>
-	inline bool convertArrayToContainer(AMX *amx, cell input, cell size, T &container)
+	inline bool convertArrayToContainer(AMX *amx, cell input, cell size, boost::unordered_set<T> &container)
 	{
 		cell *array = NULL;
 		amx_GetAddr(amx, input, &array);
-		removeFromContainer(container, -1);
+		container.clear();
+		for (std::size_t i = 0; i < static_cast<std::size_t>(size); ++i)
+		{
+			if (!addToContainer(container, static_cast<T>(array[i])))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+
+	template<std::size_t N>
+	inline bool convertArrayToContainer(AMX *amx, cell input, cell size, std::bitset<N> &container)
+	{
+		cell *array = NULL;
+		amx_GetAddr(amx, input, &array);
+		container.reset();
 		for (std::size_t i = 0; i < static_cast<std::size_t>(size); ++i)
 		{
 			if (!addToContainer(container, static_cast<std::size_t>(array[i])))
@@ -149,18 +181,19 @@ namespace Utility
 		return true;
 	}
 
-	inline bool convertContainerToArray(AMX *amx, cell output, cell size, boost::unordered_set<int> &container)
+	template<typename T>
+	inline bool convertContainerToArray(AMX *amx, cell output, cell size, boost::unordered_set<T> &container)
 	{
 		cell *array = NULL;
-		boost::unordered_set<int>::iterator c = container.begin();
+		std::size_t i = 0;
 		amx_GetAddr(amx, output, &array);
-		for (std::size_t i = 0; i < static_cast<std::size_t>(size); ++i)
+		for (typename boost::unordered_set<T>::iterator c = container.begin(); c != container.end(); ++c)
 		{
-			if (c == container.end())
+			if (i == static_cast<std::size_t>(size))
 			{
 				return false;
 			}
-			array[i] = *c++;
+			array[i++] = static_cast<cell>(*c);
 		}
 		return true;
 	}
@@ -179,13 +212,13 @@ namespace Utility
 			}
 			if (container[c])
 			{
-				array[i++] = c;
+				array[i++] = static_cast<cell>(c);
 			}
 		}
 		return true;
 	}
 
-	void convertArrayToPolygon(AMX *amx, cell input, cell size, Element::Polygon2D &polygon);
+	void convertArrayToPolygon(AMX *amx, cell input, cell size, Polygon2D &polygon);
 	std::string convertNativeStringToString(AMX *amx, cell input);
 	void convertStringToNativeString(AMX *amx, cell output, cell size, std::string string);
 	void storeFloatInNative(AMX *amx, cell output, float number);

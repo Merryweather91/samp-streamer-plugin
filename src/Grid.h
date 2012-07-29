@@ -19,29 +19,37 @@
 #ifndef GRID_H
 #define GRID_H
 
+#include "cell.h"
+#include "common.h"
+
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+
+#include <vector>
+
 class Grid
 {
 public:
 	Grid();
 
-	void addArea(const Element::SharedArea &area);
-	void addCheckpoint(const Element::SharedCheckpoint &checkpoint);
-	void addMapIcon(const Element::SharedMapIcon &mapIcon);
-	void addObject(const Element::SharedObject &object);
-	void addPickup(const Element::SharedPickup &pickup);
-	void addRaceCheckpoint(const Element::SharedRaceCheckpoint &raceCheckpoint);
-	void addTextLabel(const Element::SharedTextLabel &textLabel);
+	void addArea(const Item::SharedArea &area);
+	void addCheckpoint(const Item::SharedCheckpoint &checkpoint);
+	void addMapIcon(const Item::SharedMapIcon &mapIcon);
+	void addObject(const Item::SharedObject &object);
+	void addPickup(const Item::SharedPickup &pickup);
+	void addRaceCheckpoint(const Item::SharedRaceCheckpoint &raceCheckpoint);
+	void addTextLabel(const Item::SharedTextLabel &textLabel);
 
 	void rebuildGrid();
 	void removeAllItems(int type);
 
-	void removeArea(const Element::SharedArea &area, bool reassign = false);
-	void removeCheckpoint(const Element::SharedCheckpoint &checkpoint, bool reassign = false);
-	void removeMapIcon(const Element::SharedMapIcon &mapIcon, bool reassign = false);
-	void removeObject(const Element::SharedObject &object, bool reassign = false);
-	void removePickup(const Element::SharedPickup &pickup, bool reassign = false);
-	void removeRaceCheckpoint(const Element::SharedRaceCheckpoint &raceCheckpoint, bool reassign = false);
-	void removeTextLabel(const Element::SharedTextLabel &textLabel, bool reassign = false);
+	void removeArea(const Item::SharedArea &area, bool reassign = false);
+	void removeCheckpoint(const Item::SharedCheckpoint &checkpoint, bool reassign = false);
+	void removeMapIcon(const Item::SharedMapIcon &mapIcon, bool reassign = false);
+	void removeObject(const Item::SharedObject &object, bool reassign = false);
+	void removePickup(const Item::SharedPickup &pickup, bool reassign = false);
+	void removeRaceCheckpoint(const Item::SharedRaceCheckpoint &raceCheckpoint, bool reassign = false);
+	void removeTextLabel(const Item::SharedTextLabel &textLabel, bool reassign = false);
 
 	void findAllCells(Player &player, std::vector<SharedCell> &playerCells);
 	void findMinimalCells(Player &player, std::vector<SharedCell> &playerCells);
@@ -50,7 +58,6 @@ public:
 	float cellSize;
 private:
 	SharedCell globalCell;
-
 	Eigen::Matrix<float, 2, 9> translationMatrix;
 
 	boost::unordered_map<CellID, SharedCell> cells;

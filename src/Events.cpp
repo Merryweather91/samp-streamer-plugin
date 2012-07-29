@@ -16,7 +16,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Main.h"
+#include "events.h"
+
+#include "core.h"
+
+#include <boost/intrusive_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/unordered_map.hpp>
+
+#include <sampgdk/a_samp.h>
+#include <sampgdk/plugin.h>
+
+#include <set>
 
 bool Events::OnPlayerConnect(int playerid)
 {
@@ -50,8 +61,8 @@ bool Events::OnPlayerEditObject(int playerid, int playerobject, int objectid, in
 				int objectid = i->first;
 				for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 				{
-					int index = 0;
-					if (!amx_FindPublic(*a, "OnPlayerEditDynamicObject", &index))
+					int amxIndex = 0;
+					if (!amx_FindPublic(*a, "OnPlayerEditDynamicObject", &amxIndex))
 					{
 						amx_Push(*a, amx_ftoc(rz));
 						amx_Push(*a, amx_ftoc(ry));
@@ -62,7 +73,7 @@ bool Events::OnPlayerEditObject(int playerid, int playerobject, int objectid, in
 						amx_Push(*a, static_cast<cell>(response));
 						amx_Push(*a, static_cast<cell>(objectid));
 						amx_Push(*a, static_cast<cell>(playerid));
-						amx_Exec(*a, NULL, index);
+						amx_Exec(*a, NULL, amxIndex);
 						break;
 					}
 				}
@@ -85,8 +96,8 @@ bool Events::OnPlayerSelectObject(int playerid, int type, int objectid, int mode
 				int objectid = i->first;
 				for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 				{
-					int index = 0;
-					if (!amx_FindPublic(*a, "OnPlayerSelectDynamicObject", &index))
+					int amxIndex = 0;
+					if (!amx_FindPublic(*a, "OnPlayerSelectDynamicObject", &amxIndex))
 					{
 						amx_Push(*a, amx_ftoc(z));
 						amx_Push(*a, amx_ftoc(y));
@@ -94,7 +105,7 @@ bool Events::OnPlayerSelectObject(int playerid, int type, int objectid, int mode
 						amx_Push(*a, static_cast<cell>(modelid));
 						amx_Push(*a, static_cast<cell>(objectid));
 						amx_Push(*a, static_cast<cell>(playerid));
-						amx_Exec(*a, NULL, index);
+						amx_Exec(*a, NULL, amxIndex);
 						break;
 					}
 				}
@@ -111,7 +122,7 @@ bool Events::OnPlayerPickUpPickup(int playerid, int pickupid)
 	{
 		if (i->second == pickupid)
 		{
-			boost::unordered_map<int, Element::SharedPickup>::iterator p = core->getData()->pickups.find(i->first);
+			boost::unordered_map<int, Item::SharedPickup>::iterator p = core->getData()->pickups.find(i->first);
 			if (p != core->getData()->pickups.end())
 			{
 				if (p->second->amx != interface)
@@ -122,12 +133,12 @@ bool Events::OnPlayerPickUpPickup(int playerid, int pickupid)
 			int pickupid = i->first;
 			for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 			{
-				int index = 0;
-				if (!amx_FindPublic(*a, "OnPlayerPickUpDynamicPickup", &index))
+				int amxIndex = 0;
+				if (!amx_FindPublic(*a, "OnPlayerPickUpDynamicPickup", &amxIndex))
 				{
 					amx_Push(*a, static_cast<cell>(pickupid));
 					amx_Push(*a, static_cast<cell>(playerid));
-					amx_Exec(*a, NULL, index);
+					amx_Exec(*a, NULL, amxIndex);
 				}
 			}
 			break;
@@ -147,12 +158,12 @@ bool Events::OnPlayerEnterCheckpoint(int playerid)
 			p->second.activeCheckpoint = checkpointid;
 			for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 			{
-				int index = 0;
-				if (!amx_FindPublic(*a, "OnPlayerEnterDynamicCP", &index))
+				int amxIndex = 0;
+				if (!amx_FindPublic(*a, "OnPlayerEnterDynamicCP", &amxIndex))
 				{
 					amx_Push(*a, static_cast<cell>(checkpointid));
 					amx_Push(*a, static_cast<cell>(playerid));
-					amx_Exec(*a, NULL, index);
+					amx_Exec(*a, NULL, amxIndex);
 				}
 			}
 		}
@@ -171,12 +182,12 @@ bool Events::OnPlayerLeaveCheckpoint(int playerid)
 			p->second.activeCheckpoint = 0;
 			for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 			{
-				int index = 0;
-				if (!amx_FindPublic(*a, "OnPlayerLeaveDynamicCP", &index))
+				int amxIndex = 0;
+				if (!amx_FindPublic(*a, "OnPlayerLeaveDynamicCP", &amxIndex))
 				{
 					amx_Push(*a, static_cast<cell>(checkpointid));
 					amx_Push(*a, static_cast<cell>(playerid));
-					amx_Exec(*a, NULL, index);
+					amx_Exec(*a, NULL, amxIndex);
 				}
 			}
 		}
@@ -195,12 +206,12 @@ bool Events::OnPlayerEnterRaceCheckpoint(int playerid)
 			p->second.activeRaceCheckpoint = checkpointid;
 			for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 			{
-				int index = 0;
-				if (!amx_FindPublic(*a, "OnPlayerEnterDynamicRaceCP", &index))
+				int amxIndex = 0;
+				if (!amx_FindPublic(*a, "OnPlayerEnterDynamicRaceCP", &amxIndex))
 				{
 					amx_Push(*a, static_cast<cell>(checkpointid));
 					amx_Push(*a, static_cast<cell>(playerid));
-					amx_Exec(*a, NULL, index);
+					amx_Exec(*a, NULL, amxIndex);
 				}
 			}
 		}
@@ -219,12 +230,12 @@ bool Events::OnPlayerLeaveRaceCheckpoint(int playerid)
 			p->second.activeRaceCheckpoint = 0;
 			for (std::set<AMX*>::iterator a = core->getData()->interfaces.begin(); a != core->getData()->interfaces.end(); ++a)
 			{
-				int index = 0;
-				if (!amx_FindPublic(*a, "OnPlayerLeaveDynamicRaceCP", &index))
+				int amxIndex = 0;
+				if (!amx_FindPublic(*a, "OnPlayerLeaveDynamicRaceCP", &amxIndex))
 				{
 					amx_Push(*a, static_cast<cell>(checkpointid));
 					amx_Push(*a, static_cast<cell>(playerid));
-					amx_Exec(*a, NULL, index);
+					amx_Exec(*a, NULL, amxIndex);
 				}
 			}
 		}

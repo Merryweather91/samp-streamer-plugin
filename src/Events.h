@@ -19,6 +19,8 @@
 #ifndef EVENTS_H
 #define EVENTS_H
 
+#include <sampgdk/plugin.h>
+
 class Events
 {
 public:

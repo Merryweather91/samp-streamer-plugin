@@ -16,8 +16,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Main.h"
-#include "Utility.h"
+#include "streamer.h"
+
+#include "core.h"
+#include "utility.h"
+
+#include <boost/chrono.hpp>
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/geometries.hpp>
+#include <boost/intrusive_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+#include <boost/variant.hpp>
+
+#include <Eigen/Core>
+
+#include <sampgdk/a_objects.h>
+#include <sampgdk/a_players.h>
+#include <sampgdk/a_samp.h>
+#include <sampgdk/a_vehicles.h>
+#include <sampgdk/plugin.h>
+
+#include <bitset>
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
 
 Streamer::Streamer()
 {
@@ -50,22 +76,18 @@ std::size_t Streamer::getVisibleItems(int type)
 		{
 			return visibleObjects;
 		}
-		break;
 		case STREAMER_TYPE_PICKUP:
 		{
 			return visiblePickups;
 		}
-		break;
 		case STREAMER_TYPE_MAP_ICON:
 		{
 			return visibleMapIcons;
 		}
-		break;
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
 			return visibleTextLabels;
 		}
-		break;
 	}
 	return 0;
 }
@@ -79,25 +101,21 @@ bool Streamer::setVisibleItems(int type, std::size_t value)
 			visibleObjects = value;
 			return true;
 		}
-		break;
 		case STREAMER_TYPE_PICKUP:
 		{
 			visiblePickups = value;
 			return true;
 		}
-		break;
 		case STREAMER_TYPE_MAP_ICON:
 		{
 			visibleMapIcons = value;
 			return true;
 		}
-		break;
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
 			visibleTextLabels = value;
 			return true;
 		}
-		break;
 	}
 	return false;
 }
@@ -289,7 +307,7 @@ void Streamer::processAreas(Player &player, const std::vector<SharedCell> &cells
 	std::multimap<bool, boost::tuple<int, int> > areaCallbacks;
 	for (std::vector<SharedCell>::const_iterator c = cells.begin(); c != cells.end(); ++c)
 	{
-		for (boost::unordered_map<int, Element::SharedArea>::const_iterator a = (*c)->areas.begin(); a != (*c)->areas.end(); ++a)
+		for (boost::unordered_map<int, Item::SharedArea>::const_iterator a = (*c)->areas.begin(); a != (*c)->areas.end(); ++a)
 		{
 			bool in = false;
 			if (checkPlayer(a->second->players, player.playerID, a->second->interiors, player.interiorID, a->second->worlds, player.worldID))
@@ -331,10 +349,10 @@ void Streamer::processAreas(Player &player, const std::vector<SharedCell> &cells
 
 void Streamer::processCheckpoints(Player &player, const std::vector<SharedCell> &cells)
 {
-	std::multimap<float, Element::SharedCheckpoint> discoveredCheckpoints;
+	std::multimap<float, Item::SharedCheckpoint> discoveredCheckpoints;
 	for (std::vector<SharedCell>::const_iterator c = cells.begin(); c != cells.end(); ++c)
 	{
-		for (boost::unordered_map<int, Element::SharedCheckpoint>::const_iterator d = (*c)->checkpoints.begin(); d != (*c)->checkpoints.end(); ++d)
+		for (boost::unordered_map<int, Item::SharedCheckpoint>::const_iterator d = (*c)->checkpoints.begin(); d != (*c)->checkpoints.end(); ++d)
 		{
 			float distance = std::numeric_limits<float>::infinity();
 			if (checkPlayer(d->second->players, player.playerID, d->second->interiors, player.interiorID, d->second->worlds, player.worldID))
@@ -342,7 +360,7 @@ void Streamer::processCheckpoints(Player &player, const std::vector<SharedCell> 
 				boost::unordered_set<int>::iterator e = player.disabledCheckpoints.find(d->first);
 				if (e == player.disabledCheckpoints.end())
 				{
-					distance = boost::geometry::comparable_distance(player.position, d->second->position);
+					distance = static_cast<float>(boost::geometry::comparable_distance(player.position, d->second->position));
 				}
 			}
 			if (distance <= d->second->streamDistance)
@@ -362,7 +380,7 @@ void Streamer::processCheckpoints(Player &player, const std::vector<SharedCell> 
 	}
 	if (!discoveredCheckpoints.empty())
 	{
-		std::multimap<float, Element::SharedCheckpoint>::iterator d = discoveredCheckpoints.begin();
+		std::multimap<float, Item::SharedCheckpoint>::iterator d = discoveredCheckpoints.begin();
 		if (d->second->checkpointID != player.visibleCheckpoint)
 		{
 			if (player.visibleCheckpoint)
@@ -382,15 +400,15 @@ void Streamer::processCheckpoints(Player &player, const std::vector<SharedCell> 
 
 void Streamer::processMapIcons(Player &player, const std::vector<SharedCell> &cells)
 {
-	std::multimap<float, Element::SharedMapIcon> discoveredMapIcons, existingMapIcons;
+	std::multimap<float, Item::SharedMapIcon> discoveredMapIcons, existingMapIcons;
 	for (std::vector<SharedCell>::const_iterator c = cells.begin(); c != cells.end(); ++c)
 	{
-		for (boost::unordered_map<int, Element::SharedMapIcon>::const_iterator m = (*c)->mapIcons.begin(); m != (*c)->mapIcons.end(); ++m)
+		for (boost::unordered_map<int, Item::SharedMapIcon>::const_iterator m = (*c)->mapIcons.begin(); m != (*c)->mapIcons.end(); ++m)
 		{
 			float distance = std::numeric_limits<float>::infinity();
 			if (checkPlayer(m->second->players, player.playerID, m->second->interiors, player.interiorID, m->second->worlds, player.worldID))
 			{
-				distance = boost::geometry::comparable_distance(player.position, m->second->position);
+				distance = static_cast<float>(boost::geometry::comparable_distance(player.position, m->second->position));
 			}
 			boost::unordered_map<int, int>::iterator i = player.internalMapIcons.find(m->first);
 			if (distance <= m->second->streamDistance)
@@ -419,11 +437,11 @@ void Streamer::processMapIcons(Player &player, const std::vector<SharedCell> &ce
 			}
 		}
 	}
-	for (std::multimap<float, Element::SharedMapIcon>::iterator d = discoveredMapIcons.begin(); d != discoveredMapIcons.end(); ++d)
+	for (std::multimap<float, Item::SharedMapIcon>::iterator d = discoveredMapIcons.begin(); d != discoveredMapIcons.end(); ++d)
 	{
 		if (player.internalMapIcons.size() == visibleMapIcons)
 		{
-			std::multimap<float, Element::SharedMapIcon>::reverse_iterator e = existingMapIcons.rbegin();
+			std::multimap<float, Item::SharedMapIcon>::reverse_iterator e = existingMapIcons.rbegin();
 			if (e != existingMapIcons.rend())
 			{
 				if (d->first < e->first)
@@ -459,21 +477,21 @@ void Streamer::processMapIcons(Player &player, const std::vector<SharedCell> &ce
 
 void Streamer::processObjects(Player &player, const std::vector<SharedCell> &cells)
 {
-	std::multimap<float, Element::SharedObject> discoveredObjects, existingObjects;
+	std::multimap<float, Item::SharedObject> discoveredObjects, existingObjects;
 	for (std::vector<SharedCell>::const_iterator c = cells.begin(); c != cells.end(); ++c)
 	{
-		for (boost::unordered_map<int, Element::SharedObject>::const_iterator o = (*c)->objects.begin(); o != (*c)->objects.end(); ++o)
+		for (boost::unordered_map<int, Item::SharedObject>::const_iterator o = (*c)->objects.begin(); o != (*c)->objects.end(); ++o)
 		{
 			float distance = std::numeric_limits<float>::infinity();
 			if (checkPlayer(o->second->players, player.playerID, o->second->interiors, player.interiorID, o->second->worlds, player.worldID))
 			{
 				if (o->second->attach)
 				{
-					distance = boost::geometry::comparable_distance(player.position, o->second->attach->position);
+					distance = static_cast<float>(boost::geometry::comparable_distance(player.position, o->second->attach->position));
 				}
 				else
 				{
-					distance = boost::geometry::comparable_distance(player.position, o->second->position);
+					distance = static_cast<float>(boost::geometry::comparable_distance(player.position, o->second->position));
 				}
 			}
 			boost::unordered_map<int, int>::iterator i = player.internalObjects.find(o->first);
@@ -502,11 +520,11 @@ void Streamer::processObjects(Player &player, const std::vector<SharedCell> &cel
 			}
 		}
 	}
-	for (std::multimap<float, Element::SharedObject>::iterator d = discoveredObjects.begin(); d != discoveredObjects.end(); ++d)
+	for (std::multimap<float, Item::SharedObject>::iterator d = discoveredObjects.begin(); d != discoveredObjects.end(); ++d)
 	{
 		if (player.internalObjects.size() == player.visibleObjects)
 		{
-			std::multimap<float, Element::SharedObject>::reverse_iterator e = existingObjects.rbegin();
+			std::multimap<float, Item::SharedObject>::reverse_iterator e = existingObjects.rbegin();
 			if (e != existingObjects.rend())
 			{
 				if (d->first < e->first)
@@ -544,7 +562,7 @@ void Streamer::processObjects(Player &player, const std::vector<SharedCell> &cel
 		{
 			MovePlayerObject(player.playerID, internalID, d->second->move->position.get<0>()[0], d->second->move->position.get<0>()[1], d->second->move->position.get<0>()[2], d->second->move->speed, d->second->move->rotation.get<0>()[0], d->second->move->rotation.get<0>()[1], d->second->move->rotation.get<0>()[2]);
 		}
-		for (boost::unordered_map<int, Element::Object::Material>::iterator m = d->second->materials.begin(); m != d->second->materials.end(); ++m)
+		for (boost::unordered_map<int, Item::Object::Material>::iterator m = d->second->materials.begin(); m != d->second->materials.end(); ++m)
 		{
 			if (m->second.main)
 			{
@@ -565,12 +583,12 @@ void Streamer::processObjects(Player &player, const std::vector<SharedCell> &cel
 
 void Streamer::processPickups(Player &player, const std::vector<SharedCell> &cells)
 {
-	static boost::unordered_map<int, Element::SharedPickup> discoveredPickups;
+	static boost::unordered_map<int, Item::SharedPickup> discoveredPickups;
 	for (std::vector<SharedCell>::const_iterator c = cells.begin(); c != cells.end(); ++c)
 	{
-		for (boost::unordered_map<int, Element::SharedPickup>::const_iterator p = (*c)->pickups.begin(); p != (*c)->pickups.end(); ++p)
+		for (boost::unordered_map<int, Item::SharedPickup>::const_iterator p = (*c)->pickups.begin(); p != (*c)->pickups.end(); ++p)
 		{
-			boost::unordered_map<int, Element::SharedPickup>::iterator d = discoveredPickups.find(p->first);
+			boost::unordered_map<int, Item::SharedPickup>::iterator d = discoveredPickups.find(p->first);
 			if (d == discoveredPickups.end())
 			{
 				if (checkPlayer(p->second->players, player.playerID, p->second->interiors, player.interiorID, p->second->worlds, player.worldID))
@@ -593,7 +611,7 @@ void Streamer::processPickups(Player &player, const std::vector<SharedCell> &cel
 		boost::unordered_map<int, int>::iterator i = internalPickups.begin();
 		while (i != internalPickups.end())
 		{
-			boost::unordered_map<int, Element::SharedPickup>::iterator d = discoveredPickups.find(i->first);
+			boost::unordered_map<int, Item::SharedPickup>::iterator d = discoveredPickups.find(i->first);
 			if (d == discoveredPickups.end())
 			{
 				DestroyPickup(i->second);
@@ -605,7 +623,7 @@ void Streamer::processPickups(Player &player, const std::vector<SharedCell> &cel
 				++i;
 			}
 		}
-		for (boost::unordered_map<int, Element::SharedPickup>::iterator d = discoveredPickups.begin(); d != discoveredPickups.end(); ++d)
+		for (boost::unordered_map<int, Item::SharedPickup>::iterator d = discoveredPickups.begin(); d != discoveredPickups.end(); ++d)
 		{
 			if (internalPickups.size() == visiblePickups)
 			{
@@ -624,10 +642,10 @@ void Streamer::processPickups(Player &player, const std::vector<SharedCell> &cel
 
 void Streamer::processRaceCheckpoints(Player &player, const std::vector<SharedCell> &cells)
 {
-	std::multimap<float, Element::SharedRaceCheckpoint> discoveredRaceCheckpoints;
+	std::multimap<float, Item::SharedRaceCheckpoint> discoveredRaceCheckpoints;
 	for (std::vector<SharedCell>::const_iterator c = cells.begin(); c != cells.end(); ++c)
 	{
-		for (boost::unordered_map<int, Element::SharedRaceCheckpoint>::const_iterator r = (*c)->raceCheckpoints.begin(); r != (*c)->raceCheckpoints.end(); ++r)
+		for (boost::unordered_map<int, Item::SharedRaceCheckpoint>::const_iterator r = (*c)->raceCheckpoints.begin(); r != (*c)->raceCheckpoints.end(); ++r)
 		{
 			float distance = std::numeric_limits<float>::infinity();
 			if (checkPlayer(r->second->players, player.playerID, r->second->interiors, player.interiorID, r->second->worlds, player.worldID))
@@ -635,7 +653,7 @@ void Streamer::processRaceCheckpoints(Player &player, const std::vector<SharedCe
 				boost::unordered_set<int>::iterator d = player.disabledRaceCheckpoints.find(r->first);
 				if (d == player.disabledRaceCheckpoints.end())
 				{
-					distance = boost::geometry::comparable_distance(player.position, r->second->position);
+					distance = static_cast<float>(boost::geometry::comparable_distance(player.position, r->second->position));
 				}
 			}
 			if (distance <= r->second->streamDistance)
@@ -655,7 +673,7 @@ void Streamer::processRaceCheckpoints(Player &player, const std::vector<SharedCe
 	}
 	if (!discoveredRaceCheckpoints.empty())
 	{
-		std::multimap<float, Element::SharedRaceCheckpoint>::iterator d = discoveredRaceCheckpoints.begin();
+		std::multimap<float, Item::SharedRaceCheckpoint>::iterator d = discoveredRaceCheckpoints.begin();
 		if (d->second->raceCheckpointID != player.visibleRaceCheckpoint)
 		{
 			if (player.visibleRaceCheckpoint)
@@ -675,21 +693,21 @@ void Streamer::processRaceCheckpoints(Player &player, const std::vector<SharedCe
 
 void Streamer::processTextLabels(Player &player, const std::vector<SharedCell> &cells)
 {
-	std::multimap<float, Element::SharedTextLabel> discoveredTextLabels, existingTextLabels;
+	std::multimap<float, Item::SharedTextLabel> discoveredTextLabels, existingTextLabels;
 	for (std::vector<SharedCell>::const_iterator c = cells.begin(); c != cells.end(); ++c)
 	{
-		for (boost::unordered_map<int, Element::SharedTextLabel>::const_iterator t = (*c)->textLabels.begin(); t != (*c)->textLabels.end(); ++t)
+		for (boost::unordered_map<int, Item::SharedTextLabel>::const_iterator t = (*c)->textLabels.begin(); t != (*c)->textLabels.end(); ++t)
 		{
 			float distance = std::numeric_limits<float>::infinity();
 			if (checkPlayer(t->second->players, player.playerID, t->second->interiors, player.interiorID, t->second->worlds, player.worldID))
 			{
 				if (t->second->attach)
 				{
-					distance = boost::geometry::comparable_distance(player.position, t->second->attach->position);
+					distance = static_cast<float>(boost::geometry::comparable_distance(player.position, t->second->attach->position));
 				}
 				else
 				{
-					distance = boost::geometry::comparable_distance(player.position, t->second->position);
+					distance = static_cast<float>(boost::geometry::comparable_distance(player.position, t->second->position));
 				}
 			}
 			boost::unordered_map<int, int>::iterator i = player.internalTextLabels.find(t->first);
@@ -718,11 +736,11 @@ void Streamer::processTextLabels(Player &player, const std::vector<SharedCell> &
 			}
 		}
 	}
-	for (std::multimap<float, Element::SharedTextLabel>::iterator d = discoveredTextLabels.begin(); d != discoveredTextLabels.end(); ++d)
+	for (std::multimap<float, Item::SharedTextLabel>::iterator d = discoveredTextLabels.begin(); d != discoveredTextLabels.end(); ++d)
 	{
 		if (player.internalTextLabels.size() == player.visibleTextLabels)
 		{
-			std::multimap<float, Element::SharedTextLabel>::reverse_iterator e = existingTextLabels.rbegin();
+			std::multimap<float, Item::SharedTextLabel>::reverse_iterator e = existingTextLabels.rbegin();
 			if (e != existingTextLabels.rend())
 			{
 				if (d->first < e->first)
@@ -784,7 +802,7 @@ void Streamer::processMovingObjects()
 {
 	std::vector<int> objectCallbacks;
 	boost::chrono::steady_clock::time_point currentTime = boost::chrono::steady_clock::now();
-	boost::unordered_set<Element::SharedObject>::iterator o = movingObjects.begin();
+	boost::unordered_set<Item::SharedObject>::iterator o = movingObjects.begin();
 	while (o != movingObjects.end())
 	{
 		bool objectFinishedMoving = false;
@@ -832,7 +850,7 @@ void Streamer::processMovingObjects()
 
 void Streamer::processAttachedAreas()
 {
-	for (boost::unordered_set<Element::SharedArea>::iterator a = attachedAreas.begin(); a != attachedAreas.end(); ++a)
+	for (boost::unordered_set<Item::SharedArea>::iterator a = attachedAreas.begin(); a != attachedAreas.end(); ++a)
 	{
 		if ((*a)->attach)
 		{
@@ -844,23 +862,23 @@ void Streamer::processAttachedAreas()
 					case STREAMER_OBJECT_TYPE_GLOBAL:
 					{
 						adjust = GetObjectPos((*a)->attach->object.get<0>(), &(*a)->attach->position[0], &(*a)->attach->position[1], &(*a)->attach->position[2]);
+						break;
 					}
-					break;
 					case STREAMER_OBJECT_TYPE_PLAYER:
 					{
 						adjust = GetPlayerObjectPos((*a)->attach->object.get<2>(), (*a)->attach->object.get<0>(), &(*a)->attach->position[0], &(*a)->attach->position[1], &(*a)->attach->position[2]);
+						break;
 					}
-					break;
 					case STREAMER_OBJECT_TYPE_DYNAMIC:
 					{
-						boost::unordered_map<int, Element::SharedObject>::iterator o = core->getData()->objects.find((*a)->attach->object.get<0>());
+						boost::unordered_map<int, Item::SharedObject>::iterator o = core->getData()->objects.find((*a)->attach->object.get<0>());
 						if (o != core->getData()->objects.end())
 						{
 							(*a)->attach->position = o->second->position;
 							adjust = true;
 						}
+						break;
 					}
-					break;
 				}
 			}
 			else if ((*a)->attach->player != INVALID_GENERIC_ID)
@@ -888,7 +906,7 @@ void Streamer::processAttachedAreas()
 
 void Streamer::processAttachedObjects()
 {
-	for (boost::unordered_set<Element::SharedObject>::iterator o = attachedObjects.begin(); o != attachedObjects.end(); ++o)
+	for (boost::unordered_set<Item::SharedObject>::iterator o = attachedObjects.begin(); o != attachedObjects.end(); ++o)
 	{
 		if ((*o)->attach)
 		{
@@ -914,7 +932,7 @@ void Streamer::processAttachedObjects()
 
 void Streamer::processAttachedTextLabels()
 {
-	for (boost::unordered_set<Element::SharedTextLabel>::iterator t = attachedTextLabels.begin(); t != attachedTextLabels.end(); ++t)
+	for (boost::unordered_set<Item::SharedTextLabel>::iterator t = attachedTextLabels.begin(); t != attachedTextLabels.end(); ++t)
 	{
 		bool adjust = false;
 		if ((*t)->attach)

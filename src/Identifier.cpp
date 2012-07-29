@@ -16,7 +16,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "Main.h"
+#include "identifier.h"
+
+#include <functional>
+#include <queue>
+#include <vector>
 
 Identifier::Identifier()
 {
