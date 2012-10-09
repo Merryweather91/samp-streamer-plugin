@@ -39,6 +39,7 @@
 #include <sampgdk/plugin.h>
 
 #include <bitset>
+#include <limits>
 #include <string>
 
 cell AMX_NATIVE_CALL Natives::Streamer_TickRate(AMX *amx, cell *params)
@@ -759,7 +760,7 @@ cell AMX_NATIVE_CALL Natives::SetDynamicObjectPos(AMX *amx, cell *params)
 			o->second->move->duration = static_cast<int>((static_cast<float>(boost::geometry::distance(o->second->move->position.get<0>(), o->second->position) / o->second->move->speed) * 1000.0f));
 			o->second->move->position.get<1>() = o->second->position;
 			o->second->move->position.get<2>() = (o->second->move->position.get<0>() - o->second->position) / static_cast<float>(o->second->move->duration);
-			if (o->second->move->rotation.get<0>().maxCoeff() > -1000.0f)
+			if ((o->second->move->rotation.get<0>().maxCoeff() + 1000.0f) > std::numeric_limits<float>::epsilon())
 			{
 				o->second->move->rotation.get<1>() = o->second->rotation;
 				o->second->move->rotation.get<2>() = (o->second->move->rotation.get<0>() - o->second->rotation) / static_cast<float>(o->second->move->duration);
@@ -846,7 +847,7 @@ cell AMX_NATIVE_CALL Natives::MoveDynamicObject(AMX *amx, cell *params)
 		o->second->move->position.get<1>() = o->second->position;
 		o->second->move->position.get<2>() = (position - o->second->position) / static_cast<float>(o->second->move->duration);
 		o->second->move->rotation.get<0>() = rotation;
-		if (o->second->move->rotation.get<0>().maxCoeff() > -1000.0f)
+		if ((o->second->move->rotation.get<0>().maxCoeff() + 1000.0f) > std::numeric_limits<float>::epsilon())
 		{
 			o->second->move->rotation.get<1>() = o->second->rotation;
 			o->second->move->rotation.get<2>() = (rotation - o->second->rotation) / static_cast<float>(o->second->move->duration);
@@ -943,16 +944,16 @@ cell AMX_NATIVE_CALL Natives::AttachDynamicObjectToVehicle(AMX *amx, cell *param
 			if (i != p->second.internalObjects.end())
 			{
 				AttachPlayerObjectToVehicle(p->first, i->second, o->second->attach->vehicle, o->second->attach->offset[0], o->second->attach->offset[1], o->second->attach->offset[2], o->second->attach->rotation[0], o->second->attach->rotation[1], o->second->attach->rotation[2]);
-			}
-			for (boost::unordered_map<int, Item::Object::Material>::iterator m = o->second->materials.begin(); m != o->second->materials.end(); ++m)
-			{
-				if (m->second.main)
+				for (boost::unordered_map<int, Item::Object::Material>::iterator m = o->second->materials.begin(); m != o->second->materials.end(); ++m)
 				{
-					SetPlayerObjectMaterial(p->first, i->second, o->first, m->second.main->modelID, m->second.main->txdFileName.c_str(), m->second.main->textureName.c_str(), m->second.main->materialColor);
-				}
-				else if (m->second.text)
-				{
-					SetPlayerObjectMaterialText(p->first, i->second, m->second.text->materialText.c_str(), m->first, m->second.text->materialSize, m->second.text->fontFace.c_str(), m->second.text->fontSize, m->second.text->bold, m->second.text->fontColor, m->second.text->backColor, m->second.text->textAlignment);
+					if (m->second.main)
+					{
+						SetPlayerObjectMaterial(p->first, i->second, m->first, m->second.main->modelID, m->second.main->txdFileName.c_str(), m->second.main->textureName.c_str(), m->second.main->materialColor);
+					}
+					else if (m->second.text)
+					{
+						SetPlayerObjectMaterialText(p->first, i->second, m->second.text->materialText.c_str(), m->first, m->second.text->materialSize, m->second.text->fontFace.c_str(), m->second.text->fontSize, m->second.text->bold, m->second.text->fontColor, m->second.text->backColor, m->second.text->textAlignment);
+					}
 				}
 			}
 		}

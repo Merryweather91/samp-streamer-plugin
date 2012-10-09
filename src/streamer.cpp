@@ -38,6 +38,7 @@
 #include <sampgdk/plugin.h>
 
 #include <bitset>
+#include <limits>
 #include <map>
 #include <set>
 #include <string>
@@ -810,7 +811,7 @@ void Streamer::processMovingObjects()
 			if (elapsedTime.count() < (*o)->move->duration)
 			{
 				(*o)->position = (*o)->move->position.get<1>() + ((*o)->move->position.get<2>() * elapsedTime.count());
-				if ((*o)->move->rotation.get<0>().maxCoeff() > -1000.0f)
+				if (((*o)->move->rotation.get<0>().maxCoeff() + 1000.0f) > std::numeric_limits<float>::epsilon())
 				{
 					(*o)->rotation = (*o)->move->rotation.get<1>() + ((*o)->move->rotation.get<2>() * elapsedTime.count());
 				}
@@ -818,7 +819,7 @@ void Streamer::processMovingObjects()
 			else
 			{
 				(*o)->position = (*o)->move->position.get<0>();
-				if ((*o)->move->rotation.get<0>().maxCoeff() > -1000.0f)
+				if (((*o)->move->rotation.get<0>().maxCoeff() + 1000.0f) > std::numeric_limits<float>::epsilon())
 				{
 					(*o)->rotation = (*o)->move->rotation.get<0>();
 				}
