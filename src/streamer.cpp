@@ -168,7 +168,7 @@ void Streamer::startManualUpdate(Player &player)
 
 void Streamer::performPlayerUpdate(Player &player, bool automatic)
 {
-	Eigen::Vector3f position = player.position;
+	Eigen::Vector3f delta = Eigen::Vector3f::Zero(), position = player.position;
 	int state = GetPlayerState(player.playerID);
 	bool update = true;
 	if (automatic)
@@ -193,7 +193,8 @@ void Streamer::performPlayerUpdate(Player &player, bool automatic)
 				float velocityNorm = velocity.squaredNorm();
 				if (velocityNorm >= velocityBoundaries.get<0>() && velocityNorm <= velocityBoundaries.get<1>())
 				{
-					player.position += velocity * averageUpdateTime;
+					delta = velocity * averageUpdateTime;
+					player.position += delta;
 				}
 			}
 			else
@@ -234,7 +235,15 @@ void Streamer::performPlayerUpdate(Player &player, bool automatic)
 			}
 			if (!core->getData()->areas.empty() && player.enabledItems[STREAMER_TYPE_AREA])
 			{
+				if (!delta.isZero())
+				{
+					player.position = position;
+				}
 				processAreas(player, cells);
+				if (!delta.isZero())
+				{
+					player.position += delta;
+				}
 			}
 		}
 	}
@@ -248,7 +257,10 @@ void Streamer::performPlayerUpdate(Player &player, bool automatic)
 			}
 			processPickups(player, cells);
 		}
-		player.position = position;
+		if (!delta.isZero())
+		{
+			player.position = position;
+		}
 	}
 }
 

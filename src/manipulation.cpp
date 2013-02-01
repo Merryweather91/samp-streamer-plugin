@@ -43,6 +43,7 @@ using namespace Manipulation;
 
 int Manipulation::getFloatData(AMX *amx, cell *params)
 {
+	int error = -1;
 	switch (static_cast<int>(params[1]))
 	{
 		case STREAMER_TYPE_OBJECT:
@@ -238,13 +239,16 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_GetFloatData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_GetFloatData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_PICKUP:
 		{
@@ -275,13 +279,16 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_GetFloatData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_GetFloatData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_CP:
 		{
@@ -317,13 +324,16 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_GetFloatData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_GetFloatData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_RACE_CP:
 		{
@@ -374,13 +384,16 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_GetFloatData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_GetFloatData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_MAP_ICON:
 		{
@@ -411,13 +424,16 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_GetFloatData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_GetFloatData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
@@ -483,13 +499,16 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_GetFloatData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_GetFloatData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_AREA:
 		{
@@ -680,18 +699,39 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_GetFloatData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_GetFloatData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		default:
 		{
+			error = InvalidType;
+			break;
+		}
+	}
+	switch (error)
+	{
+		case InvalidData:
+		{
+			logprintf("*** Streamer_GetFloatData: Invalid data specified");
+			break;
+		}
+		case InvalidID:
+		{
+			logprintf("*** Streamer_GetFloatData: Invalid ID specified");
+			break;
+		}
+		case InvalidType:
+		{
 			logprintf("*** Streamer_GetFloatData: Invalid type specified");
-			return 0;
+			break;
 		}
 	}
 	return 0;
@@ -699,6 +739,7 @@ int Manipulation::getFloatData(AMX *amx, cell *params)
 
 int Manipulation::setFloatData(AMX *amx, cell *params)
 {
+	int error = -1;
 	bool reassign = false, update = false;
 	switch (static_cast<int>(params[1]))
 	{
@@ -847,8 +888,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_SetFloatData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 				if (reassign)
@@ -886,10 +927,16 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						}
 					}
 				}
-				return (reassign || update);
+				if (reassign || update)
+				{
+					return 1;
+				}
 			}
-			logprintf("*** Streamer_SetFloatData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_PICKUP:
 		{
@@ -932,8 +979,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_SetFloatData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 				if (reassign)
@@ -949,10 +996,16 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						i->second = CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], p->second->worldID);
 					}
 				}
-				return (reassign || update);
+				if (reassign || update)
+				{
+					return 1;
+				}
 			}
-			logprintf("*** Streamer_SetFloatData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_CP:
 		{
@@ -1001,8 +1054,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_SetFloatData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 				if (reassign)
@@ -1020,10 +1073,16 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						}
 					}
 				}
-				return (reassign || update);
+				if (reassign || update)
+				{
+					return 1;
+				}
 			}
-			logprintf("*** Streamer_SetFloatData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_RACE_CP:
 		{
@@ -1090,8 +1149,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_SetFloatData: Invalid data for type specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 				if (reassign)
@@ -1109,10 +1168,16 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						}
 					}
 				}
-				return (reassign || update);
+				if (reassign || update)
+				{
+					return 1;
+				}
 			}
-			logprintf("*** Streamer_SetFloatData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_MAP_ICON:
 		{
@@ -1155,8 +1220,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_SetFloatData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 				if (reassign)
@@ -1175,10 +1240,16 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						}
 					}
 				}
-				return (reassign || update);
+				if (reassign || update)
+				{
+					return 1;
+				}
 			}
-			logprintf("*** Streamer_SetFloatData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
@@ -1230,8 +1301,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_SetFloatData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 				if (reassign)
@@ -1250,10 +1321,16 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 						}
 					}
 				}
-				return (reassign || update);
+				if (reassign || update)
+				{
+					return 1;
+				}
 			}
-			logprintf("*** Streamer_SetFloatData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_AREA:
 		{
@@ -1438,8 +1515,8 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_SetFloatData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 				if (reassign)
@@ -1461,15 +1538,39 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 					}
 					core->getGrid()->removeArea(a->second, true);
 				}
-				return reassign;
+				if (reassign)
+				{
+					return 1;
+				}
 			}
-			logprintf("*** Streamer_SetFloatData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		default:
 		{
+			error = InvalidType;
+			break;
+		}
+	}
+	switch (error)
+	{
+		case InvalidData:
+		{
+			logprintf("*** Streamer_SetFloatData: Invalid data specified");
+			break;
+		}
+		case InvalidID:
+		{
+			logprintf("*** Streamer_SetFloatData: Invalid ID specified");
+			break;
+		}
+		case InvalidType:
+		{
 			logprintf("*** Streamer_SetFloatData: Invalid type specified");
-			return 0;
+			break;
 		}
 	}
 	return 0;
@@ -1477,6 +1578,7 @@ int Manipulation::setFloatData(AMX *amx, cell *params)
 
 int Manipulation::getIntData(AMX *amx, cell *params)
 {
+	int error = -1;
 	switch (static_cast<int>(params[1]))
 	{
 		case STREAMER_TYPE_OBJECT:
@@ -1504,13 +1606,16 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_GetIntData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_GetIntData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_PICKUP:
 		{
@@ -1533,13 +1638,16 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_GetIntData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_GetIntData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_CP:
 		{
@@ -1554,13 +1662,16 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_GetIntData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_GetIntData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_RACE_CP:
 		{
@@ -1579,13 +1690,16 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_GetIntData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_GetIntData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_MAP_ICON:
 		{
@@ -1612,13 +1726,16 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_GetIntData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_GetIntData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
@@ -1657,13 +1774,16 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_GetIntData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_GetIntData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_AREA:
 		{
@@ -1706,18 +1826,39 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_GetIntData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_GetIntData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		default:
 		{
+			error = InvalidType;
+			break;
+		}
+	}
+	switch (error)
+	{
+		case InvalidData:
+		{
+			logprintf("*** Streamer_GetIntData: Invalid data specified");
+			break;
+		}
+		case InvalidID:
+		{
+			logprintf("*** Streamer_GetIntData: Invalid ID specified");
+			break;
+		}
+		case InvalidType:
+		{
 			logprintf("*** Streamer_GetIntData: Invalid type specified");
-			return 0;
+			break;
 		}
 	}
 	return 0;
@@ -1725,6 +1866,7 @@ int Manipulation::getIntData(AMX *amx, cell *params)
 
 int Manipulation::setIntData(AMX *amx, cell *params)
 {
+	int error = -1;
 	bool update = false;
 	switch (static_cast<int>(params[1]))
 	{
@@ -1774,8 +1916,8 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_SetIntData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 				if (update)
@@ -1808,11 +1950,17 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 							}
 						}
 					}
-					return update;
+					if (update)
+					{
+						return 1;
+					}
 				}
 			}
-			logprintf("*** Streamer_SetIntData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_PICKUP:
 		{
@@ -1840,8 +1988,8 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_SetIntData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 				if (update)
@@ -1853,10 +2001,16 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						i->second = CreatePickup(p->second->modelID, p->second->type, p->second->position[0], p->second->position[1], p->second->position[2], p->second->worldID);
 					}
 				}
-				return update;
+				if (update)
+				{
+					return 1;
+				}
 			}
-			logprintf("*** Streamer_SetIntData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_CP:
 		{
@@ -1872,13 +2026,16 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_SetIntData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_SetIntData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_RACE_CP:
 		{
@@ -1900,8 +2057,8 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_SetIntData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 				if (update)
@@ -1915,10 +2072,16 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						}
 					}
 				}
-				return update;
+				if (update)
+				{
+					return 1;
+				}
 			}
-			logprintf("*** Streamer_SetIntData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_MAP_ICON:
 		{
@@ -1952,8 +2115,8 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_SetIntData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 				if (update)
@@ -1968,10 +2131,16 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						}
 					}
 				}
-				return update;
+				if (update)
+				{
+					return 1;
+				}
 			}
-			logprintf("*** Streamer_SetIntData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
@@ -2049,8 +2218,8 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_SetIntData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 				if (update)
@@ -2072,10 +2241,16 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 						}
 					}
 				}
-				return update;
+				if (update)
+				{
+					return 1;
+				}
 			}
-			logprintf("*** Streamer_SetIntData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		case STREAMER_TYPE_AREA:
 		{
@@ -2148,18 +2323,39 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 					}
 					default:
 					{
-						logprintf("*** Streamer_SetIntData: Invalid data specified");
-						return 0;
+						error = InvalidData;
+						break;
 					}
 				}
 			}
-			logprintf("*** Streamer_SetIntData: Invalid ID specified");
-			return 0;
+			else
+			{
+				error = InvalidID;
+			}
+			break;
 		}
 		default:
 		{
+			error = InvalidType;
+			break;
+		}
+	}
+	switch (error)
+	{
+		case InvalidData:
+		{
+			logprintf("*** Streamer_SetIntData: Invalid data specified");
+			break;
+		}
+		case InvalidID:
+		{
+			logprintf("*** Streamer_SetIntData: Invalid ID specified");
+			break;
+		}
+		case InvalidType:
+		{
 			logprintf("*** Streamer_SetIntData: Invalid type specified");
-			return 0;
+			break;
 		}
 	}
 	return 0;
@@ -2167,40 +2363,70 @@ int Manipulation::setIntData(AMX *amx, cell *params)
 
 int Manipulation::getArrayData(AMX *amx, cell *params)
 {
+	int error = -1, result = 0;
 	switch (static_cast<int>(params[1]))
 	{
 		case STREAMER_TYPE_OBJECT:
 		{
-			return getArrayDataForItem(core->getData()->objects, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
+			result = getArrayDataForItem(core->getData()->objects, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5], error);
+			break;
 		}
 		case STREAMER_TYPE_PICKUP:
 		{
-			return getArrayDataForItem(core->getData()->pickups, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
+			result = getArrayDataForItem(core->getData()->pickups, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5], error);
+			break;
 		}
 		case STREAMER_TYPE_CP:
 		{
-			return getArrayDataForItem(core->getData()->checkpoints, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
+			result = getArrayDataForItem(core->getData()->checkpoints, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5], error);
+			break;
 		}
 		case STREAMER_TYPE_RACE_CP:
 		{
-			return getArrayDataForItem(core->getData()->raceCheckpoints, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
+			result = getArrayDataForItem(core->getData()->raceCheckpoints, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5], error);
+			break;
 		}
 		case STREAMER_TYPE_MAP_ICON:
 		{
-			return getArrayDataForItem(core->getData()->mapIcons, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
+			result = getArrayDataForItem(core->getData()->mapIcons, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5], error);
+			break;
 		}
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
-			return getArrayDataForItem(core->getData()->textLabels, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
+			result = getArrayDataForItem(core->getData()->textLabels, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5], error);
+			break;
 		}
 		case STREAMER_TYPE_AREA:
 		{
-			return getArrayDataForItem(core->getData()->areas, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
+			result = getArrayDataForItem(core->getData()->areas, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5], error);
+			break;
 		}
 		default:
 		{
+			error = InvalidType;
+			break;
+		}
+	}
+	switch (error)
+	{
+		case InvalidData:
+		{
+			logprintf("*** Streamer_GetArrayData: Invalid data specified");
+			break;
+		}
+		case InvalidID:
+		{
+			logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+			break;
+		}
+		case InvalidType:
+		{
 			logprintf("*** Streamer_GetArrayData: Invalid type specified");
-			return 0;
+			break;
+		}
+		default:
+		{
+			return result;
 		}
 	}
 	return 0;
@@ -2208,40 +2434,70 @@ int Manipulation::getArrayData(AMX *amx, cell *params)
 
 int Manipulation::setArrayData(AMX *amx, cell *params)
 {
+	int error = -1, result = 0;
 	switch (static_cast<int>(params[1]))
 	{
 		case STREAMER_TYPE_OBJECT:
 		{
-			return setArrayDataForItem(core->getData()->objects, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
+			result = setArrayDataForItem(core->getData()->objects, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5], error);
+			break;
 		}
 		case STREAMER_TYPE_PICKUP:
 		{
-			return setArrayDataForItem(core->getData()->pickups, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
+			result = setArrayDataForItem(core->getData()->pickups, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5], error);
+			break;
 		}
 		case STREAMER_TYPE_CP:
 		{
-			return setArrayDataForItem(core->getData()->checkpoints, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
+			result = setArrayDataForItem(core->getData()->checkpoints, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5], error);
+			break;
 		}
 		case STREAMER_TYPE_RACE_CP:
 		{
-			return setArrayDataForItem(core->getData()->raceCheckpoints, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
+			result = setArrayDataForItem(core->getData()->raceCheckpoints, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5], error);
+			break;
 		}
 		case STREAMER_TYPE_MAP_ICON:
 		{
-			return setArrayDataForItem(core->getData()->mapIcons, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
+			result = setArrayDataForItem(core->getData()->mapIcons, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5], error);
+			break;
 		}
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
-			return setArrayDataForItem(core->getData()->textLabels, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
+			result = setArrayDataForItem(core->getData()->textLabels, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5], error);
+			break;
 		}
 		case STREAMER_TYPE_AREA:
 		{
-			return setArrayDataForItem(core->getData()->areas, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5]);
+			result = setArrayDataForItem(core->getData()->areas, amx, static_cast<int>(params[2]), static_cast<int>(params[3]), params[4], params[5], error);
+			break;
 		}
 		default:
 		{
+			error = InvalidType;
+			break;
+		}
+	}
+	switch (error)
+	{
+		case InvalidData:
+		{
+			logprintf("*** Streamer_SetArrayData: Invalid data specified");
+			break;
+		}
+		case InvalidID:
+		{
+			logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+			break;
+		}
+		case InvalidType:
+		{
 			logprintf("*** Streamer_SetArrayData: Invalid type specified");
-			return 0;
+			break;
+		}
+		default:
+		{
+			return result;
 		}
 	}
 	return 0;
@@ -2249,40 +2505,70 @@ int Manipulation::setArrayData(AMX *amx, cell *params)
 
 int Manipulation::isInArrayData(AMX *amx, cell *params)
 {
+	int error = -1, result = 0;
 	switch (static_cast<int>(params[1]))
 	{
 		case STREAMER_TYPE_OBJECT:
 		{
-			return isInArrayDataForItem(core->getData()->objects, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = isInArrayDataForItem(core->getData()->objects, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_PICKUP:
 		{
-			return isInArrayDataForItem(core->getData()->pickups, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = isInArrayDataForItem(core->getData()->pickups, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_CP:
 		{
-			return isInArrayDataForItem(core->getData()->checkpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = isInArrayDataForItem(core->getData()->checkpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_RACE_CP:
 		{
-			return isInArrayDataForItem(core->getData()->raceCheckpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = isInArrayDataForItem(core->getData()->raceCheckpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_MAP_ICON:
 		{
-			return isInArrayDataForItem(core->getData()->mapIcons, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = isInArrayDataForItem(core->getData()->mapIcons, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
-			return isInArrayDataForItem(core->getData()->textLabels, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = isInArrayDataForItem(core->getData()->textLabels, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_AREA:
 		{
-			return isInArrayDataForItem(core->getData()->areas, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = isInArrayDataForItem(core->getData()->areas, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		default:
 		{
+			error = InvalidType;
+			break;
+		}
+	}
+	switch (error)
+	{
+		case InvalidData:
+		{
+			logprintf("*** Streamer_IsInArrayData: Invalid data specified");
+			break;
+		}
+		case InvalidID:
+		{
+			logprintf("*** Streamer_IsInArrayData: Invalid ID specified");
+			break;
+		}
+		case InvalidType:
+		{
 			logprintf("*** Streamer_IsInArrayData: Invalid type specified");
-			return 0;
+			break;
+		}
+		default:
+		{
+			return result;
 		}
 	}
 	return 0;
@@ -2290,40 +2576,70 @@ int Manipulation::isInArrayData(AMX *amx, cell *params)
 
 int Manipulation::appendArrayData(AMX *amx, cell *params)
 {
+	int error = -1, result = 0;
 	switch (static_cast<int>(params[1]))
 	{
 		case STREAMER_TYPE_OBJECT:
 		{
-			return appendArrayDataForItem(core->getData()->objects, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = appendArrayDataForItem(core->getData()->objects, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_PICKUP:
 		{
-			return appendArrayDataForItem(core->getData()->pickups, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = appendArrayDataForItem(core->getData()->pickups, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_CP:
 		{
-			return appendArrayDataForItem(core->getData()->checkpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = appendArrayDataForItem(core->getData()->checkpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_RACE_CP:
 		{
-			return appendArrayDataForItem(core->getData()->raceCheckpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = appendArrayDataForItem(core->getData()->raceCheckpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_MAP_ICON:
 		{
-			return appendArrayDataForItem(core->getData()->mapIcons, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = appendArrayDataForItem(core->getData()->mapIcons, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
-			return appendArrayDataForItem(core->getData()->textLabels, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = appendArrayDataForItem(core->getData()->textLabels, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_AREA:
 		{
-			return appendArrayDataForItem(core->getData()->areas, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = appendArrayDataForItem(core->getData()->areas, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		default:
 		{
+			error = InvalidType;
+			break;
+		}
+	}
+	switch (error)
+	{
+		case InvalidData:
+		{
+			logprintf("*** Streamer_AppendArrayData: Invalid data specified");
+			break;
+		}
+		case InvalidID:
+		{
+			logprintf("*** Streamer_AppendArrayData: Invalid ID specified");
+			break;
+		}
+		case InvalidType:
+		{
 			logprintf("*** Streamer_AppendArrayData: Invalid type specified");
-			return 0;
+			break;
+		}
+		default:
+		{
+			return result;
 		}
 	}
 	return 0;
@@ -2331,40 +2647,70 @@ int Manipulation::appendArrayData(AMX *amx, cell *params)
 
 int Manipulation::removeArrayData(AMX *amx, cell *params)
 {
+	int error = -1, result = 0;
 	switch (static_cast<int>(params[1]))
 	{
 		case STREAMER_TYPE_OBJECT:
 		{
-			return removeArrayDataForItem(core->getData()->objects, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = removeArrayDataForItem(core->getData()->objects, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_PICKUP:
 		{
-			return removeArrayDataForItem(core->getData()->pickups, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = removeArrayDataForItem(core->getData()->pickups, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_CP:
 		{
-			return removeArrayDataForItem(core->getData()->checkpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = removeArrayDataForItem(core->getData()->checkpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_RACE_CP:
 		{
-			return removeArrayDataForItem(core->getData()->raceCheckpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = removeArrayDataForItem(core->getData()->raceCheckpoints, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_MAP_ICON:
 		{
-			return removeArrayDataForItem(core->getData()->mapIcons, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = removeArrayDataForItem(core->getData()->mapIcons, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_3D_TEXT_LABEL:
 		{
-			return removeArrayDataForItem(core->getData()->textLabels, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = removeArrayDataForItem(core->getData()->textLabels, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		case STREAMER_TYPE_AREA:
 		{
-			return removeArrayDataForItem(core->getData()->areas, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]));
+			result = removeArrayDataForItem(core->getData()->areas, static_cast<int>(params[2]), static_cast<int>(params[3]), static_cast<int>(params[4]), error);
+			break;
 		}
 		default:
 		{
+			error = InvalidType;
+			break;
+		}
+	}
+	switch (error)
+	{
+		case InvalidData:
+		{
+			logprintf("*** Streamer_RemoveArrayData: Invalid data specified");
+			break;
+		}
+		case InvalidID:
+		{
+			logprintf("*** Streamer_RemoveArrayData: Invalid ID specified");
+			break;
+		}
+		case InvalidType:
+		{
 			logprintf("*** Streamer_RemoveArrayData: Invalid type specified");
-			return 0;
+			break;
+		}
+		default:
+		{
+			return result;
 		}
 	}
 	return 0;

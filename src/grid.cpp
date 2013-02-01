@@ -592,7 +592,7 @@ void Grid::removeTextLabel(const Item::SharedTextLabel &textLabel, bool reassign
 
 CellID Grid::getCellID(const Eigen::Vector2f &position, bool insert)
 {
-	Box2D box;
+	static Box2D box;
 	box.min_corner()[0] = std::floor((position[0] / cellSize)) * cellSize;
 	box.min_corner()[1] = std::floor((position[1] / cellSize)) * cellSize;
 	box.max_corner()[0] = box.min_corner()[0] + cellSize;
