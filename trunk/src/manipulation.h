@@ -74,6 +74,13 @@ namespace Manipulation
 		Z
 	};
 
+	enum
+	{
+		InvalidData,
+		InvalidID,
+		InvalidType
+	};
+
 	int getFloatData(AMX *amx, cell *params);
 	int setFloatData(AMX *amx, cell *params);
 	int getIntData(AMX *amx, cell *params);
@@ -85,7 +92,7 @@ namespace Manipulation
 	int removeArrayData(AMX *amx, cell *params);
 
 	template <typename T>
-	int getArrayDataForItem(T &container, AMX *amx, int id, int type, cell output, cell size)
+	int getArrayDataForItem(T &container, AMX *amx, int id, int type, cell output, cell size, int &error)
 	{
 		typename T::iterator i = container.find(id);
 		if (i != container.end())
@@ -110,17 +117,20 @@ namespace Manipulation
 				}
 				default:
 				{
-					logprintf("*** Streamer_GetArrayData: Invalid data specified");
-					return 0;
+					error = InvalidData;
+					break;
 				}
 			}
 		}
-		logprintf("*** Streamer_GetArrayData: Invalid ID specified");
+		else
+		{
+			error = InvalidID;
+		}
 		return 0;
 	}
 
 	template <typename T>
-	int setArrayDataForItem(T &container, AMX *amx, int id, int type, cell input, cell size)
+	int setArrayDataForItem(T &container, AMX *amx, int id, int type, cell input, cell size, int &error)
 	{
 		typename T::iterator i = container.find(id);
 		if (i != container.end())
@@ -145,17 +155,17 @@ namespace Manipulation
 				}
 				default:
 				{
-					logprintf("*** Streamer_SetArrayData: Invalid data specified");
+					error = InvalidData;
 					return 0;
 				}
 			}
 		}
-		logprintf("*** Streamer_SetArrayData: Invalid ID specified");
+		error = InvalidID;
 		return 0;
 	}
 
 	template <typename T>
-	int isInArrayDataForItem(T &container, int id, int type, int value)
+	int isInArrayDataForItem(T &container, int id, int type, int value, int &error)
 	{
 		typename T::iterator i = container.find(id);
 		if (i != container.end())
@@ -180,17 +190,20 @@ namespace Manipulation
 				}
 				default:
 				{
-					logprintf("*** Streamer_IsInArrayData: Invalid data specified");
-					return 0;
+					error = InvalidData;
+					break;
 				}
 			}
 		}
-		logprintf("*** Streamer_IsInArrayData: Invalid ID specified");
+		else
+		{
+			error = InvalidID;
+		}
 		return 0;
 	}
 
 	template <typename T>
-	int appendArrayDataForItem(T &container, int id, int type, int value)
+	int appendArrayDataForItem(T &container, int id, int type, int value, int &error)
 	{
 		typename T::iterator i = container.find(id);
 		if (i != container.end())
@@ -215,17 +228,20 @@ namespace Manipulation
 				}
 				default:
 				{
-					logprintf("*** Streamer_AppendArrayData: Invalid data specified");
-					return 0;
+					error = InvalidData;
+					break;
 				}
 			}
 		}
-		logprintf("*** Streamer_AppendArrayData: Invalid ID specified");
+		else
+		{
+			error = InvalidID;
+		}
 		return 0;
 	}
 
 	template <typename T>
-	int removeArrayDataForItem(T &container, int id, int type, int value)
+	int removeArrayDataForItem(T &container, int id, int type, int value, int &error)
 	{
 		typename T::iterator i = container.find(id);
 		if (i != container.end())
@@ -250,12 +266,15 @@ namespace Manipulation
 				}
 				default:
 				{
-					logprintf("*** Streamer_RemoveArrayData: Invalid data specified");
-					return 0;
+					error = InvalidData;
+					break;
 				}
 			}
 		}
-		logprintf("*** Streamer_RemoveArrayData: Invalid ID specified");
+		else
+		{
+			error = InvalidID;
+		}
 		return 0;
 	}
 }

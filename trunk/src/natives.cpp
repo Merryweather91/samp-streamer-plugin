@@ -981,6 +981,7 @@ cell AMX_NATIVE_CALL Natives::EditDynamicObject(AMX *amx, cell *params)
 		boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(static_cast<int>(params[2]));
 		if (i != p->second.internalObjects.end())
 		{
+			core->getStreamer()->startAutomaticUpdate();
 			EditPlayerObject(p->first, i->second);
 			return 1;
 		}
@@ -2064,7 +2065,7 @@ cell AMX_NATIVE_CALL Natives::CreateDynamicObjectEx(AMX *amx, cell *params)
 	object->modelID = static_cast<int>(params[1]);
 	object->position = Eigen::Vector3f(amx_ctof(params[2]), amx_ctof(params[3]), amx_ctof(params[4]));
 	object->rotation = Eigen::Vector3f(amx_ctof(params[5]), amx_ctof(params[6]), amx_ctof(params[7]));
-	object->drawDistance = amx_ctof(params[8]) * amx_ctof(params[8]);
+	object->drawDistance = amx_ctof(params[8]);
 	object->streamDistance = amx_ctof(params[9]) * amx_ctof(params[9]);
 	Utility::convertArrayToContainer(amx, params[10], params[13], object->worlds);
 	Utility::convertArrayToContainer(amx, params[11], params[14], object->interiors);
