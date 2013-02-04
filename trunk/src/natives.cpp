@@ -975,10 +975,10 @@ cell AMX_NATIVE_CALL Natives::EditDynamicObject(AMX *amx, cell *params)
 	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
 	if (p != core->getData()->players.end())
 	{
+		core->getStreamer()->startManualUpdate(p->second, true);
 		boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(static_cast<int>(params[2]));
 		if (i != p->second.internalObjects.end())
 		{
-			core->getStreamer()->startManualUpdate(p->second, true);
 			EditPlayerObject(p->first, i->second);
 			return 1;
 		}
