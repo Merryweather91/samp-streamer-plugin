@@ -160,8 +160,14 @@ void Streamer::startAutomaticUpdate()
 	}
 }
 
-void Streamer::startManualUpdate(Player &player)
+void Streamer::startManualUpdate(Player &player, bool getData)
 {
+	if (getData)
+	{
+		player.interiorID = GetPlayerInterior(player.playerID);
+		player.worldID = GetPlayerVirtualWorld(player.playerID);
+		GetPlayerPos(player.playerID, &player.position[0], &player.position[1], &player.position[2]);
+	}
 	processActiveItems();
 	performPlayerUpdate(player, false);
 }

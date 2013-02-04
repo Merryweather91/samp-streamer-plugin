@@ -42,7 +42,7 @@ public:
 	bool setVisibleItems(int type, std::size_t value);
 
 	void startAutomaticUpdate();
-	void startManualUpdate(Player &player);
+	void startManualUpdate(Player &player, bool getData);
 
 	void processActiveItems();
 
