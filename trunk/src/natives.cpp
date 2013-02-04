@@ -130,10 +130,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_Update(AMX *amx, cell *params)
 	boost::unordered_map<int, Player>::iterator p = core->getData()->players.find(static_cast<int>(params[1]));
 	if (p != core->getData()->players.end())
 	{
-		p->second.interiorID = GetPlayerInterior(p->first);
-		p->second.worldID = GetPlayerVirtualWorld(p->first);
-		GetPlayerPos(p->first, &p->second.position[0], &p->second.position[1], &p->second.position[2]);
-		core->getStreamer()->startManualUpdate(p->second);
+		core->getStreamer()->startManualUpdate(p->second, true);
 		return 1;
 	}
 	return 0;
@@ -162,7 +159,7 @@ cell AMX_NATIVE_CALL Natives::Streamer_UpdateEx(AMX *amx, cell *params)
 		{
 			p->second.interiorID = GetPlayerInterior(p->first);
 		}
-		core->getStreamer()->startManualUpdate(p->second);
+		core->getStreamer()->startManualUpdate(p->second, false);
 		return 1;
 	}
 	return 0;
@@ -981,7 +978,7 @@ cell AMX_NATIVE_CALL Natives::EditDynamicObject(AMX *amx, cell *params)
 		boost::unordered_map<int, int>::iterator i = p->second.internalObjects.find(static_cast<int>(params[2]));
 		if (i != p->second.internalObjects.end())
 		{
-			core->getStreamer()->startManualUpdate();
+			core->getStreamer()->startManualUpdate(p->second, true);
 			EditPlayerObject(p->first, i->second);
 			return 1;
 		}
